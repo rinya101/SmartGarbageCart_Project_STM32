@@ -1,0 +1,73 @@
+STM32_SmartCar_Project/  # 工程根目录
+├── Doc/                  # 文档目录（答辩必备）
+│   ├── Pin_Map.xlsx      # 引脚映射表（对应bsp_pin_cfg.h）
+│   ├── Module_Design.md  # 模块设计文档（OOP/驱动说明）
+│   └── Test_Report.md    # BSP驱动测试报告
+├── Drivers/              # 底层驱动目录
+│   ├── STM32F4xx_StdPeriph_Driver/  # STM32标准库（官方）
+│   │   ├── Inc/          # 标准库头文件（stm32f4xx_gpio.h等）
+│   │   └── Src/          # 标准库源文件（stm32f4xx_gpio.c等）
+│   └── CMSIS/            # CMSIS核心文件（启动文件/内核函数）
+│       ├── Core/         # 内核层（core_cm4.h等）
+│       └── Device/       # 设备层（stm32f4xx.h/启动文件startup_stm32f4xx.s）
+├── Middlewares/          # 中间件目录
+│   ├── FreeRTOS/         # FreeRTOS实时系统
+│   │   ├── Inc/          # FreeRTOS头文件（FreeRTOS.h/task.h等）
+│   │   └── Src/          # FreeRTOS源文件（task.c/queue.c等）
+│   └── Log/              # 日志中间件（串口上传/格式封装）
+│       ├── Inc/
+│       │   └── log_middleware.h
+│       └── Src/
+│           └── log_middleware.c
+├── Application/          # 应用层目录（核心业务/OOP）
+│   ├── Inc/              # 应用层头文件
+│   │   ├── MotorObject.h # 电机OOP类头文件（大驼峰）
+│   │   ├── PidObject.h   # PID OOP类头文件
+│   │   ├── UltrasonicObject.h # 超声波OOP类头文件
+│   │   └── TrackSensorObject.h # 循迹传感器OOP类头文件
+│   └── Src/              # 应用层源文件
+│       ├── MotorObject.c
+│       ├── PidObject.c
+│       ├── UltrasonicObject.c
+│       └── TrackSensorObject.c
+├── BSP/                  # 板级支持包（硬件驱动，无业务逻辑）
+│   ├── Inc/              # BSP头文件
+│   │   ├── bsp_pin_cfg.h # 引脚宏配置文件（唯一硬件配置源）
+│   │   ├── bsp_motor_hal.h # 电机BSP驱动
+│   │   ├── bsp_ultrasonic.h # 超声波BSP驱动
+│   │   ├── bsp_track_sensor.h # 循迹传感器BSP驱动
+│   │   └── bsp_uart.h    # 串口BSP驱动
+│   └── Src/              # BSP源文件
+│       ├── bsp_pin_init.c # 引脚统一初始化
+│       ├── bsp_motor_hal.c
+│       ├── bsp_ultrasonic.c
+│       ├── bsp_track_sensor.c
+│       └── bsp_uart.c
+├── Tasks/                # FreeRTOS任务层（业务逻辑）
+│   ├── Inc/
+│   │   ├── task_track_pid.h # 循迹PID任务
+│   │   ├── task_obstacle_avoidance.h # 避障任务
+│   │   ├── task_log_upload.h # 日志上传任务
+│   │   └── task_main.h    # 主任务（任务创建）
+│   └── Src/
+│       ├── task_track_pid.c
+│       ├── task_obstacle_avoidance.c
+│       ├── task_log_upload.c
+│       └── task_main.c
+├── Config/               # 全局配置目录
+│   ├── FreeRTOSConfig.h  # FreeRTOS配置（任务栈大小/优先级等）
+│   ├── system_config.h   # 系统全局配置（如日志开关/PID参数）
+│   └── compiler.h        # 编译器相关配置（如__STDC_VERSION__）
+├── Test/                 # 独立测试目录（BSP驱动裸测）
+│   ├── Inc/
+│   │   └── test_bsp_common.h # 测试公共头文件（延时/串口重定向）
+│   └── Src/
+│       ├── test_motor_bsp.c # 电机BSP独立测试
+│       ├── test_ultrasonic_bsp.c # 超声波BSP独立测试
+│       └── test_uart_bsp.c # 串口BSP独立测试
+├── main.c                # 工程入口文件（仅初始化+启动任务）
+├── stm32f4xx_it.c        # 中断服务函数（如串口/定时器中断）
+├── stm32f4xx_conf.h      # 标准库配置（选择启用的外设驱动）
+└── Makefile/MDK-ARM/     # 编译工程文件（根据开发环境选择）
+    ├── STM32_SmartCar.uvprojx # MDK工程文件
+    └── Makefile          # Linux/Make编译文件（可选）
