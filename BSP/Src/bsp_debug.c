@@ -1,13 +1,10 @@
 /*******************************************************************************
- *      文    件: SysClockConfig.h
- *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 时钟配置文件
+ *      文    件: bsp_debug.h
+ *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 调试接口 (USART1)
+ *      特别说明： 使用之前 注意配置 USART1 相关内容
  *      版    本: V1.0
  *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
  *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
  *               可以作为个人参考学习使用。
 *******************************************************************************/
-#ifndef _SYSCLOCKCONFIG_H
-#define _SYSCLOCKCONFIG_H
-#include "stm32f4xx_rcc.h"
-void SysClockConfig_HSE25MHZ(void);
-#endif
+#include "bsp_debug.h"

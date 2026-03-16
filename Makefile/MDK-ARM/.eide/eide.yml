@@ -23,11 +23,16 @@ virtualFolder:
         - name: Inc
           files:
             - path: ../../BSP/Inc/bsp_usart.h
-            - path: ../../BSP/Inc/bsp_pin_cfg.h
+            - path: ../../BSP/Inc/bsp_encoder.h
+            - path: ../../BSP/Inc/bsp_debug.h
+            - path: ../../BSP/Inc/bsp_tim5.h
           folders: []
         - name: Src
           files:
             - path: ../../BSP/Src/bsp_usart.c
+            - path: ../../BSP/Src/bsp_encoder.c
+            - path: ../../BSP/Src/bsp_debug.c
+            - path: ../../BSP/Src/bsp_tim5.c
           folders: []
     - name: Drivers
       files: []
@@ -192,10 +197,12 @@ virtualFolder:
             - path: ../../Config/Inc/FreeRTOSConfig.h
             - path: ../../Config/Inc/SysClockConfig.h
             - path: ../../Config/Inc/PeripheralParamConfig.h
+            - path: ../../BSP/Inc/bsp_pin_cfg.h
           folders: []
         - name: Src
           files:
             - path: ../../Config/Src/SysClockConfig.c
+            - path: ../../Config/Src/PeripheralParamConfig.c
           folders: []
     - name: Test
       files: []

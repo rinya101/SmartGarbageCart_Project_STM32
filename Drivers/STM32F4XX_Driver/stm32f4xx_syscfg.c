@@ -165,6 +165,15 @@ void SYSCFG_MemorySwappingBank(FunctionalState NewState)
   *             
   * @retval None
   */
+/**
+  * @brief  选择用作EXTI线的GPIO引脚。
+  * @param  EXTI_PortSourceGPIOx：选择用作EXTI线源的GPIO端口，其中对于STM32F42xxx/43xxx器件，x可以是（A..K）；对于STM32F405xx/407xx和STM32F415xx/417xx器件，x可以是（A..I）；对于STM32401xx器件，x可以是（A、B、C、D和H）。
+  *            
+  * @param  EXTI_PinSourcex：指定要配置的EXTI线。
+  *           该参数可以是EXTI_PinSourcex，其中x可以是（0..15），但对于STM32F405xx/407xx和STM32F405xx/407xx器件，当为EXTI_PortSourceGPIOI时，x可以是（0..11）；对于STM32F42xxx/43xxx器件，当为EXTI_PortSourceGPIOK时，x可以是（0..7）。
+  *             
+  * @retval 无
+  */
 void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex)
 {
   uint32_t tmp = 0x00;

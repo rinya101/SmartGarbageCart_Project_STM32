@@ -10,7 +10,8 @@
 #include "task.h"
 #include "bsp_usart.h"
 #include <string.h>
-
+uint8_t data1[26] = "";
+uint8_t data2[26] = "";
 void app(void *pvParameters);
 void led_init(void);
 /**
@@ -22,7 +23,6 @@ void usart1_rx_callback(usart_handle_t *handle)
 {
     // 回调事件
     bsp_usart_send_string(handle, "usart1_rx_callback\r\n", handle->rx_len);
-
 }
 int main(void)
 {
@@ -38,6 +38,17 @@ int main(void)
  */
 void app(void *pvParameters)
 {
+    /* data 数据计算 */
+    for (uint16_t i = 0; i < sizeof(data1) - 1; i++)
+    {
+        data1[i] = i + 'A';
+    }
+    data1[25] = '\n';
+    for (uint16_t i = 0; i < sizeof(data2) - 1; i++)
+    {
+        data2[i] = i + 'a';
+    }
+    data2[25] = '\n';
     usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
     if (usart1_handle == NULL)
     {
@@ -46,19 +57,15 @@ void app(void *pvParameters)
     memset(usart1_handle, 0, sizeof(usart_handle_t));
     /* 初始化 USATR1 */
     usart_cfg_t cfg1 = USART1_DEFAULT_CONFIG();
-    cfg1.sub_priority    = 1;
+    usart1_handle->dma_buf_size = sizeof(data1);
+    usart1_handle->dma_buf      = data1;
     bsp_usart_init(usart1_handle, cfg1);
-
-    usart2_handle = pvPortMalloc(sizeof(usart_handle_t));
-    if (usart2_handle == NULL)
-    {
-        while(1); // 内存不足
-    }
-    memset(usart2_handle, 0, sizeof(usart_handle_t));
-    /* 初始化 USATR2 */
-    usart_cfg_t cfg2 = USART2_DEFAULT_CONFIG();
-    cfg2.sub_priority    = 2;
-    bsp_usart_init(usart2_handle, cfg2);
+    vTaskDelay(1000);
+    bsp_usart_send_dma(usart1_handle);
+    usart1_handle->dma_buf_size = sizeof(data2);
+    usart1_handle->dma_buf      = data2;
+    vTaskDelay(1000);
+    bsp_usart_send_dma(usart1_handle);
     uint16_t count = 0;
     while(1)
     {
@@ -93,6 +100,7 @@ void led_init(void)
 1. `void bsp_usart_init(usart_handle_t* handle, usart_cfg_t cfg)`
 2. `void bsp_usart_send_byte(usart_handle_t* handle, uint8_t byte)`
 3. `void bsp_usart_send_string(usart_handle_t* handle, char* str, uint16_t len)`
+4. `void bsp_usart_send_dma(usart_handle_t* handle)`
 ### 结构体
 ```C
 /**
@@ -120,6 +128,10 @@ typedef struct
     uint16_t        usart_stopbit;
     uint16_t        usart_wordlength;
     uint16_t        hfc;
+    /* DMA */
+    DMA_Stream_TypeDef* tx_dma_stream;
+    uint32_t            tx_dma_channel;
+
 } usart_cfg_t;
 ```
 ```C
@@ -129,11 +141,14 @@ typedef struct
  */
 struct usart_handle
 {
-    uint8_t  rx_buf[USART_RECEIVE_BUF_SIZE];
-    uint16_t rx_len;
-    uint16_t buf_index;
-    uint8_t  new_msg_flag;
+    uint8_t             rx_buf[USART_RECEIVE_BUF_SIZE];
+    uint8_t*            dma_buf;
+    uint16_t            dma_buf_size;
+    uint16_t            rx_len;
+    uint16_t            buf_index;
+    uint8_t             new_msg_flag;
     usart_rx_callback_t rx_callback;
-    USART_TypeDef*  usart;
+    USART_TypeDef*      usart;
+    DMA_Stream_TypeDef* tx_dma_stream;
 };
 ```

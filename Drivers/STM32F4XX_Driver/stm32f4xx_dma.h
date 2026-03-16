@@ -104,11 +104,16 @@ typedef struct
                                         It specifies the amount of data to be transferred in a single non interruptable 
                                         transaction. This parameter can be a value of @ref DMA_memory_burst 
                                         @note The burst mode is possible only if the address Increment mode is enabled. */
-
+                                    /*!< 指定内存传输的突发传输配置。
+                                        它指定在单个不可中断的事务中要传输的数据量。此参数可以是@ref DMA_memory_burst中的一个值
+                                        @note 只有当地址递增模式启用时，突发模式才有可能。*/
   uint32_t DMA_PeripheralBurst;    /*!< Specifies the Burst transfer configuration for the peripheral transfers. 
                                         It specifies the amount of data to be transferred in a single non interruptable 
                                         transaction. This parameter can be a value of @ref DMA_peripheral_burst
                                         @note The burst mode is possible only if the address Increment mode is enabled. */  
+                                  /*!< 指定外设传输的突发传输配置。
+                                        它指定在单次不可中断的事务中要传输的数据量。此参数可以是@ref DMA_peripheral_burst中的值
+                                        @note 仅当地址递增模式启用时，突发模式才有可能。*/
 }DMA_InitTypeDef;
 
 /* Exported constants --------------------------------------------------------*/
@@ -576,6 +581,7 @@ void DMA_PeriphIncOffsetSizeConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DM
 void DMA_FlowControllerConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_FlowCtrl);
 
 /* Data Counter functions *****************************************************/
+/* 数据计数器函数 *****************************************************/
 void DMA_SetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx, uint16_t Counter);
 uint16_t DMA_GetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx);
 

@@ -1119,6 +1119,18 @@ void USART_IrDACmd(USART_TypeDef* USARTx, FunctionalState NewState)
   *          This parameter can be: ENABLE or DISABLE.   
   * @retval None
   */
+/**
+  * @brief  启用或禁用USART的DMA接口。
+  * @param  USARTx：其中x可以是1、2、3、4、5、6、7或8，用于选择USART或
+  *         UART外设。
+  * @param  USART_DMAReq：指定DMA请求。
+  *          此参数可以是以下值的任意组合：
+  *            @arg USART_DMAReq_Tx：USART DMA发送请求
+  *            @arg USART_DMAReq_Rx：USART DMA接收请求
+  * @param  NewState：DMA请求源的新状态。
+  *          此参数可以是：ENABLE（启用）或DISABLE（禁用）。
+  * @retval 无
+  */
 void USART_DMACmd(USART_TypeDef* USARTx, uint16_t USART_DMAReq, FunctionalState NewState)
 {
   /* Check the parameters */

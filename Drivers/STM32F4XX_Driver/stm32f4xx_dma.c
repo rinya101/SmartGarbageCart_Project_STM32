@@ -694,6 +694,11 @@ void DMA_SetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx, uint16_t Counter)
   *          to 7 to select the DMA Stream.
   * @retval The number of remaining data units in the current DMAy Streamx transfer.
   */
+/**
+  * @brief  返回当前DMAy Streamx传输中剩余的数据单元数量。
+  * @param  DMAy_Streamx：其中y可以是1或2，用于选择DMA；x可以是0到7，用于选择DMA流。
+  * @retval 当前DMAy Streamx传输中剩余的数据单元数量。
+  */
 uint16_t DMA_GetCurrDataCounter(DMA_Stream_TypeDef* DMAy_Streamx)
 {
   /* Check the parameters */
@@ -990,6 +995,15 @@ uint32_t DMA_GetCurrentMemoryTarget(DMA_Stream_TypeDef* DMAy_Streamx)
   *      
   * @retval Current state of the DMAy Streamx (ENABLE or DISABLE).
   */
+/**
+  * @brief  返回指定DMAy Streamx的EN位状态。
+  * @param  DMAy_Streamx：其中y可以是1或2，用于选择DMA；x可以是0到7，用于选择DMA流。
+  *   
+  * @note    配置DMA流（DMA_Init()函数）并启用该流后，建议检查（或等待直到）DMA流实际启用。如果某个配置参数错误，流可能会保持禁用状态。
+  *          禁用DMA流后，也建议检查（或等待直到）DMA流实际禁用。如果在数据传输进行时禁用流，当前数据将被传输，且只有在完成该单个数据的传输后，流才会实际禁用。  
+  *      
+  * @retval DMAy Streamx的当前状态（ENABLE或DISABLE）。
+  */
 FunctionalState DMA_GetCmdStatus(DMA_Stream_TypeDef* DMAy_Streamx)
 {
   FunctionalState state = DISABLE;
@@ -1177,6 +1191,19 @@ void DMA_ClearFlag(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_FLAG)
   * @param  NewState: new state of the specified DMA interrupts.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
+  */
+/**
+  * @brief  启用或禁用指定的DMAy Streamx中断。
+  * @param  DMAy_Streamx：其中y可以是1或2，用于选择DMA；x可以是0到7，用于选择DMA流。
+  * @param DMA_IT：指定要启用或禁用的DMA中断源。
+  *          此参数可以是以下值的任意组合：
+  *            @arg DMA_IT_TC：传输完成中断掩码
+  *            @arg DMA_IT_HT：半传输完成中断掩码
+  *            @arg DMA_IT_TE：传输错误中断掩码
+  *            @arg DMA_IT_FE：FIFO错误中断掩码
+  * @param  NewState：指定DMA中断的新状态。
+  *          此参数可以是：ENABLE（启用）或DISABLE（禁用）。
+  * @retval 无
   */
 void DMA_ITConfig(DMA_Stream_TypeDef* DMAy_Streamx, uint32_t DMA_IT, FunctionalState NewState)
 {

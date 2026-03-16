@@ -4,27 +4,39 @@
 #include "task.h"
 #include "bsp_usart.h"
 #include <string.h>
-
+#include "bsp_encoder.h"
 void app(void *pvParameters);
 void led_init(void);
-/**
- * @brief 接收一组数据回调
- * 
- * @param handle 
- */
-void usart1_rx_callback(usart_handle_t *handle)
-{
-    // 回调事件
-    bsp_usart_send_string(handle, "usart1_rx_callback\r\n", handle->rx_len);
 
-}
 int main(void)
 {
     /* 时钟配置 */
     SysClockConfig_HSE25MHZ();
+    g_usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
+    if (g_usart1_handle == NULL)
+    {
+        while(1); // 内存不足
+    }
+    memset(g_usart1_handle, 0, sizeof(usart_handle_t));
+    usart_cfg_t *cfg = pvPortMalloc(sizeof(usart_cfg_t));
+    if (cfg == NULL)
+    {
+        while(1);// 内存不足
+    }
+    memset(cfg, 0, sizeof(cfg));
+    *cfg = USART1_DEFAULT_CONFIG();
+    bsp_usart_init(g_usart1_handle, *cfg);
+    vPortFree(cfg);/* 释放内存 */
     /* 创建任务 */
-    xTaskCreate(app, "app", 512, NULL, 5, NULL);
+    if(xTaskCreate(app, "app", 512, NULL, 5, NULL) != pdPASS)
+    {
+        printf("create task failed\r\n");
+    }
     vTaskStartScheduler();
+    while(1)
+    {
+        printf("[Error]: FreeRTOS scheduler error!\r\n");
+    }
 }
 
 /**
@@ -32,39 +44,39 @@ int main(void)
  */
 void app(void *pvParameters)
 {
-    usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
-    if (usart1_handle == NULL)
+    /* 编码器配置 */
+    g_encoder = pvPortMalloc(sizeof(encoder_handle_t));
+    if (g_encoder == NULL)
     {
-        while(1); // 内存不足
+        while(1); /* 内存不足 */
     }
-    memset(usart1_handle, 0, sizeof(usart_handle_t));
-    /* 初始化 USATR1 */
-    usart_cfg_t cfg1 = USART1_DEFAULT_CONFIG();
-    cfg1.sub_priority    = 1;
-    bsp_usart_init(usart1_handle, cfg1);
-
-    usart2_handle = pvPortMalloc(sizeof(usart_handle_t));
-    if (usart2_handle == NULL)
+    memset(g_encoder, 0, sizeof(encoder_handle_t));
+    encoder_cfg_t *encoder_cfg = pvPortMalloc(sizeof(encoder_cfg_t));
+    if (encoder_cfg == NULL)
     {
-        while(1); // 内存不足
+        while(1); /* 内存不足 */
     }
-    memset(usart2_handle, 0, sizeof(usart_handle_t));
-    /* 初始化 USATR2 */
-    usart_cfg_t cfg2 = USART2_DEFAULT_CONFIG();
-    cfg2.sub_priority    = 2;
-    bsp_usart_init(usart2_handle, cfg2);
+    memset(encoder_cfg, 0, sizeof(encoder_cfg_t));
+    *encoder_cfg = ENCODER_DEFAULT_CONFIG();
+    encoder_attach_callback(encoder_cfg);
+    encoder_attach_event(encoder_cfg);
+    encoder_init(g_encoder, *encoder_cfg);
     uint16_t count = 0;
     while(1)
     {
         count++;
-        printf("count = %d\r\n", count);
-        vTaskDelay(1000);
-        if (usart1_handle != NULL)
+        //printf("count = %d\r\n", count);
+        // printf("encoder->count = %d\r\nencoder->turn_state = %s\r\nencoder->btn_state = %s\r\n", 
+        //         g_encoder->count,
+        //         g_encoder->turn_state > 0 ? "正转":"反转",
+        //         g_encoder->btn_state > 0 ? "按下":"松开");
+        vTaskDelay(50);
+        if (g_usart1_handle != NULL)
         {
-            if (usart1_handle->new_msg_flag)
+            if (g_usart1_handle->new_msg_flag)
             {
-                usart1_handle->new_msg_flag = 0;
-                printf("usart Receive: %s\n",usart1_handle->rx_buf);
+                g_usart1_handle->new_msg_flag = 0;
+                printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
             }
         }
 

@@ -1,3 +1,10 @@
+/*******************************************************************************
+ *      文    件: bsp_pin_cfg.h
+ *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 引脚配置宏文件
+ *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
+ *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
+ *               可以作为个人参考学习使用。
+*******************************************************************************/
 #ifndef _BSP_PIN_CFG_H
 #define _BSP_PIN_CFG_H
 
@@ -57,15 +64,33 @@ PC 组
 */
 
 /* --------------------------- USART1 引脚 --------------------------- */
+/**
+ * @note 千万注意配置 对应的 Source AF DMA Stream 
+ * 
+ */
 #define USART1_TX_PORT                  GPIOA
 #define USART1_TX_PIN                   GPIO_Pin_9
 
 #define USART1_RX_PORT                  GPIOA
 #define USART1_RX_PIN                   GPIO_Pin_10
 /* --------------------------- USART2 引脚 --------------------------- */
+/**
+ * @note 千万注意配置 对应的 Source AF DMA Stream 
+ * 
+ */
 #define USART2_TX_PORT                  GPIOA
 #define USART2_TX_PIN                   GPIO_Pin_2
 
 #define USART2_RX_PORT                  GPIOA
 #define USART2_RX_PIN                   GPIO_Pin_3
 #endif
+
+/* --------------------------- ENCODER(编码器) 引脚 --------------------------- */
+#define ENCODER_BTN_PORT                GPIOB
+#define ENCODER_BTN_PIN                 GPIO_Pin_14
+
+#define ENCODER_LEFT_PORT               GPIOB
+#define ENCODER_LEFT_PIN                GPIO_Pin_12
+
+#define ENCODER_RIGHT_PORT              GPIOB
+#define ENCODER_RIGHT_PIN               GPIO_Pin_13
