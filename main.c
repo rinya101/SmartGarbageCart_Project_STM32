@@ -5,6 +5,7 @@
 #include "bsp_usart.h"
 #include <string.h>
 #include "bsp_encoder.h"
+#include "bsp_oled.h"
 void app(void *pvParameters);
 void led_init(void);
 
@@ -44,33 +45,45 @@ int main(void)
  */
 void app(void *pvParameters)
 {
-    /* 编码器配置 */
-    g_encoder = pvPortMalloc(sizeof(encoder_handle_t));
-    if (g_encoder == NULL)
+    /* OLED POWER 初始化 VCC --> PB5 GND --> PB4 */
+    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitStruct.GPIO_Pin    = GPIO_Pin_5 | GPIO_Pin_4;
+    GPIO_InitStruct.GPIO_Mode   = GPIO_Mode_OUT;
+    GPIO_InitStruct.GPIO_OType  = GPIO_OType_PP;
+    GPIO_InitStruct.GPIO_PuPd   = GPIO_PuPd_NOPULL; 
+    GPIO_InitStruct.GPIO_Speed  = GPIO_Speed_50MHz;
+    GPIO_SetBits(GPIOB, GPIO_Pin_5);    /* VCC */
+    GPIO_ResetBits(GPIOB, GPIO_Pin_4);  /* GND */
+    GPIO_Init(GPIOB, &GPIO_InitStruct);
+    /* OLED 初始化 */
+    g_oled_handle = pvPortMalloc(sizeof(oled_handle_t));
+    if (g_oled_handle == NULL) while(1);
+    memset(g_oled_handle, 0, sizeof(oled_handle_t));
+    bsp_oled_init(g_oled_handle, OLED_DEFAULT_CONFIG());
+    for (int i = 0; i < 1024; i++)
     {
-        while(1); /* 内存不足 */
+        g_oled_handle->screen_buf[i] = 0xAA;
     }
-    memset(g_encoder, 0, sizeof(encoder_handle_t));
-    encoder_cfg_t *encoder_cfg = pvPortMalloc(sizeof(encoder_cfg_t));
-    if (encoder_cfg == NULL)
-    {
-        while(1); /* 内存不足 */
-    }
-    memset(encoder_cfg, 0, sizeof(encoder_cfg_t));
-    *encoder_cfg = ENCODER_DEFAULT_CONFIG();
-    encoder_attach_callback(encoder_cfg);
-    encoder_attach_event(encoder_cfg);
-    encoder_init(g_encoder, *encoder_cfg);
+    bsp_oled_refresh(g_oled_handle);
     uint16_t count = 0;
     while(1)
     {
-        count++;
-        //printf("count = %d\r\n", count);
-        // printf("encoder->count = %d\r\nencoder->turn_state = %s\r\nencoder->btn_state = %s\r\n", 
-        //         g_encoder->count,
-        //         g_encoder->turn_state > 0 ? "正转":"反转",
-        //         g_encoder->btn_state > 0 ? "按下":"松开");
-        vTaskDelay(50);
+        for (int i = 0; i < 1024; i++)
+        {
+            g_oled_handle->screen_buf[i] = 0x00;
+            bsp_oled_refresh(g_oled_handle);
+            count++;
+            printf("count = %d\n", count);
+            vTaskDelay(5);
+        }
+        for (int i = 0; i < 1024; i++)
+        {
+            g_oled_handle->screen_buf[i] = 0xFF;
+            bsp_oled_refresh(g_oled_handle);
+            count--;
+            printf("count = %d\n", count);
+            vTaskDelay(5);
+        }
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)
@@ -79,7 +92,6 @@ void app(void *pvParameters)
                 printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
             }
         }
-
     }
 }
 void led_init(void)

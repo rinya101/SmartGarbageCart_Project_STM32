@@ -66,7 +66,6 @@
     .dma_preemption_priority= 5,\
     .dma_sub_priority       = 0}
 
-#endif
 /* ---------------------------------- 编码器 配置 ----------------------------- */
 #define ENCODER_BTN_IRQ_HANDLE(void)    EXTI15_10_IRQHandler(void)
 #define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI15_10_IRQHandler(void)
@@ -105,3 +104,65 @@
  * @note 根据需要增加
  */
 #define TIM5_USED_ENCODER_ID         0
+/* ---------------------------------- OLED 配置 ----------------------------- */
+extern const uint8_t oled_init_cmd_seq[];
+#define OLED_INIT_CMD_SEQ_SIZE      26
+/* 硬件寄存器配置 */
+#define OLED_ADDR       0x78 /* I2C 地址 */
+#define OLED_WIDTH      128  /* OLED 宽度 */
+#define OLED_HEIGHT     64   /* OLED 高度 */
+#define OLED_PAGE_SIZE  8    /* 每页显示 8 行 */
+#define OLED_BUF_SIZE   (OLED_WIDTH * OLED_PAGE_SIZE)
+#define OLED_BUF_BIT_SIZE (OLED_WIDTH * OLED_HEIGHT)
+/* 软件寄存器配置 */
+#define OLED_DATA_MODE   0x40 /* 数据模式 */
+#define OLED_CMD_MODE    0x00 /* 命令模式 */
+#define OLED_PAGE(page)        (0xB0 + (page))                  /* 设置页地址 */
+#define OLED_COL_LOW(col)      (0x00 | ((col) & 0x0F))          /* 设置列地址低4位 */
+#define OLED_COL_HIGH(col)     (0x10 | (((col) >> 4) & 0x0F))   /* 设置列地址高4位 */
+#define OLED_DEFAULT_CONFIG()    (oled_cfg_t){\
+    /* GPIO 配置 */\
+    .scl_clk            = RCC_AHB1Periph_GPIOB,\
+    .sda_clk            = RCC_AHB1Periph_GPIOB,\
+    .scl_port           = GPIOB,\
+    .sda_port           = GPIOB,\
+    .scl_pin            = GPIO_Pin_6,\
+    .sda_pin            = GPIO_Pin_7,\
+    .scl_pu             = GPIO_PuPd_UP,\
+    .sda_pu             = GPIO_PuPd_UP,\
+    .scl_speed          = GPIO_Speed_100MHz,\
+    .sda_speed          = GPIO_Speed_100MHz,\
+    .scl_mode           = GPIO_Mode_AF,\
+    .sda_mode           = GPIO_Mode_AF,\
+    .scl_otype          = GPIO_OType_OD,\
+    .sda_otype          = GPIO_OType_OD,\
+    .scl_source         = GPIO_PinSource6,\
+    .sda_source         = GPIO_PinSource7,\
+    .scl_af             = GPIO_AF_I2C1,\
+    .sda_af             = GPIO_AF_I2C1,\
+    /* I2C 配置 */\
+    .i2c_clk            = RCC_APB1Periph_I2C1,\
+    .i2cx               = I2C1,\
+    .i2c_mode           = I2C_Mode_I2C,\
+    .i2c_ack            = I2C_Ack_Enable,\
+    .i2c_ack_addr       = I2C_AcknowledgedAddress_7bit,\
+    .i2c_duty           = I2C_DutyCycle_2,\
+    .i2c_speed          = 400000,\
+    .i2c_own_addr       = 0x00,\
+    /* DMA 配置 */\
+    .dma_clk            = RCC_AHB1Periph_DMA1,\
+    .dma_stream         = DMA1_Stream7,\
+    .tx_dma_channel      = DMA_Channel_1,\
+    .dma_priority       = DMA_Priority_High,\
+    .dma_irq_channel    = DMA1_Stream7_IRQn,\
+    .dma_irq_prio       = 5,\
+    .dma_irq_sub_prio   = 0,\
+    /* SYSCFG 配置 */\
+    .syscfg_clk         = RCC_APB2Periph_SYSCFG,\
+    /* OLED 配置 */\
+    .i2c_addr           = OLED_ADDR,\
+    .width              = OLED_WIDTH,\
+    .height             = OLED_HEIGHT\
+}
+
+#endif  /* PeripheralParamConfig.h */
