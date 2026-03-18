@@ -517,3 +517,194 @@ struct encoder_handle
     btn_long_press_event    btn_long_press;
 };
 ```
+## OLED 显示屏
+### 示例
+```C
+#include "stm32f4xx.h"
+#include "SysClockConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "bsp_usart.h"
+#include <string.h>
+#include "bsp_encoder.h"
+#include "bsp_oled.h"
+void app(void *pvParameters);
+void led_init(void);
+
+int main(void)
+{
+    /* 时钟配置 */
+    SysClockConfig_HSE25MHZ();
+    g_usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
+    if (g_usart1_handle == NULL)
+    {
+        while(1); // 内存不足
+    }
+    memset(g_usart1_handle, 0, sizeof(usart_handle_t));
+    usart_cfg_t *cfg = pvPortMalloc(sizeof(usart_cfg_t));
+    if (cfg == NULL)
+    {
+        while(1);// 内存不足
+    }
+    memset(cfg, 0, sizeof(cfg));
+    *cfg = USART1_DEFAULT_CONFIG();
+    bsp_usart_init(g_usart1_handle, *cfg);
+    vPortFree(cfg);/* 释放内存 */
+    /* 创建任务 */
+    if(xTaskCreate(app, "app", 512, NULL, 5, NULL) != pdPASS)
+    {
+        printf("create task failed\r\n");
+    }
+    vTaskStartScheduler();
+    while(1)
+    {
+        printf("[Error]: FreeRTOS scheduler error!\r\n");
+    }
+}
+
+/**
+ * @brief 用户任务
+ */
+void app(void *pvParameters)
+{
+    /* OLED 初始化 */
+    oled_handle_t* g_oled_handle = pvPortMalloc(sizeof(oled_handle_t));
+    if (g_oled_handle == NULL) while(1);
+    memset(g_oled_handle, 0, sizeof(oled_handle_t));
+    bsp_oled_init(g_oled_handle, &OLED_DEFAULT_CONFIG());
+    for (int i = 0; i < 1024; i++)
+    {
+        g_oled_handle->screen_buf[i] = 0xAA;
+    }
+    bsp_oled_refresh(g_oled_handle);
+    uint16_t count = 0;
+    printf("g_oled_handle size: %d\r\n",sizeof(*g_oled_handle));
+    while(1)
+    {
+        for (int i = 0; i < 1024; i++)
+        {
+            g_oled_handle->screen_buf[i] = 0x00;
+            bsp_oled_refresh(g_oled_handle);
+            count++;
+            printf("count = %d\n", count);
+            vTaskDelay(5);
+        }
+        for (int i = 0; i < 1024; i++)
+        {
+            g_oled_handle->screen_buf[i] = 0xFF;
+            bsp_oled_refresh(g_oled_handle);
+            count--;
+            printf("count = %d\n", count);
+            vTaskDelay(5);
+        }
+        if (g_usart1_handle != NULL)
+        {
+            if (g_usart1_handle->new_msg_flag)
+            {
+                g_usart1_handle->new_msg_flag = 0;
+                printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
+            }
+        }
+    }
+}
+void led_init(void)
+{
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+
+```
+### 全局变量
+```C
+/**
+ * @brief OLED 句柄
+ * @note 锚点
+ */
+oled_handle_t* s_oled_handle = NULL;
+/**
+ * @brief OLED  显存
+ * 
+ */
+static uint8_t s_screen_buf[OLED_WIDTH * OLED_HEIGHT / OLED_PAGE_SIZE];
+```
+### 库函数
+```C
+void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t* cfg);
+void bsp_oled_draw_point(oled_handle_t* oled_handle, uint8_t x, uint8_t y, uint8_t data);
+void bsp_oled_refresh(oled_handle_t* oled_handle);
+```
+### 结构体
+```C
+/**
+ * @brief OLED 配置结构体
+ * 
+ */
+typedef struct 
+{
+    /* GPIO */
+    uint32_t            scl_clk;
+    uint32_t            sda_clk;
+    GPIO_TypeDef*       scl_port;
+    GPIO_TypeDef*       sda_port;
+    uint32_t            scl_pin;
+    uint32_t            sda_pin;
+    GPIOPuPd_TypeDef    scl_pu;
+    GPIOPuPd_TypeDef    sda_pu;
+    GPIOSpeed_TypeDef   scl_speed;
+    GPIOSpeed_TypeDef   sda_speed;
+    GPIOMode_TypeDef    scl_mode;
+    GPIOMode_TypeDef    sda_mode;
+    GPIOOType_TypeDef   scl_otype;
+    GPIOOType_TypeDef   sda_otype;
+    uint16_t            scl_source;
+    uint16_t            sda_source;
+    uint8_t             scl_af;
+    uint8_t             sda_af;
+    /* I2Cx */
+    uint32_t        i2c_clk;
+    I2C_TypeDef*    i2cx;
+    uint16_t        i2c_mode;
+    uint16_t        i2c_ack;
+    uint16_t        i2c_ack_addr;
+    uint16_t        i2c_duty;
+    uint32_t        i2c_speed;
+    uint16_t        i2c_own_addr;   /* 本机地址 */
+    /* DMA */
+    uint32_t                dma_clk;
+    DMA_Stream_TypeDef*     dma_stream;
+    uint32_t                tx_dma_channel;
+    uint32_t                dma_priority;
+    uint8_t                 dma_irq_channel;
+    uint8_t                 dma_irq_prio;
+    uint8_t                 dma_irq_sub_prio;
+    /* SYSCFG (部分私有) */
+    uint32_t                syscfg_clk;
+    /* OLED */
+    uint8_t                 i2c_addr;  /* 从机地址 */
+    uint16_t                width;
+    uint16_t                height;
+} oled_cfg_t;
+/**
+ * @brief OLED 句柄结构体
+ * @note 包含 I2C、DMA、全屏缓存、显示参数
+ */
+struct oled_handle
+{
+    /* I2C */
+    I2C_TypeDef*        i2cx;
+    /* OLED */
+    uint8_t             width;
+    uint8_t             height;
+    uint8_t*            screen_buf;  /* 全屏显示缓存 */
+    uint8_t             oled_addr;
+    /* DMA */
+    DMA_Stream_TypeDef*     dma_stream;
+};
+```

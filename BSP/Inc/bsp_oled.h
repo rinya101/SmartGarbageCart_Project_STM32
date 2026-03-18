@@ -1,3 +1,31 @@
+/*******************************************************************************
+ *      文    件: bsp_oled.h
+ *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 编码器驱动
+ *      版    本: V1.0
+ *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
+ *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
+ *               可以作为个人参考学习使用。
+ * 私有说明：
+ *      1. 截至目前（2026.3.18）还未完成 DMA 屏幕刷新功能，DMA 可列为暂不可用状态
+ *      2. 在文件 bsp_oled.c 中已经定义 OLED 显示缓存区，可直接使用，
+ *         不需要额外配置
+ *      3. 库函数使用说明/顺序：
+ *          [1] void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t* cfg)
+ *              对于 oled_handle 需要进行声明使用，例如：
+ *                  oled_handle_t oled_handle;
+ *              对于 cfg 【优先推荐】使用文件 PerpheraParamsConfig.h 中定义的
+ *                   OLED_DEFAULT_CONFIG()，例如：
+ *                  oled_cfg_t oled_cfg = OLED_DEFAULT_CONFIG();
+ *               PerpheraParamsConfig.h 根据需求更改
+ *          [2] void bsp_oled_refresh(oled_handle_t* oled_handle)
+ *               刷新屏幕，将缓存区内容写入屏幕
+ *      4. 库函数这里仅仅提供 DrowPoint 函数：
+ *          void bsp_oled_draw_point(oled_handle_t* oled_handle, 
+ *                                      uint8_t x, 
+ *                                      uint8_t y, 
+ *                                      uint8_t data);
+ *          剩余函数可自行开发。
+*******************************************************************************/
 #ifndef _BSP_OLED_H
 #define _BSP_OLED_H
 #include "stm32f4xx_i2c.h"
@@ -6,12 +34,6 @@
 #include "PeripheralParamConfig.h"
 #include "bsp_debug.h"
 typedef struct oled_handle oled_handle_t;
-
-/**
- * @brief OLED 句柄
- * 
- */
-extern oled_handle_t* g_oled_handle;
 /**
  * @brief OLED 配置结构体
  * 
@@ -67,14 +89,19 @@ typedef struct
  */
 struct oled_handle
 {
-    I2C_TypeDef*        i2cx;          
+    /* I2C */
+    I2C_TypeDef*        i2cx;
+    /* OLED */
     uint8_t             width;
     uint8_t             height;
-    uint8_t             screen_buf[OLED_BUF_BIT_SIZE];  /* 全屏显示缓存 */
-    uint16_t            buf_size;
+    uint8_t*            screen_buf;  /* 全屏显示缓存 */
     uint8_t             oled_addr;
+    /* DMA */
+    DMA_Stream_TypeDef*     dma_stream;
 };
 
-void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t cfg);
+
+void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t* cfg);
+void bsp_oled_draw_point(oled_handle_t* oled_handle, uint8_t x, uint8_t y, uint8_t data);
 void bsp_oled_refresh(oled_handle_t* oled_handle);
 #endif /* _BSP_OLED_H */

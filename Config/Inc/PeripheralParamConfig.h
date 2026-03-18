@@ -73,7 +73,7 @@
  * @note 根据实际情况修改 中断服务函数参考 bsp_encoder_it.c 中的函数：
  * 
  */
-#define ENCODER_DEFAULT_CONFIG()    (encoder_cfg_t){\
+#define ENCODER_DEFAULT_CONFIG()    (const encoder_cfg_t){\
     .btn_port           = ENCODER_BTN_PORT,\
     .btn_pin            = ENCODER_BTN_PIN,\
     .left_port          = ENCODER_LEFT_PORT,\
@@ -89,7 +89,7 @@
     .preemption_priority= 5,\
     .sub_priority       = 0}
 /* ---------------------------------- TIM5 配置 ----------------------------- */
-#define TIM5_DEFAULT_CONFIG()    (tim5_cfg_t){\
+#define TIM5_DEFAULT_CONFIG()    (const tim5_cfg_t){\
     .tim5           = TIM5,\
     .prescaler      = (uint16_t)(1000 - 1),    /* 100MHz / 1000 = 100kHz */\
     .period         = (uint16_t)(50000 - 1),   /* 默认 500ms */\
@@ -106,7 +106,7 @@
 #define TIM5_USED_ENCODER_ID         0
 /* ---------------------------------- OLED 配置 ----------------------------- */
 extern const uint8_t oled_init_cmd_seq[];
-#define OLED_INIT_CMD_SEQ_SIZE      26
+#define OLED_INIT_CMD_SEQ_SIZE      32
 /* 硬件寄存器配置 */
 #define OLED_ADDR       0x78 /* I2C 地址 */
 #define OLED_WIDTH      128  /* OLED 宽度 */
@@ -114,6 +114,7 @@ extern const uint8_t oled_init_cmd_seq[];
 #define OLED_PAGE_SIZE  8    /* 每页显示 8 行 */
 #define OLED_BUF_SIZE   (OLED_WIDTH * OLED_PAGE_SIZE)
 #define OLED_BUF_BIT_SIZE (OLED_WIDTH * OLED_HEIGHT)
+#define OLED_DMA_IRQ_HANDLE DMA1_Channel7_IRQHandler
 /* 软件寄存器配置 */
 #define OLED_DATA_MODE   0x40 /* 数据模式 */
 #define OLED_CMD_MODE    0x00 /* 命令模式 */
@@ -152,7 +153,7 @@ extern const uint8_t oled_init_cmd_seq[];
     /* DMA 配置 */\
     .dma_clk            = RCC_AHB1Periph_DMA1,\
     .dma_stream         = DMA1_Stream7,\
-    .tx_dma_channel      = DMA_Channel_1,\
+    .tx_dma_channel     = DMA_Channel_1,\
     .dma_priority       = DMA_Priority_High,\
     .dma_irq_channel    = DMA1_Stream7_IRQn,\
     .dma_irq_prio       = 5,\

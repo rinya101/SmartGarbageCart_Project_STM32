@@ -45,27 +45,18 @@ int main(void)
  */
 void app(void *pvParameters)
 {
-    /* OLED POWER 初始化 VCC --> PB5 GND --> PB4 */
-    GPIO_InitTypeDef GPIO_InitStruct;
-    GPIO_InitStruct.GPIO_Pin    = GPIO_Pin_5 | GPIO_Pin_4;
-    GPIO_InitStruct.GPIO_Mode   = GPIO_Mode_OUT;
-    GPIO_InitStruct.GPIO_OType  = GPIO_OType_PP;
-    GPIO_InitStruct.GPIO_PuPd   = GPIO_PuPd_NOPULL; 
-    GPIO_InitStruct.GPIO_Speed  = GPIO_Speed_50MHz;
-    GPIO_SetBits(GPIOB, GPIO_Pin_5);    /* VCC */
-    GPIO_ResetBits(GPIOB, GPIO_Pin_4);  /* GND */
-    GPIO_Init(GPIOB, &GPIO_InitStruct);
     /* OLED 初始化 */
-    g_oled_handle = pvPortMalloc(sizeof(oled_handle_t));
+    oled_handle_t* g_oled_handle = pvPortMalloc(sizeof(oled_handle_t));
     if (g_oled_handle == NULL) while(1);
     memset(g_oled_handle, 0, sizeof(oled_handle_t));
-    bsp_oled_init(g_oled_handle, OLED_DEFAULT_CONFIG());
+    bsp_oled_init(g_oled_handle, &OLED_DEFAULT_CONFIG());
     for (int i = 0; i < 1024; i++)
     {
         g_oled_handle->screen_buf[i] = 0xAA;
     }
     bsp_oled_refresh(g_oled_handle);
     uint16_t count = 0;
+    printf("g_oled_handle size: %d\r\n",sizeof(*g_oled_handle));
     while(1)
     {
         for (int i = 0; i < 1024; i++)
