@@ -69,41 +69,46 @@
 /* ---------------------------------- 编码器 配置 ----------------------------- */
 #define ENCODER_BTN_IRQ_HANDLE(void)    EXTI15_10_IRQHandler(void)
 #define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI15_10_IRQHandler(void)
+#define ENCODER_TIM_IRQ_HANDLE(void)    TIM5_IRQHandler(void)
 /**
  * @note 根据实际情况修改 中断服务函数参考 bsp_encoder_it.c 中的函数：
  * 
  */
 #define ENCODER_DEFAULT_CONFIG()    (const encoder_cfg_t){\
+    /* RCC */\
+    .btn_clk            = RCC_AHB1Periph_GPIOB,\
+    .left_clk           = RCC_AHB1Periph_GPIOB,\
+    .right_clk          = RCC_AHB1Periph_GPIOB,\
+    .syscfg_clk         = RCC_APB2Periph_SYSCFG,\
+    .tim_clk            = RCC_APB1Periph_TIM5,\
+    /* GPIO */\
     .btn_port           = ENCODER_BTN_PORT,\
     .btn_pin            = ENCODER_BTN_PIN,\
     .left_port          = ENCODER_LEFT_PORT,\
     .left_pin           = ENCODER_LEFT_PIN,\
     .right_port         = ENCODER_RIGHT_PORT,\
     .right_pin          = ENCODER_RIGHT_PIN,\
+    /* TIM */\
+    .timx               = TIM5,\
+    .tim_prescaler      = (uint16_t)(1000 - 1),\
+    .tim_period         = (uint16_t)(60000 - 1),\
+    .tim_counter_mode   = TIM_CounterMode_Up,\
+    .tim_division       = TIM_CKD_DIV1,\
+    /* EXIT */\
     .btn_exti_line      = EXTI_Line14,\
     .btn_trigger        = EXTI_Trigger_Rising_Falling,\
     .left_exti_line     = EXTI_Line12,\
     .left_trigger       = EXTI_Trigger_Falling,\
+    /* NVIC */\
     .btn_irq_channel    = EXTI15_10_IRQn,\
     .left_irq_channel   = EXTI15_10_IRQn,\
     .preemption_priority= 5,\
-    .sub_priority       = 0}
-/* ---------------------------------- TIM5 配置 ----------------------------- */
-#define TIM5_DEFAULT_CONFIG()    (const tim5_cfg_t){\
-    .tim5           = TIM5,\
-    .prescaler      = (uint16_t)(1000 - 1),    /* 100MHz / 1000 = 100kHz */\
-    .period         = (uint16_t)(50000 - 1),   /* 默认 500ms */\
-    .counter_mode   = TIM_CounterMode_Up,\
-    .division       = TIM_CKD_DIV1,\
-    .irq_channel    = TIM5_IRQn,\
-    .irq_prepriority= 5,\
-    .irq_subpriority= 0}
-
-/**
- * @brief 定时器5使用 ID
- * @note 根据需要增加
- */
-#define TIM5_USED_ENCODER_ID         0
+    .sub_priority       = 0,\
+    .tim_irq_channel    = TIM5_IRQn,\
+    .tim_irq_prepriority= 5,\
+    .tim_irq_subpriority= 0,\
+    .press_long_time    = 40000 /* 最大 uint16_t */\
+}
 /* ---------------------------------- OLED 配置 ----------------------------- */
 extern const uint8_t oled_init_cmd_seq[];
 #define OLED_INIT_CMD_SEQ_SIZE      32

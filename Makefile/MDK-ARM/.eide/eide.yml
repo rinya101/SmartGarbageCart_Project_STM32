@@ -25,7 +25,6 @@ virtualFolder:
             - path: ../../BSP/Inc/bsp_usart.h
             - path: ../../BSP/Inc/bsp_encoder.h
             - path: ../../BSP/Inc/bsp_debug.h
-            - path: ../../BSP/Inc/bsp_tim5.h
             - path: ../../BSP/Inc/bsp_oled.h
           folders: []
         - name: Src
@@ -33,7 +32,6 @@ virtualFolder:
             - path: ../../BSP/Src/bsp_usart.c
             - path: ../../BSP/Src/bsp_encoder.c
             - path: ../../BSP/Src/bsp_debug.c
-            - path: ../../BSP/Src/bsp_tim5.c
             - path: ../../BSP/Src/bsp_oled.c
           folders: []
     - name: Drivers

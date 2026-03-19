@@ -11,52 +11,88 @@
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
+/**
+ * @brief 编码器锚点实例
+ * 
+ */
+static encoder_handle_t* s_encoder_handle = NULL;
+/**
+ * @brief 编码器外部中断
+ * 
+ */
 #if (ENCODER_BTN_IRQ_HANDLE == ENCODER_LEFT_IRQ_HANDLE)
 void ENCODER_BTN_IRQ_HANDLE(void)
 {
-    if (EXTI_GetITStatus(g_encoder->btn_line) != RESET)
+    if (EXTI_GetITStatus(s_encoder_handle->btn_exti_line) != RESET)
     {
-        g_encoder->btn_cb(g_encoder);
-        EXTI_ClearITPendingBit(g_encoder->btn_line);
+        s_encoder_handle->btn_cb(s_encoder_handle);
+        EXTI_ClearITPendingBit(s_encoder_handle->btn_exti_line);
     }
-    if (EXTI_GetITStatus(g_encoder->left_line) != RESET)
+    if (EXTI_GetITStatus(s_encoder_handle->left_exti_line) != RESET)
     {
-        g_encoder->encoder_cb(g_encoder);
-        EXTI_ClearITPendingBit(g_encoder->left_line);
+        s_encoder_handle->encoder_cb(s_encoder_handle);
+        EXTI_ClearITPendingBit(s_encoder_handle->left_exti_line);
     }
-    
 }
 #else
 void ENCODER_BTN_IRQ_HANDLE(void)
 {
-    if (EXTI_GetITStatus(g_encoder->btn_line) != RESET)
+    if (EXTI_GetITStatus(g_encoder->btn_exti_line) != RESET)
     {
         g_encoder->btn_cb(g_encoder);
-        EXTI_ClearITPendingBit(g_encoder->btn_line);
+        EXTI_ClearITPendingBit(g_encoder->btn_exti_line);
     }
 }
 void ENCODER_LEFT_IRQ_HANDLE(void)
 {
-    if (EXTI_GetITStatus(g_encoder->left_line) != RESET)
+    if (EXTI_GetITStatus(g_encoder->left_exti_line) != RESET)
     {
         g_encoder->encoder_cb(g_encoder);
-        EXTI_ClearITPendingBit(g_encoder->left_line);
+        EXTI_ClearITPendingBit(g_encoder->left_exti_line);
     }
 }
 #endif
 /**
- * @brief 编码器实例
+ * @brief TIM 中断服务函数
  * 
  */
-encoder_handle_t* g_encoder = NULL;
-
+void ENCODER_TIM_IRQ_HANDLE(void)
+{
+    if (TIM_GetITStatus(s_encoder_handle->timx, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(s_encoder_handle->timx, TIM_IT_Update);
+        /* 定时器回调 */
+        s_encoder_handle->tim_cb(s_encoder_handle);
+    }
+}
+/**
+ * @brief 定时器开始定时
+ * 
+ * @param encoder 
+ */
+static void encoder_tim_start(encoder_handle_t *encoder, uint16_t period)
+{
+    TIM_Cmd(encoder->timx, DISABLE);      
+    TIM_SetCounter(encoder->timx, 0);    
+    TIM_SetAutoreload(encoder->timx, period);  
+    TIM_Cmd(encoder->timx, ENABLE);
+}
+/**
+ * @brief TIM 停止
+ * 
+ */
+static void encoder_tim_stop(encoder_handle_t *encoder)
+{
+    TIM_Cmd(encoder->timx, DISABLE);
+    TIM_SetCounter(encoder->timx, 0);
+}
 /**
  * @brief 默认回调函数
  * @note 需要手动挂载
  * @param encoder 
  * @return void
  */
-static __weak void encoder_default_cb(encoder_handle_t *encoder)
+static void encoder_default_cb(encoder_handle_t *encoder)
 {
     if (encoder == NULL)
     {
@@ -66,13 +102,13 @@ static __weak void encoder_default_cb(encoder_handle_t *encoder)
     uint8_t r = GPIO_ReadInputDataBit(encoder->right_port, encoder->right_pin);
     if(r == 1) 
     {
-        encoder->count++;  // 顺时针
+        encoder->count++;
         encoder->turn_state = RIGHT;
         encoder->right_event(encoder);
     }
     else
     {
-        encoder->count--;  // 逆时针
+        encoder->count--;
         encoder->turn_state = LEFT;
         encoder->left_event(encoder);
     }
@@ -83,7 +119,7 @@ static __weak void encoder_default_cb(encoder_handle_t *encoder)
  * @param encoder 
  * @return __weak 
  */
-static __weak void encoder_btn_default_cb(encoder_handle_t *encoder)
+static void encoder_btn_default_cb(encoder_handle_t *encoder)
 {
     if (encoder == NULL)
     {
@@ -93,13 +129,26 @@ static __weak void encoder_btn_default_cb(encoder_handle_t *encoder)
     if (GPIO_ReadInputDataBit(encoder->btn_port, encoder->btn_pin) == 0)
     {
         encoder->btn_state = PRESS;
-        encoder->btn_press(encoder);
-        bsp_tim5_timing(60000, TIM5_USED_ENCODER_ID); /* 0 ：encoder */
+        encoder->btn_press_event(encoder);
+        encoder_tim_start(encoder, encoder->press_long_time);
     }
     else
     {
         encoder->btn_state = RELEASE;
-        bsp_tim5_stop();
+        encoder_tim_stop(encoder);
+    }
+}
+/**
+ * @brief 默认回调函数
+ * 
+ * @param encoder 
+ */
+static void encoder_tim_default_cb(encoder_handle_t *encoder)
+{
+    TIM_Cmd(encoder->timx, DISABLE);
+    if (GPIO_ReadInputDataBit(encoder->btn_port, encoder->btn_pin) == 0)
+    {
+        encoder->btn_long_press_event(encoder);
     }
 }
 /**
@@ -108,7 +157,7 @@ static __weak void encoder_btn_default_cb(encoder_handle_t *encoder)
  * @param encode 
  * @return __weak 
  */
-static __weak void encoder_turn_left_event(encoder_handle_t* encode)
+static __weak void encoder_turn_left_event(void* param)
 {
     printf("[info] encoder_left_event: You can add or modify code here. [File: %s | Func: %s | Line: %d]\r\n",
         __FILE__, __FUNCTION__, __LINE__);
@@ -119,7 +168,7 @@ static __weak void encoder_turn_left_event(encoder_handle_t* encode)
  * @param encode 
  * @return __weak 
  */
-static __weak void encoder_turn_right_event(encoder_handle_t* encode)
+static __weak void encoder_turn_right_event(void* param)
 {
     printf("[info] encoder_right_event: You can add or modify code here. [File: %s | Func: %s | Line: %d]\r\n",
         __FILE__, __FUNCTION__, __LINE__);
@@ -130,7 +179,7 @@ static __weak void encoder_turn_right_event(encoder_handle_t* encode)
  * @param encode 
  * @return __weak 
  */
-static __weak void encoder_btn_press_event(encoder_handle_t* encode)
+static __weak void encoder_btn_press_event(void* param)
 {
     printf("[info] encoder_press_event: You can add or modify code here. [File: %s | Func: %s | Line: %d]\r\n",
         __FILE__, __FUNCTION__, __LINE__);
@@ -141,14 +190,11 @@ static __weak void encoder_btn_press_event(encoder_handle_t* encode)
  * @param encoder 
  * @return __weak 
  */
-static __weak void encoder_btn_long_press_event(encoder_handle_t* encoder)
+static __weak void encoder_btn_long_press_event(void* param)
 {
-    if (GPIO_ReadInputDataBit(encoder->btn_port, encoder->btn_pin) == 0)
-    {
-        encoder->btn_state = LONG_PRESS;
-        printf("[info] encoder_long_press_event: You can add or modify code here. [File: %s | Func: %s | Line: %d]\r\n",
-            __FILE__, __FUNCTION__, __LINE__);
-    }
+    s_encoder_handle->btn_state = LONG_PRESS;
+    printf("[info] encoder_long_press_event: You can add or modify code here. [File: %s | Func: %s | Line: %d]\r\n",
+        __FILE__, __FUNCTION__, __LINE__);
 }
 /**
  * @brief 获取 GPIO 端口源 (给 SYSCFG 使用)
@@ -185,12 +231,111 @@ static uint8_t GPIO_GetPinSource(uint32_t pin)
     return 0;
 }
 /**
+ * @brief 编码器 时钟初始化
+ * 
+ * @param cfg 
+ */
+static void encoder_clk_init(encoder_cfg_t* cfg)
+{
+    /* GPIO btn */
+    RCC_AHB1PeriphClockCmd(cfg->btn_clk, ENABLE);
+    /* GPIO left */
+    RCC_AHB1PeriphClockCmd(cfg->left_clk, ENABLE);
+    /* GPIO right */
+    RCC_AHB1PeriphClockCmd(cfg->right_clk, ENABLE);
+    /* GPIO syscfg */
+    RCC_APB2PeriphClockCmd(cfg->syscfg_clk, ENABLE);
+    /* TIM */
+    RCC_APB1PeriphClockCmd(cfg->tim_clk, ENABLE);
+}
+/**
+ * @brief 编码器 GPIO 初始化
+ * 
+ * @param cfg 
+ */
+static void encoder_gpio_init(encoder_cfg_t* cfg)
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitStruct.GPIO_Mode       = GPIO_Mode_IN;
+    GPIO_InitStruct.GPIO_Speed      = GPIO_Speed_50MHz;
+    GPIO_InitStruct.GPIO_PuPd       = GPIO_PuPd_UP;
+    GPIO_InitStruct.GPIO_Pin        = cfg->btn_pin;
+    GPIO_Init(cfg->btn_port, &GPIO_InitStruct);
+    GPIO_InitStruct.GPIO_Pin        = cfg->left_pin;
+    GPIO_Init(cfg->left_port, &GPIO_InitStruct);
+    GPIO_InitStruct.GPIO_Pin        = cfg->right_pin;
+    GPIO_Init(cfg->right_port, &GPIO_InitStruct);
+}
+/**
+ * @brief 编码器定时器初始化
+ * 
+ * @param cfg 
+ */
+static void encoder_tim_init(encoder_cfg_t* cfg)
+{
+    TIM_DeInit(cfg->timx);
+    TIM_TimeBaseInitTypeDef TIM_InitStructure;
+    TIM_InitStructure.TIM_Prescaler     = cfg->tim_prescaler;
+    TIM_InitStructure.TIM_Period        = cfg->tim_period;
+    TIM_InitStructure.TIM_CounterMode   = cfg->tim_counter_mode;
+    TIM_InitStructure.TIM_ClockDivision = cfg->tim_division;
+    TIM_TimeBaseInit(cfg->timx, &TIM_InitStructure);
+    /* 开启中断 */
+    TIM_ITConfig(cfg->timx, TIM_IT_Update, ENABLE);
+    /* 开启 TIM */
+    TIM_Cmd(cfg->timx, ENABLE);
+}
+/**
+ * @brief 编码器 中断初始化
+ * 
+ * @param cfg 
+ */
+static void encoder_exit_init(encoder_cfg_t* cfg)
+{
+    SYSCFG_EXTILineConfig(GPIO_GetPortSource(cfg->btn_port), GPIO_GetPinSource(cfg->btn_pin));
+    SYSCFG_EXTILineConfig(GPIO_GetPortSource(cfg->left_port), GPIO_GetPinSource(cfg->left_pin));
+    /* 中断配置 */
+    EXTI_InitTypeDef EXTI_InitStruct;
+    EXTI_InitStruct.EXTI_Line       = cfg->btn_exti_line;
+    EXTI_InitStruct.EXTI_Mode       = EXTI_Mode_Interrupt;
+    EXTI_InitStruct.EXTI_Trigger    = cfg->btn_trigger;
+    EXTI_InitStruct.EXTI_LineCmd    = ENABLE;
+    EXTI_Init(&EXTI_InitStruct);
+    EXTI_InitStruct.EXTI_Line       = cfg->left_exti_line;
+    EXTI_InitStruct.EXTI_Trigger    = cfg->left_trigger;
+    EXTI_Init(&EXTI_InitStruct);
+}
+/**
+ * @brief 编码器NVIC初始化
+ * 
+ * @param cfg 
+ */
+static void encoder_nvic_init(encoder_cfg_t* cfg)
+{
+    /* btn */
+    NVIC_InitTypeDef NVIC_InitStruct;
+    NVIC_InitStruct.NVIC_IRQChannel                     = cfg->btn_irq_channel;
+    NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority   = cfg->preemption_priority;
+    NVIC_InitStruct.NVIC_IRQChannelSubPriority          = cfg->sub_priority;
+    NVIC_InitStruct.NVIC_IRQChannelCmd                  = ENABLE;
+    NVIC_Init(&NVIC_InitStruct);
+    /* left */
+    NVIC_InitStruct.NVIC_IRQChannel                     = cfg->left_irq_channel;
+    NVIC_Init(&NVIC_InitStruct);
+    /* TIM */
+    NVIC_InitStruct.NVIC_IRQChannel                   = cfg->tim_irq_channel;
+    NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = cfg->tim_irq_prepriority;
+    NVIC_InitStruct.NVIC_IRQChannelSubPriority        = cfg->tim_irq_subpriority;
+    NVIC_InitStruct.NVIC_IRQChannelCmd                = ENABLE;
+    NVIC_Init(&NVIC_InitStruct);
+}
+/**
  * @brief 编码器初始化
  * 
  * @param handle 
  * @param cfg 
  */
-void encoder_init(encoder_handle_t* handle , encoder_cfg_t cfg)
+void encoder_init(encoder_handle_t* handle , encoder_cfg_t* cfg)
 {
     if (handle == NULL)
     {
@@ -198,61 +343,40 @@ void encoder_init(encoder_handle_t* handle , encoder_cfg_t cfg)
         return;
     }
     /* 句柄获取 参数 */
-    handle->btn_line    = cfg.btn_exti_line;
-    handle->left_line   = cfg.left_exti_line;
-    handle->encoder_cb  = cfg.event_cb;
-    handle->btn_cb      = cfg.btn_cb;
-    handle->left_event      = cfg.left_event;
-    handle->right_event     = cfg.right_event;
-    handle->btn_press       = cfg.btn_press;
-    handle->btn_long_press  = cfg.btn_long_press;
-    handle->btn_port    = cfg.btn_port;
-    handle->btn_pin     = cfg.btn_pin;
-    handle->left_port   = cfg.left_port;
-    handle->left_pin    = cfg.left_pin;
-    handle->right_port  = cfg.right_port;
-    handle->right_pin   = cfg.right_pin;
+    /* EXIT line */
+    handle->btn_exti_line       = cfg->btn_exti_line;
+    handle->left_exti_line      = cfg->left_exti_line;
+    /* CallBack */
+    handle->encoder_cb          = cfg->event_cb;
+    handle->btn_cb              = cfg->btn_cb;
+    handle->tim_cb              = cfg->tim_cb;
+    /* EVENT */
+    handle->left_event          = cfg->left_event;
+    handle->right_event         = cfg->right_event;
+    handle->btn_press_event     = cfg->btn_press;
+    handle->btn_long_press_event= cfg->btn_long_press;
+    /* GPIO */
+    handle->btn_port            = cfg->btn_port;
+    handle->btn_pin             = cfg->btn_pin;
+    handle->left_port           = cfg->left_port;
+    handle->left_pin            = cfg->left_pin;
+    handle->right_port          = cfg->right_port;
+    handle->right_pin           = cfg->right_pin;
+    handle->press_long_time     = cfg->press_long_time;
+    /* TIM */
+    handle->timx                = cfg->timx;
+    /* 锚点对接 */
+    s_encoder_handle = handle;
     /* 时钟使能 */
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+    encoder_clk_init(cfg);
     /* GPIO 配置 */
-    GPIO_InitTypeDef GPIO_InitStruct;
-    GPIO_InitStruct.GPIO_Mode       = GPIO_Mode_IN;
-    GPIO_InitStruct.GPIO_Speed      = GPIO_Speed_50MHz;
-    GPIO_InitStruct.GPIO_PuPd       = GPIO_PuPd_UP;
-    GPIO_InitStruct.GPIO_Pin        = cfg.btn_pin;
-    GPIO_Init(cfg.btn_port, &GPIO_InitStruct);
-    GPIO_InitStruct.GPIO_Pin        = cfg.left_pin;
-    GPIO_Init(cfg.left_port, &GPIO_InitStruct);
-    GPIO_InitStruct.GPIO_Pin        = cfg.right_pin;
-    GPIO_Init(cfg.right_port, &GPIO_InitStruct);
+    encoder_gpio_init(cfg);
     /* EXIT 映射 */
-    SYSCFG_EXTILineConfig(GPIO_GetPortSource(cfg.btn_port), GPIO_GetPinSource(cfg.btn_pin));
-    SYSCFG_EXTILineConfig(GPIO_GetPortSource(cfg.left_port), GPIO_GetPinSource(cfg.left_pin));
-    /* 中断配置 */
-    EXTI_InitTypeDef EXTI_InitStruct;
-    EXTI_InitStruct.EXTI_Line       = cfg.btn_exti_line;
-    EXTI_InitStruct.EXTI_Mode       = EXTI_Mode_Interrupt;
-    EXTI_InitStruct.EXTI_Trigger    = cfg.btn_trigger;
-    EXTI_InitStruct.EXTI_LineCmd    = ENABLE;
-    EXTI_Init(&EXTI_InitStruct);
-    EXTI_InitStruct.EXTI_Line       = cfg.left_exti_line;
-    EXTI_InitStruct.EXTI_Trigger    = cfg.left_trigger;
-    EXTI_Init(&EXTI_InitStruct);
+    encoder_exit_init(cfg);
     /* NVIC 配置 */
-    NVIC_InitTypeDef NVIC_InitStruct;
-    NVIC_InitStruct.NVIC_IRQChannel                     = cfg.btn_irq_channel;
-    NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority   = cfg.preemption_priority;
-    NVIC_InitStruct.NVIC_IRQChannelSubPriority           = cfg.sub_priority;
-    NVIC_InitStruct.NVIC_IRQChannelCmd                  = ENABLE;
-    NVIC_Init(&NVIC_InitStruct);
-    NVIC_InitStruct.NVIC_IRQChannel                     = cfg.left_irq_channel;
-    NVIC_Init(&NVIC_InitStruct);
+    encoder_nvic_init(cfg);
     /* 定时器5 初始化 */
-    tim5_cfg_t tim5_cfg;
-    tim5_cfg = TIM5_DEFAULT_CONFIG();
-    bsp_tim5_attach_callback(&g_tim5_handle);
-    bsp_tim5_init(&g_tim5_handle, tim5_cfg);
+    encoder_tim_init(cfg);
     /* DUBUG */
     SGCS_INFO("encoder init succeed");
 }
@@ -270,8 +394,11 @@ void encoder_attach_callback(encoder_cfg_t *cfg)
         SGCS_ERROR("cfg is null");
         return;
     }
-    cfg->event_cb = encoder_default_cb;
-    cfg->btn_cb = encoder_btn_default_cb;
+    /* 编码器回调 */
+    cfg->event_cb           = encoder_default_cb;
+    cfg->btn_cb             = encoder_btn_default_cb;
+    /* 定时器回调 */
+    cfg->tim_cb             = encoder_tim_default_cb;
 }
 /**
  * @brief 挂载事件
@@ -285,8 +412,9 @@ void encoder_attach_event(encoder_cfg_t *cfg)
         SGCS_ERROR("cfg is null");
         return;
     }
-    cfg->left_event = encoder_turn_left_event;
-    cfg->right_event = encoder_turn_right_event;
-    cfg->btn_press = encoder_btn_press_event;
-    cfg->btn_long_press = encoder_btn_long_press_event;
+    /* 编码器事件 */
+    cfg->left_event         = encoder_turn_left_event;
+    cfg->right_event        = encoder_turn_right_event;
+    cfg->btn_press          = encoder_btn_press_event;
+    cfg->btn_long_press     = encoder_btn_long_press_event;
 }

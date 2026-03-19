@@ -5,7 +5,7 @@
 #include "bsp_usart.h"
 #include <string.h>
 #include "bsp_encoder.h"
-#include "bsp_oled.h"
+#include "PeripheralParamConfig.h"
 void app(void *pvParameters);
 void led_init(void);
 
@@ -28,6 +28,7 @@ int main(void)
     *cfg = USART1_DEFAULT_CONFIG();
     bsp_usart_init(g_usart1_handle, *cfg);
     vPortFree(cfg);/* 释放内存 */
+    printf("[info] FreeRTOS start!\r\n");
     /* 创建任务 */
     if(xTaskCreate(app, "app", 512, NULL, 5, NULL) != pdPASS)
     {
@@ -45,36 +46,29 @@ int main(void)
  */
 void app(void *pvParameters)
 {
-    /* OLED 初始化 */
-    oled_handle_t* g_oled_handle = pvPortMalloc(sizeof(oled_handle_t));
-    if (g_oled_handle == NULL) while(1);
-    memset(g_oled_handle, 0, sizeof(oled_handle_t));
-    bsp_oled_init(g_oled_handle, &OLED_DEFAULT_CONFIG());
-    for (int i = 0; i < 1024; i++)
+    /* 编码器配置 */
+    encoder_handle_t* g_encoder = pvPortMalloc(sizeof(encoder_handle_t));
+    if (g_encoder == NULL)
     {
-        g_oled_handle->screen_buf[i] = 0xAA;
+        while(1); /* 内存不足 */
     }
-    bsp_oled_refresh(g_oled_handle);
+    memset(g_encoder, 0, sizeof(encoder_handle_t));
+    encoder_cfg_t *encoder_cfg = pvPortMalloc(sizeof(encoder_cfg_t));
+    if (encoder_cfg == NULL)
+    {
+        while(1); /* 内存不足 */
+    }
+    memset(encoder_cfg, 0, sizeof(encoder_cfg_t));
+    *encoder_cfg = ENCODER_DEFAULT_CONFIG();
+    encoder_attach_callback(encoder_cfg);
+    encoder_attach_event(encoder_cfg);
+    encoder_init(g_encoder, encoder_cfg);
+    vPortFree(encoder_cfg);/* 释放内存 */
     uint16_t count = 0;
-    printf("g_oled_handle size: %d\r\n",sizeof(*g_oled_handle));
     while(1)
     {
-        for (int i = 0; i < 1024; i++)
-        {
-            g_oled_handle->screen_buf[i] = 0x00;
-            bsp_oled_refresh(g_oled_handle);
-            count++;
-            printf("count = %d\n", count);
-            vTaskDelay(5);
-        }
-        for (int i = 0; i < 1024; i++)
-        {
-            g_oled_handle->screen_buf[i] = 0xFF;
-            bsp_oled_refresh(g_oled_handle);
-            count--;
-            printf("count = %d\n", count);
-            vTaskDelay(5);
-        }
+        count++;
+        vTaskDelay(50);
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)
@@ -83,6 +77,7 @@ void app(void *pvParameters)
                 printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
             }
         }
+
     }
 }
 void led_init(void)

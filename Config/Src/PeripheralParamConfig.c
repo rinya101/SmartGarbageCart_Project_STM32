@@ -1,4 +1,6 @@
 #include "PeripheralParamConfig.h"
+#include "bsp_encoder.h"
+
 
 /* ---------------------------------- OLED 配置 ----------------------------- */
 /**
