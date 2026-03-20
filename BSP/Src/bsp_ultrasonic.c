@@ -1,0 +1,339 @@
+#include "bsp_ultrasonic.h"
+#include "PeripheralParamConfig.h"
+#include "bsp_debug.h"
+#ifndef NULL
+#define NULL (void*)0
+#endif
+ult_handle_t s_ult_first_handle_instance, s_ult_second_handle_instance, s_ult_third_handle_instance;
+ult_handle_t* s_ult_first_handle = NULL;
+ult_handle_t* s_ult_second_handle = NULL;
+ult_handle_t* s_ult_third_handle = NULL;
+
+/**
+ * @brief us 转换距离
+ * @param us        微秒数（ECHO高电平时间）
+ * @param distance  输出距离，单位：厘米 cm
+ */
+static uint16_t us_transform_distance(uint16_t us)
+{
+    uint16_t distance = 0;
+    // 声速 = 340 m/s
+    // 距离 = 声速 * 时间 / 2   (往返)
+    // 简化公式：cm = us / 58
+    distance = us / 58;
+    return distance;
+}
+/**
+ * @brief 第一个超声波 外部中断处理函数
+ * 
+ */
+void ULT_FIRST_EH_EXTI_HANDLE(void)
+{
+    uint32_t counter = 0;
+    if (EXTI_GetITStatus(s_ult_first_handle->dev_handle.eh_exti_line) != RESET)
+    {
+        EXTI_ClearITPendingBit(s_ult_first_handle->dev_handle.eh_exti_line);
+        uint8_t echo_val = GPIO_ReadInputDataBit(
+            s_ult_first_handle->dev_handle.eh_gpio_port,
+            s_ult_first_handle->dev_handle.eh_gpio_pin
+        );
+        if (echo_val == 1) 
+        {
+            TIM_Cmd(s_ult_first_handle->dev_handle.timx, DISABLE);
+            TIM_SetCounter(s_ult_first_handle->dev_handle.timx, 0);
+            TIM_Cmd(s_ult_first_handle->dev_handle.timx, ENABLE);
+        }
+        else
+        {
+            TIM_Cmd(s_ult_first_handle->dev_handle.timx, DISABLE);
+            counter = TIM_GetCounter(s_ult_first_handle->dev_handle.timx);
+            s_ult_first_handle->distance_cm = us_transform_distance((uint16_t)counter);
+        }
+    }
+}
+/**
+ * @brief 第二个超声波 外部中断处理函数
+ */
+void ULT_SECOND_EH_EXTI_HANDLE(void)
+{
+    if (EXTI_GetITStatus(s_ult_second_handle->dev_handle.eh_exti_line) != RESET)
+    {
+        EXTI_ClearITPendingBit(s_ult_second_handle->dev_handle.eh_exti_line);
+
+        uint8_t echo_val = GPIO_ReadInputDataBit(
+            s_ult_second_handle->dev_handle.eh_gpio_port,
+            s_ult_second_handle->dev_handle.eh_gpio_pin
+        );
+
+        if (echo_val == 1)
+        {
+            TIM_SetCounter(s_ult_second_handle->dev_handle.timx, 0);
+            TIM_Cmd(s_ult_second_handle->dev_handle.timx, ENABLE);
+        }
+        else
+        {
+            TIM_Cmd(s_ult_second_handle->dev_handle.timx, DISABLE);
+            uint32_t counter = TIM_GetCounter(s_ult_second_handle->dev_handle.timx);
+            s_ult_second_handle->distance_cm = us_transform_distance((uint16_t)counter);
+        }
+    }
+}
+
+/**
+ * @brief 第三个超声波 外部中断处理函数
+ */
+void ULT_THIRD_EH_EXTI_HANDLE(void)
+{
+    if (EXTI_GetITStatus(s_ult_third_handle->dev_handle.eh_exti_line) != RESET)
+    {
+        EXTI_ClearITPendingBit(s_ult_third_handle->dev_handle.eh_exti_line);
+
+        uint8_t echo_val = GPIO_ReadInputDataBit(
+            s_ult_third_handle->dev_handle.eh_gpio_port,
+            s_ult_third_handle->dev_handle.eh_gpio_pin
+        );
+
+        if (echo_val == 1)
+        {
+            TIM_SetCounter(s_ult_third_handle->dev_handle.timx, 0);
+            TIM_Cmd(s_ult_third_handle->dev_handle.timx, ENABLE);
+        }
+        else
+        {
+            TIM_Cmd(s_ult_third_handle->dev_handle.timx, DISABLE);
+            uint32_t counter = TIM_GetCounter(s_ult_third_handle->dev_handle.timx);
+            s_ult_third_handle->distance_cm = us_transform_distance((uint16_t)counter);
+        }
+    }
+}
+/**
+ * @brief 定时器中断处理函数
+ * 
+ */
+void ULT_TIM_HANDLE(void)
+{
+    if (TIM_GetITStatus(s_ult_first_handle->dev_handle.timx, TIM_IT_Update) != RESET)
+    {
+        
+        TIM_ClearITPendingBit(s_ult_first_handle->dev_handle.timx, TIM_IT_Update);
+    }
+}
+
+/**
+ * @brief 获取 GPIO 端口源 (给 SYSCFG 使用)
+ */
+static uint8_t GPIO_GetPortSource(GPIO_TypeDef* GPIOx)
+{
+    if (GPIOx == GPIOA) return EXTI_PortSourceGPIOA;
+    if (GPIOx == GPIOB) return EXTI_PortSourceGPIOB;
+    if (GPIOx == GPIOC) return EXTI_PortSourceGPIOC;
+    return 0;
+}
+/**
+ * @brief 获取 GPIO 引脚源 (给 SYSCFG 使用)
+ */
+static uint8_t GPIO_GetPinSource(uint32_t pin)
+{
+    if (pin == GPIO_Pin_0)  return GPIO_PinSource0;
+    if (pin == GPIO_Pin_1)  return GPIO_PinSource1;
+    if (pin == GPIO_Pin_2)  return GPIO_PinSource2;
+    if (pin == GPIO_Pin_3)  return GPIO_PinSource3;
+    if (pin == GPIO_Pin_4)  return GPIO_PinSource4;
+    if (pin == GPIO_Pin_5)  return GPIO_PinSource5;
+    if (pin == GPIO_Pin_6)  return GPIO_PinSource6;
+    if (pin == GPIO_Pin_7)  return GPIO_PinSource7;
+    if (pin == GPIO_Pin_8)  return GPIO_PinSource8;
+    if (pin == GPIO_Pin_9)  return GPIO_PinSource9;
+    if (pin == GPIO_Pin_10) return GPIO_PinSource10;
+    if (pin == GPIO_Pin_11) return GPIO_PinSource11;
+    if (pin == GPIO_Pin_12) return GPIO_PinSource12;
+    if (pin == GPIO_Pin_13) return GPIO_PinSource13;
+    if (pin == GPIO_Pin_14) return GPIO_PinSource14;
+    if (pin == GPIO_Pin_15) return GPIO_PinSource15;
+    return 0;
+}
+/**
+ * @brief 超声波模块时钟初始化
+ * 
+ * @param handle 
+ * @param cfg 
+ */
+static void ultrasonic_clk_init(ult_handle_t* handle, ult_cfg_t* cfg)
+{
+    /* GPIO Tr Ecoh 时钟使能 */
+    RCC_AHB1PeriphClockCmd(cfg->eh_gpio_rcc, ENABLE);
+    RCC_AHB1PeriphClockCmd(cfg->tr_gpio_rcc, ENABLE);
+    /* TIM 时钟使能 */
+    RCC_APB1PeriphClockCmd(cfg->tim_rcc, ENABLE);
+}
+/**
+ * @brief 超声波模块GPIO初始化
+ * 
+ * @param handle 
+ * @param cfg 
+ */
+static void ultrasonic_gpio_init(ult_handle_t* handle, ult_cfg_t* cfg)
+{
+    /* Trig */
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin         = cfg->tr_gpio_pin;
+    GPIO_InitStructure.GPIO_Mode        = cfg->tr_gpio_mode;
+    GPIO_InitStructure.GPIO_OType       = cfg->tr_gpio_otype;
+    GPIO_InitStructure.GPIO_Speed       = cfg->tr_gpio_speed;
+    GPIO_InitStructure.GPIO_PuPd        = cfg->tr_gpio_pupd;
+    GPIO_Init(cfg->tr_gpio_port, &GPIO_InitStructure);
+    /* Echo */
+    GPIO_InitStructure.GPIO_Pin         = cfg->eh_gpio_pin;
+    GPIO_InitStructure.GPIO_Mode        = cfg->eh_gpio_mode;
+    GPIO_InitStructure.GPIO_OType       = cfg->eh_gpio_otype;
+    GPIO_InitStructure.GPIO_Speed       = cfg->eh_gpio_speed;
+    GPIO_InitStructure.GPIO_PuPd        = cfg->eh_gpio_pupd;
+    GPIO_Init(cfg->eh_gpio_port, &GPIO_InitStructure);
+}
+/**
+ * @brief 超声波模块 定时器 初始化
+ * 
+ * @param handle 
+ * @param cfg 
+ */
+static void ultrasonic_tim_init(ult_handle_t* handle, ult_cfg_t* cfg)
+{
+    TIM_DeInit(cfg->timx);
+    TIM_TimeBaseInitTypeDef TIM_InitStructure;
+    TIM_InitStructure.TIM_Prescaler     = cfg->tim_prescaler;
+    TIM_InitStructure.TIM_Period        = cfg->tim_period;
+    TIM_InitStructure.TIM_CounterMode   = cfg->tim_counter_mode;
+    TIM_InitStructure.TIM_ClockDivision = cfg->tim_division;
+    TIM_TimeBaseInit(cfg->timx, &TIM_InitStructure);
+    /* 开启中断 */
+    TIM_ITConfig(cfg->timx, TIM_IT_Update, ENABLE);
+    /* 开启 TIM */
+    TIM_Cmd(cfg->timx, ENABLE);
+}
+/**
+ * @brief 超声波模块 外部中断 中断优先级 初始化
+ * 
+ * @param handle 
+ * @param cfg 
+ */
+static void ultrasonic_exti_init(ult_handle_t* handle, ult_cfg_t* cfg)
+{
+    /* 配置外部中断 */
+    SYSCFG_EXTILineConfig(GPIO_GetPortSource(cfg->tr_gpio_port), GPIO_GetPinSource(cfg->tr_gpio_pin));
+    SYSCFG_EXTILineConfig(GPIO_GetPortSource(cfg->eh_gpio_port), GPIO_GetPinSource(cfg->eh_gpio_pin));
+    /* 外部中断 */
+    EXTI_InitTypeDef EXTI_InitStructure;
+    EXTI_InitStructure.EXTI_Line    = cfg->eh_exti_line;
+    EXTI_InitStructure.EXTI_Mode    = cfg->eh_exti_mode;
+    EXTI_InitStructure.EXTI_Trigger = cfg->eh_exti_trigger;
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+    EXTI_Init(&EXTI_InitStructure);
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel                   = cfg->eh_nvic_irqn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = cfg->eh_nvic_pri;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority        = cfg->eh_nvic_subpri;
+    NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;  
+    NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel                     = cfg->tim_nvic_irqn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority   = cfg->tim_nvic_pri;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority          = cfg->tim_nvic_subpri;
+    NVIC_InitStructure.NVIC_IRQChannelCmd                  = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+/**
+ * @brief 初始化超声波
+ * 
+ * @param handle 
+ * @param cfg 
+ */
+void bsp_ultrasonic_init(ult_handle_t* handle, ult_cfg_t* cfg)
+{
+    if (handle == NULL || cfg == NULL)
+    {
+        SGCS_ERROR("handle or cfg is NULL");
+        return;
+    }
+    if (cfg->num == 1)
+    {
+        s_ult_first_handle = handle;
+        s_ult_first_handle->dev_handle.eh_exti_line = cfg->eh_exti_line;
+        s_ult_first_handle->dev_handle.timx = cfg->timx;
+        s_ult_first_handle->num = cfg->num;
+        s_ult_first_handle->dev_handle.tr_gpio_port = cfg->tr_gpio_port;
+        s_ult_first_handle->dev_handle.eh_gpio_port = cfg->eh_gpio_port;
+        s_ult_first_handle->dev_handle.tr_gpio_pin = cfg->tr_gpio_pin;
+        s_ult_first_handle->dev_handle.eh_gpio_pin = cfg->eh_gpio_pin;
+    }else if (cfg->num == 2)
+    {
+        s_ult_second_handle = handle;
+        s_ult_second_handle->dev_handle.eh_exti_line = cfg->eh_exti_line;
+        s_ult_second_handle->dev_handle.timx = cfg->timx;
+        s_ult_second_handle->num = cfg->num;
+        s_ult_second_handle->dev_handle.tr_gpio_port = cfg->tr_gpio_port;
+        s_ult_second_handle->dev_handle.eh_gpio_port = cfg->eh_gpio_port;
+        s_ult_second_handle->dev_handle.tr_gpio_pin = cfg->tr_gpio_pin;
+        s_ult_second_handle->dev_handle.eh_gpio_pin = cfg->eh_gpio_pin;
+    }else if (cfg->num == 3)
+    {
+        s_ult_third_handle = handle;
+        s_ult_third_handle->dev_handle.eh_exti_line = cfg->eh_exti_line;
+        s_ult_third_handle->dev_handle.timx = cfg->timx;
+        s_ult_third_handle->num = cfg->num;
+        s_ult_third_handle->dev_handle.tr_gpio_port = cfg->tr_gpio_port;
+        s_ult_third_handle->dev_handle.eh_gpio_port = cfg->eh_gpio_port;
+        s_ult_third_handle->dev_handle.tr_gpio_pin = cfg->tr_gpio_pin;
+        s_ult_third_handle->dev_handle.eh_gpio_pin = cfg->eh_gpio_pin;
+    }
+    else
+    {
+        SGCS_ERROR("ultrasonic num error");
+        return;
+    }
+    /* 时钟使能 */
+    ultrasonic_clk_init(handle, cfg);
+    /* GPIO 配置 */
+    ultrasonic_gpio_init(handle, cfg);
+    /* 外部中断 */
+    ultrasonic_exti_init(handle, cfg);
+    /* TIM 配置 */
+    ultrasonic_tim_init(handle, cfg);
+}
+/**
+ * @brief 定时器开始计时
+ * 
+ * @param handle 
+ */
+static void tim_start(ult_handle_t* handle)
+{
+    TIM_Cmd(handle->dev_handle.timx, DISABLE);
+    TIM_SetCounter(handle->dev_handle.timx, 0);
+    TIM_Cmd(handle->dev_handle.timx, ENABLE);
+}
+
+/**
+ * @brief 获取超声波距离
+ * 
+ * @param handle 
+ * @return uint16_t 
+ */
+uint16_t bsp_ultrasonic_get_distance(ult_handle_t* handle)
+{
+    if (handle == NULL)
+    {
+        SGCS_ERROR("handle is NULL");
+        return 0;
+    }
+    return handle->distance_cm;
+}
+/**
+ * @brief 触发超声波测距
+ * 
+ * @param handle 
+ */
+void bsp_ultrasonic_trigger(ult_handle_t *handle)
+{
+    GPIO_SetBits(handle->dev_handle.tr_gpio_port, handle->dev_handle.tr_gpio_pin);
+    for (volatile int i = 0; i < 100; i++);
+    GPIO_ResetBits(handle->dev_handle.tr_gpio_port, handle->dev_handle.tr_gpio_pin);
+    tim_start(handle);
+}

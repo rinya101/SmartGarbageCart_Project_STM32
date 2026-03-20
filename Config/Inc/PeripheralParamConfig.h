@@ -17,6 +17,8 @@
 #define USART_STRING_END_CR             '\r'        /* 字符串回车符 */
 #define USART_STRING_END_LF             '\n'        /* 字符串换行符 */
 #define USART_STRING_END_NULL           '\0'        /* 字符串结束符 */
+#define USART1_IRQ_HANDLE(void)         USART1_IRQHandler(void)
+#define USART2_IRQ_HANDLE(void)         USART2_IRQHandler(void)
 /**
  * @brief USART 默认初始化配置 
  * @note 修改 usart_tx_source 与 usart_rx_source 对应接口 任务交给程序员自己配置
@@ -170,5 +172,47 @@ extern const uint8_t oled_init_cmd_seq[];
     .width              = OLED_WIDTH,\
     .height             = OLED_HEIGHT\
 }
-
+/* ----------------------- 超声波模块（HC-SR0504） 配置 ------------------------- */
+#define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
+#define ULT_SECOND_EH_EXTI_HANDLE(void) EXTI0_IRQHandler(void)
+#define ULT_THIRD_EH_EXTI_HANDLE(void)  EXTI2_IRQHandler(void)
+#define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
+#define ULT_DEFAULT_CONDFIG() (ult_cfg_t){\
+    /* NUM */\
+    .num = 1,\
+    /* RCC */\
+    .tr_gpio_rcc = RCC_AHB1Periph_GPIOA,\
+    .eh_gpio_rcc = RCC_AHB1Periph_GPIOA,\
+    .tim_rcc     = RCC_APB1Periph_TIM3,\
+    /* GPIO */\
+    .tr_gpio_port   = GPIOA,\
+    .eh_gpio_port   = GPIOA,\
+    .tr_gpio_pin    = GPIO_Pin_11,\
+    .eh_gpio_pin    = GPIO_Pin_1,\
+    .tr_gpio_mode   = GPIO_Mode_OUT,\
+    .eh_gpio_mode   = GPIO_Mode_IN,\
+    .tr_gpio_otype  = GPIO_OType_PP,\
+    .eh_gpio_otype  = GPIO_OType_PP,\
+    .tr_gpio_speed  = GPIO_Speed_25MHz,\
+    .eh_gpio_speed  = GPIO_Speed_50MHz,\
+    .tr_gpio_pupd   = GPIO_PuPd_NOPULL,\
+    .eh_gpio_pupd   = GPIO_PuPd_UP,\
+    /* EXTI */\
+    .eh_exti_line   = EXTI_Line1,\
+    .eh_exti_mode   = EXTI_Mode_Interrupt,\
+    .eh_exti_trigger= EXTI_Trigger_Rising_Falling,\
+    /* NVIC */\
+    .eh_nvic_irqn   = EXTI1_IRQn,\
+    .eh_nvic_pri    = 5,\
+    .eh_nvic_subpri = 0,\
+    .tim_nvic_irqn  = TIM3_IRQn,\
+    .tim_nvic_pri   = 5,\
+    .tim_nvic_subpri= 0,\
+    /* TIM */\
+    .timx               = TIM3,\
+    .tim_prescaler      = 100 - 1, /* 1MHZ 1us */\
+    .tim_period         = 10000 - 1, /* 1us*10000 = 10ms */\
+    .tim_counter_mode   = TIM_CounterMode_Up,\
+    .tim_division       = TIM_CKD_DIV1,\
+}
 #endif  /* PeripheralParamConfig.h */

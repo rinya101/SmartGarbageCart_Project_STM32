@@ -1,3 +1,4 @@
+
 #include "stm32f4xx.h"
 #include "SysClockConfig.h"
 #include "FreeRTOS.h"
@@ -6,6 +7,7 @@
 #include <string.h>
 #include "bsp_encoder.h"
 #include "PeripheralParamConfig.h"
+#include "bsp_ultrasonic.h"
 void app(void *pvParameters);
 void led_init(void);
 
@@ -64,11 +66,18 @@ void app(void *pvParameters)
     encoder_attach_event(encoder_cfg);
     encoder_init(g_encoder, encoder_cfg);
     vPortFree(encoder_cfg);/* 释放内存 */
+    /* 超声波模块初始化 */
+    ult_handle_t ult1_handle;
+    ult_cfg_t ult1_cfg;
+    ult1_cfg = ULT_DEFAULT_CONDFIG();
+    bsp_ultrasonic_init(&ult1_handle, &ult1_cfg);
     uint16_t count = 0;
     while(1)
     {
         count++;
+        bsp_ultrasonic_trigger(&ult1_handle);
         vTaskDelay(50);
+        printf("distance:%d\n",bsp_ultrasonic_get_distance(&ult1_handle));
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)
