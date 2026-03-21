@@ -16,7 +16,10 @@
 #define _BSP_TRACKING_H
 #include "stm32f4xx_gpio.h"
 typedef struct track_handle track_handle_t;
-
+/**
+ * @brief 循迹模块ID枚举
+ * 
+ */
 typedef enum
 {
     TRACKER_A,
@@ -25,7 +28,10 @@ typedef enum
     TRACKER_D,
     TRACKER_E,
 } track_id_t;
-
+/**
+ * @brief 循迹模块状态枚举
+ * 
+ */
 typedef enum
 {
     TRACKER_STATE_NONE = -1,

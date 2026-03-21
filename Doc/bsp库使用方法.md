@@ -938,3 +938,215 @@ struct ult_handle
     ult_dev_handle_t dev_handle;
 };
 ```
+
+## 循迹模块
+### 示例
+```C
+
+#include "stm32f4xx.h"
+#include "SysClockConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "bsp_usart.h"
+#include <string.h>
+#include "bsp_encoder.h"
+#include "PeripheralParamConfig.h"
+#include "bsp_ultrasonic.h"
+#include "bsp_oled.h"
+#include "bsp_tracking.h"
+void app(void *pvParameters);
+void led_init(void);
+
+int main(void)
+{
+    /* 时钟配置 */
+    SysClockConfig_HSE25MHZ();
+    g_usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
+    if (g_usart1_handle == NULL)
+    {
+        while(1); // 内存不足
+    }
+    memset(g_usart1_handle, 0, sizeof(usart_handle_t));
+    usart_cfg_t *cfg = pvPortMalloc(sizeof(usart_cfg_t));
+    if (cfg == NULL)
+    {
+        while(1);// 内存不足
+    }
+    memset(cfg, 0, sizeof(cfg));
+    *cfg = USART1_DEFAULT_CONFIG();
+    bsp_usart_init(g_usart1_handle, *cfg);
+    vPortFree(cfg);/* 释放内存 */
+    printf("[info] FreeRTOS start!\r\n");
+    /* 创建任务 */
+    if(xTaskCreate(app, "app", 1024, NULL, 5, NULL) != pdPASS)
+    {
+        printf("create task failed\r\n");
+    }
+    vTaskStartScheduler();
+    while(1)
+    {
+        printf("[Error]: FreeRTOS scheduler error!\r\n");
+    }
+}
+
+/**
+ * @brief 用户任务
+ */
+void app(void *pvParameters)
+{
+    /* 编码器配置 */
+    encoder_handle_t* g_encoder = pvPortMalloc(sizeof(encoder_handle_t));
+    if (g_encoder == NULL)
+    {
+        while(1); /* 内存不足 */
+    }
+    memset(g_encoder, 0, sizeof(encoder_handle_t));
+    encoder_cfg_t *encoder_cfg = pvPortMalloc(sizeof(encoder_cfg_t));
+    if (encoder_cfg == NULL)
+    {
+        while(1); /* 内存不足 */
+    }
+    memset(encoder_cfg, 0, sizeof(encoder_cfg_t));
+    *encoder_cfg = ENCODER_DEFAULT_CONFIG();
+    encoder_attach_callback(encoder_cfg);
+    encoder_attach_event(encoder_cfg);
+    encoder_init(g_encoder, encoder_cfg);
+    vPortFree(encoder_cfg);/* 释放内存 */
+    /* 循迹模块 A路 初始化 */
+    track_handle_t trackA_handle;
+    track_cfg_t trackA_cfg = TRACKER_A_DEFAULT_CONFIG();
+    bsp_tracking_init(&trackA_handle, &trackA_cfg);
+    /* 循迹模块 B路 初始化 */
+    track_handle_t trackB_handle;
+    track_cfg_t trackB_cfg = TRACKER_B_DEFAULT_CONFIG();
+    bsp_tracking_init(&trackB_handle, &trackB_cfg);
+    uint16_t count = 0;
+    while(1)
+    {
+        count++;
+        vTaskDelay(50);
+        printf("track_A_state = %s\ntrack_B_state = %s\n", 
+            trackA_handle.sta ? "On_line": "Off_line",
+            trackB_handle.sta );
+        if (g_usart1_handle != NULL)
+        {
+            if (g_usart1_handle->new_msg_flag)
+            {
+                g_usart1_handle->new_msg_flag = 0;
+                printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
+            }
+        }
+
+    }
+}
+void led_init(void)
+{
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+
+```
+### 私有全局变量
+```C
+/**
+ * @brief 五路循迹私有句柄指针
+ * 
+ */
+track_handle_t* s_track_a_handle = NULL;
+track_handle_t* s_track_b_handle = NULL;
+track_handle_t* s_track_c_handle = NULL;
+track_handle_t* s_track_d_handle = NULL;
+track_handle_t* s_track_e_handle = NULL;
+```
+### 库函数
+```C
+void bsp_tracking_init(track_handle_t* handle, track_cfg_t *cfg);
+```
+### 枚举
+```C
+/**
+ * @brief 循迹模块ID枚举
+ * 
+ */
+typedef enum
+{
+    TRACKER_A,
+    TRACKER_B,
+    TRACKER_C,  
+    TRACKER_D,
+    TRACKER_E,
+} track_id_t;
+/**
+ * @brief 循迹模块状态枚举
+ * 
+ */
+typedef enum
+{
+    TRACKER_STATE_NONE = -1,
+    TRACKER_STATE_WHITE = 0,
+    TRACKER_STATE_BLACK = 1,
+}track_state_t;
+```
+### 结构体
+```C
+
+/**
+ * @brief 循迹初始化
+ * 
+ */
+typedef struct 
+{
+    /* TRACKER */
+    track_id_t          id;
+    /* RCC */
+    uint32_t            rcc_gpio;
+    /* GPIO */
+    GPIO_TypeDef*       gpio_port;
+    uint32_t            gpio_pin;
+    GPIOMode_TypeDef    gpio_mode;
+    GPIOOType_TypeDef   gpio_otype;
+    GPIOSpeed_TypeDef   gpio_speed;
+    GPIOPuPd_TypeDef    gpio_pupd;
+    /* EXTI */
+    uint32_t            exti_line;
+    EXTIMode_TypeDef    exti_mode;
+    EXTITrigger_TypeDef exti_trigger;
+    /* NVIC */
+    uint8_t             nvic_irqn;
+    uint8_t             nvic_pri;
+    uint8_t             nvic_subpri;
+} track_cfg_t;
+
+/**
+ * @brief 循迹设备句柄
+ * 
+ */
+typedef struct 
+{
+    /* EXTI */
+    uint32_t            exti_line;
+    /* GPIO */
+    GPIO_TypeDef*       gpio_port;
+    uint32_t            gpio_pin;
+} track_dev_handle_t;
+
+/**
+ * @brief 循迹句柄
+ * 
+ */
+struct track_handle
+{
+    /* BASE */
+    track_id_t          id;
+    track_state_t       sta;
+    /* Dev */
+    track_dev_handle_t  dev;
+};
+```
