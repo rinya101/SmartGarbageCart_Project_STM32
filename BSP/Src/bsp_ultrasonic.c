@@ -1,10 +1,18 @@
+/*******************************************************************************
+ *      文    件: bsp_ultrasonic.h
+ *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 超声波 模块
+ *      版    本: V1.0
+ *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
+ *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
+ *               可以作为个人参考学习使用。
+*******************************************************************************/
 #include "bsp_ultrasonic.h"
 #include "PeripheralParamConfig.h"
 #include "bsp_debug.h"
 #ifndef NULL
 #define NULL (void*)0
 #endif
-ult_handle_t s_ult_first_handle_instance, s_ult_second_handle_instance, s_ult_third_handle_instance;
+
 ult_handle_t* s_ult_first_handle = NULL;
 ult_handle_t* s_ult_second_handle = NULL;
 ult_handle_t* s_ult_third_handle = NULL;
@@ -24,6 +32,27 @@ static uint16_t us_transform_distance(uint16_t us)
     return distance;
 }
 /**
+ * @brief 超声波数据更新事件
+ * 
+ * @param data 
+ * @return __weak 
+ */
+static __weak void ult_data_updata_event(void* data[])
+{
+    ult_handle_t* ult_frist     = (ult_handle_t*)data[0];
+    ult_handle_t* ult_second    = (ult_handle_t*)data[1];
+    ult_handle_t* ult_third     = (ult_handle_t*)data[2];
+    printf("ult_frist:%d,ult_second:%d,ult_third:%d\r\n\
+[warning] You need to rewrite this function at the application layer! | File:%s | Line:%d | Fun:%s\r\n",
+        ult_frist->distance_cm,
+        ult_second->distance_cm,
+        ult_third->distance_cm,
+        __FILE__, __LINE__, __FUNCTION__
+    );
+
+}
+
+/**
  * @brief 第一个超声波 外部中断处理函数
  * 
  */
@@ -39,15 +68,16 @@ void ULT_FIRST_EH_EXTI_HANDLE(void)
         );
         if (echo_val == 1) 
         {
-            TIM_Cmd(s_ult_first_handle->dev_handle.timx, DISABLE);
             TIM_SetCounter(s_ult_first_handle->dev_handle.timx, 0);
             TIM_Cmd(s_ult_first_handle->dev_handle.timx, ENABLE);
+            s_ult_first_handle->state = ULT_BUSY;
         }
         else
         {
-            TIM_Cmd(s_ult_first_handle->dev_handle.timx, DISABLE);
+            //TIM_Cmd(s_ult_first_handle->dev_handle.timx, DISABLE);
             counter = TIM_GetCounter(s_ult_first_handle->dev_handle.timx);
             s_ult_first_handle->distance_cm = us_transform_distance((uint16_t)counter);
+            //s_ult_first_handle->state = ULT_READY;
         }
     }
 }
@@ -69,12 +99,14 @@ void ULT_SECOND_EH_EXTI_HANDLE(void)
         {
             TIM_SetCounter(s_ult_second_handle->dev_handle.timx, 0);
             TIM_Cmd(s_ult_second_handle->dev_handle.timx, ENABLE);
+            s_ult_second_handle->state = ULT_BUSY;
         }
         else
         {
-            TIM_Cmd(s_ult_second_handle->dev_handle.timx, DISABLE);
+            //TIM_Cmd(s_ult_second_handle->dev_handle.timx, DISABLE);
             uint32_t counter = TIM_GetCounter(s_ult_second_handle->dev_handle.timx);
             s_ult_second_handle->distance_cm = us_transform_distance((uint16_t)counter);
+            //s_ult_second_handle->state = ULT_READY;
         }
     }
 }
@@ -97,12 +129,14 @@ void ULT_THIRD_EH_EXTI_HANDLE(void)
         {
             TIM_SetCounter(s_ult_third_handle->dev_handle.timx, 0);
             TIM_Cmd(s_ult_third_handle->dev_handle.timx, ENABLE);
+            s_ult_third_handle->state = ULT_BUSY;
         }
         else
         {
-            TIM_Cmd(s_ult_third_handle->dev_handle.timx, DISABLE);
+            //TIM_Cmd(s_ult_third_handle->dev_handle.timx, DISABLE);
             uint32_t counter = TIM_GetCounter(s_ult_third_handle->dev_handle.timx);
             s_ult_third_handle->distance_cm = us_transform_distance((uint16_t)counter);
+            //s_ult_third_handle->state = ULT_READY;
         }
     }
 }
@@ -114,8 +148,16 @@ void ULT_TIM_HANDLE(void)
 {
     if (TIM_GetITStatus(s_ult_first_handle->dev_handle.timx, TIM_IT_Update) != RESET)
     {
-        
+        /* 超时 */
         TIM_ClearITPendingBit(s_ult_first_handle->dev_handle.timx, TIM_IT_Update);
+        TIM_Cmd(s_ult_first_handle->dev_handle.timx, DISABLE);
+        s_ult_first_handle->state = ULT_READY;
+        void* ult_all_data[] = {
+            s_ult_first_handle,
+            s_ult_second_handle,
+            s_ult_third_handle,
+        };
+        ult_data_updata_event(ult_all_data);
     }
 }
 
@@ -289,6 +331,7 @@ void bsp_ultrasonic_init(ult_handle_t* handle, ult_cfg_t* cfg)
         SGCS_ERROR("ultrasonic num error");
         return;
     }
+    handle->state = ULT_READY;
     /* 时钟使能 */
     ultrasonic_clk_init(handle, cfg);
     /* GPIO 配置 */
@@ -297,17 +340,6 @@ void bsp_ultrasonic_init(ult_handle_t* handle, ult_cfg_t* cfg)
     ultrasonic_exti_init(handle, cfg);
     /* TIM 配置 */
     ultrasonic_tim_init(handle, cfg);
-}
-/**
- * @brief 定时器开始计时
- * 
- * @param handle 
- */
-static void tim_start(ult_handle_t* handle)
-{
-    TIM_Cmd(handle->dev_handle.timx, DISABLE);
-    TIM_SetCounter(handle->dev_handle.timx, 0);
-    TIM_Cmd(handle->dev_handle.timx, ENABLE);
 }
 
 /**
@@ -327,13 +359,10 @@ uint16_t bsp_ultrasonic_get_distance(ult_handle_t* handle)
 }
 /**
  * @brief 触发超声波测距
- * 
- * @param handle 
  */
 void bsp_ultrasonic_trigger(ult_handle_t *handle)
 {
     GPIO_SetBits(handle->dev_handle.tr_gpio_port, handle->dev_handle.tr_gpio_pin);
-    for (volatile int i = 0; i < 100; i++);
+    for (volatile int i = 0; i < 150; i++); // 标准 10us+
     GPIO_ResetBits(handle->dev_handle.tr_gpio_port, handle->dev_handle.tr_gpio_pin);
-    tim_start(handle);
 }

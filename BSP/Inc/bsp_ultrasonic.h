@@ -1,9 +1,38 @@
+/*******************************************************************************
+ *      文    件: bsp_ultrasonic.h
+ *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 超声波 模块
+ *      版    本: V1.0
+ *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
+ *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
+ *               可以作为个人参考学习使用。
+ * 私有说明：
+ *       1. 有三个超声波模块可以使用，必须注意，每一个模块都采用第一个配置的定时器
+ *          也就是说三个超声波模块必须使用同一个定时器，否则会出错
+ *       2. 必须从第一个开始使用配置，不能跳过第一个的配置，否则会出错
+ *       3，提供一个 __weak void ult_data_updata_event(void* data[]) 函数
+ *           用于处理超声波数据，需要在 APP 层重写该函数，
+ *          void* data[] 通过 ult_handle_t 数据结构进行解耦使用
+ * 例如：
+ *         ult_handle_t* ult_frist     = (ult_handle_t*)data[0];
+ *        此函数为中断内部函数，禁止采用阻塞方式，否则会卡死
+*******************************************************************************/
 #ifndef _BSP_ULTRASONIC_H
 #define _BSP_ULTRASONIC_H
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_tim.h"
 
 typedef struct ult_handle ult_handle_t;
+
+/**
+ * @brief 超声波状态枚举
+ * 
+ */
+typedef enum 
+{
+    ULT_BUSY,
+    ULT_READY,
+} ult_sta_t;
+
 /**
  * @brief 超声波模块初始化
  * 
@@ -70,6 +99,7 @@ struct ult_handle
     /* base */
     uint16_t distance_cm;
     uint8_t  num;
+    uint8_t  state;
     ult_dev_handle_t dev_handle;
 };
 

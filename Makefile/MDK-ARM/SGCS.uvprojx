@@ -14,10 +14,10 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>ARMCM4</Device>
-          <Vendor>ARM</Vendor>
-          <PackID>ARM.CMSIS.5.7.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <Device>STM32F411CEUx</Device>
+          <Vendor>STMicroelectronics</Vendor>
+          <PackID>Keil.STM32F4xx_DFP.3.1.1</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IROM(0x08000000,0x00080000) CPUTYPE("Cortex-M4") FPU2 DSP CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -110,11 +110,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>-REMAP -MPU</SimDllArguments>
+          <SimDllArguments> -REMAP -MPU</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
+          <TargetDllArguments> -MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -1078,9 +1078,14 @@
               <FilePath>../../BSP/Src/bsp_debug.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_tim5.c</FileName>
+              <FileName>bsp_oled.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../BSP/Src/bsp_tim5.c</FilePath>
+              <FilePath>../../BSP/Src/bsp_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_ultrasonic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../BSP/Src/bsp_ultrasonic.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1103,9 +1108,14 @@
               <FilePath>../../BSP/Inc/bsp_debug.h</FilePath>
             </File>
             <File>
-              <FileName>bsp_tim5.h</FileName>
+              <FileName>bsp_oled.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_tim5.h</FilePath>
+              <FilePath>../../BSP/Inc/bsp_oled.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_ultrasonic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>../../BSP/Inc/bsp_ultrasonic.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -8,6 +8,7 @@
 #include "bsp_encoder.h"
 #include "PeripheralParamConfig.h"
 #include "bsp_ultrasonic.h"
+#include "bsp_oled.h"
 void app(void *pvParameters);
 void led_init(void);
 
@@ -32,7 +33,7 @@ int main(void)
     vPortFree(cfg);/* 释放内存 */
     printf("[info] FreeRTOS start!\r\n");
     /* 创建任务 */
-    if(xTaskCreate(app, "app", 512, NULL, 5, NULL) != pdPASS)
+    if(xTaskCreate(app, "app", 1024, NULL, 5, NULL) != pdPASS)
     {
         printf("create task failed\r\n");
     }
@@ -66,18 +67,41 @@ void app(void *pvParameters)
     encoder_attach_event(encoder_cfg);
     encoder_init(g_encoder, encoder_cfg);
     vPortFree(encoder_cfg);/* 释放内存 */
-    /* 超声波模块初始化 */
+    /* 超声波模块1初始化 */
     ult_handle_t ult1_handle;
     ult_cfg_t ult1_cfg;
-    ult1_cfg = ULT_DEFAULT_CONDFIG();
+    ult1_cfg = ULT_FIRST_DEFAULT_CONDFIG();
     bsp_ultrasonic_init(&ult1_handle, &ult1_cfg);
+    /* 超声波模块2 */
+    ult_handle_t ult2_handle;
+    ult_cfg_t ult2_cfg;
+    ult2_cfg = ULT_SECOND_DEFAULT_CONDFIG();
+    bsp_ultrasonic_init(&ult2_handle, &ult2_cfg);
+    /* 超声波模块3 */
+    ult_handle_t ult3_handle;
+    ult_cfg_t ult3_cfg;
+    ult3_cfg = ULT_THIRD_DEFAULT_CONDFIG();
+    bsp_ultrasonic_init(&ult3_handle, &ult3_cfg);
     uint16_t count = 0;
     while(1)
     {
         count++;
-        bsp_ultrasonic_trigger(&ult1_handle);
+        if (ult1_handle.state == ULT_READY)
+        {
+            bsp_ultrasonic_trigger(&ult1_handle);
+        }
+        if (ult2_handle.state == ULT_READY)
+        {
+            bsp_ultrasonic_trigger(&ult2_handle);
+        }
+        if (ult3_handle.state == ULT_READY)
+        {
+            bsp_ultrasonic_trigger(&ult3_handle);
+        }
         vTaskDelay(50);
-        printf("distance:%d\n",bsp_ultrasonic_get_distance(&ult1_handle));
+        // printf("first distance:%d\n second distance:%d\n",
+        //     bsp_ultrasonic_get_distance(&ult1_handle),
+        //     bsp_ultrasonic_get_distance(&ult2_handle));
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)

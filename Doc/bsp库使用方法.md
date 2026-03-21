@@ -708,3 +708,233 @@ struct oled_handle
     DMA_Stream_TypeDef*     dma_stream;
 };
 ```
+## 超声波模块
+
+### 示例
+```C
+
+#include "stm32f4xx.h"
+#include "SysClockConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "bsp_usart.h"
+#include <string.h>
+#include "bsp_encoder.h"
+#include "PeripheralParamConfig.h"
+#include "bsp_ultrasonic.h"
+#include "bsp_oled.h"
+void app(void *pvParameters);
+void led_init(void);
+
+int main(void)
+{
+    /* 时钟配置 */
+    SysClockConfig_HSE25MHZ();
+    g_usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
+    if (g_usart1_handle == NULL)
+    {
+        while(1); // 内存不足
+    }
+    memset(g_usart1_handle, 0, sizeof(usart_handle_t));
+    usart_cfg_t *cfg = pvPortMalloc(sizeof(usart_cfg_t));
+    if (cfg == NULL)
+    {
+        while(1);// 内存不足
+    }
+    memset(cfg, 0, sizeof(cfg));
+    *cfg = USART1_DEFAULT_CONFIG();
+    bsp_usart_init(g_usart1_handle, *cfg);
+    vPortFree(cfg);/* 释放内存 */
+    printf("[info] FreeRTOS start!\r\n");
+    /* 创建任务 */
+    if(xTaskCreate(app, "app", 1024, NULL, 5, NULL) != pdPASS)
+    {
+        printf("create task failed\r\n");
+    }
+    vTaskStartScheduler();
+    while(1)
+    {
+        printf("[Error]: FreeRTOS scheduler error!\r\n");
+    }
+}
+
+/**
+ * @brief 用户任务
+ */
+void app(void *pvParameters)
+{
+    /* 编码器配置 */
+    encoder_handle_t* g_encoder = pvPortMalloc(sizeof(encoder_handle_t));
+    if (g_encoder == NULL)
+    {
+        while(1); /* 内存不足 */
+    }
+    memset(g_encoder, 0, sizeof(encoder_handle_t));
+    encoder_cfg_t *encoder_cfg = pvPortMalloc(sizeof(encoder_cfg_t));
+    if (encoder_cfg == NULL)
+    {
+        while(1); /* 内存不足 */
+    }
+    memset(encoder_cfg, 0, sizeof(encoder_cfg_t));
+    *encoder_cfg = ENCODER_DEFAULT_CONFIG();
+    encoder_attach_callback(encoder_cfg);
+    encoder_attach_event(encoder_cfg);
+    encoder_init(g_encoder, encoder_cfg);
+    vPortFree(encoder_cfg);/* 释放内存 */
+    /* 超声波模块1初始化 */
+    ult_handle_t ult1_handle;
+    ult_cfg_t ult1_cfg;
+    ult1_cfg = ULT_FIRST_DEFAULT_CONDFIG();
+    bsp_ultrasonic_init(&ult1_handle, &ult1_cfg);
+    /* 超声波模块2 */
+    ult_handle_t ult2_handle;
+    ult_cfg_t ult2_cfg;
+    ult2_cfg = ULT_SECOND_DEFAULT_CONDFIG();
+    bsp_ultrasonic_init(&ult2_handle, &ult2_cfg);
+    /* 超声波模块3 */
+    ult_handle_t ult3_handle;
+    ult_cfg_t ult3_cfg;
+    ult3_cfg = ULT_THIRD_DEFAULT_CONDFIG();
+    bsp_ultrasonic_init(&ult3_handle, &ult3_cfg);
+    uint16_t count = 0;
+    while(1)
+    {
+        count++;
+        if (ult1_handle.state == ULT_READY)
+        {
+            bsp_ultrasonic_trigger(&ult1_handle);
+        }
+        if (ult2_handle.state == ULT_READY)
+        {
+            bsp_ultrasonic_trigger(&ult2_handle);
+        }
+        if (ult3_handle.state == ULT_READY)
+        {
+            bsp_ultrasonic_trigger(&ult3_handle);
+        }
+        vTaskDelay(50);
+        // printf("first distance:%d\n second distance:%d\n",
+        //     bsp_ultrasonic_get_distance(&ult1_handle),
+        //     bsp_ultrasonic_get_distance(&ult2_handle));
+        if (g_usart1_handle != NULL)
+        {
+            if (g_usart1_handle->new_msg_flag)
+            {
+                g_usart1_handle->new_msg_flag = 0;
+                printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
+            }
+        }
+
+    }
+}
+void led_init(void)
+{
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+
+```
+### 私有全局变量
+```C
+ult_handle_t* s_ult_first_handle = NULL;
+ult_handle_t* s_ult_second_handle = NULL;
+ult_handle_t* s_ult_third_handle = NULL;
+```
+
+### 库函数
+```C
+void bsp_ultrasonic_init(ult_handle_t* handle, ult_cfg_t* cfg);
+uint16_t bsp_ultrasonic_get_distance(ult_handle_t* handle);
+void bsp_ultrasonic_trigger(ult_handle_t *handle);
+```
+### 枚举
+```C
+/**
+ * @brief 超声波状态枚举
+ * 
+ */
+typedef enum 
+{
+    ULT_BUSY,
+    ULT_READY,
+} ult_sta_t;
+```
+### 结构体
+```C
+/**
+ * @brief 超声波模块初始化
+ * 
+ */
+typedef struct 
+{
+    /* NUM */
+    uint8_t             num;
+    /* RCC */
+    uint32_t            tr_gpio_rcc;
+    uint32_t            eh_gpio_rcc;
+    uint32_t            tim_rcc;
+    /* GPIO */
+    GPIO_TypeDef*       tr_gpio_port;
+    GPIO_TypeDef*       eh_gpio_port;
+    uint16_t            tr_gpio_pin;
+    uint16_t            eh_gpio_pin;
+    GPIOMode_TypeDef    tr_gpio_mode;
+    GPIOMode_TypeDef    eh_gpio_mode;
+    GPIOOType_TypeDef   tr_gpio_otype;
+    GPIOOType_TypeDef   eh_gpio_otype;
+    GPIOSpeed_TypeDef   tr_gpio_speed;  
+    GPIOSpeed_TypeDef   eh_gpio_speed;
+    GPIOPuPd_TypeDef    tr_gpio_pupd;
+    GPIOPuPd_TypeDef    eh_gpio_pupd;
+    /* EXTI */
+    uint8_t             eh_exti_line;
+    EXTIMode_TypeDef    eh_exti_mode;
+    EXTITrigger_TypeDef eh_exti_trigger;
+    /* NVIC */
+    uint8_t             eh_nvic_irqn;
+    uint8_t             eh_nvic_pri;
+    uint8_t             eh_nvic_subpri;
+    uint8_t             tim_nvic_irqn;
+    uint8_t             tim_nvic_pri;
+    uint8_t             tim_nvic_subpri;
+    /* TIM */
+    TIM_TypeDef*        timx;
+    uint16_t            tim_prescaler;
+    uint32_t            tim_period;
+    uint16_t            tim_counter_mode;
+    uint16_t            tim_division;
+} ult_cfg_t;
+
+
+typedef struct 
+{
+    /* EXTI */
+    uint8_t             eh_exti_line;
+    /* TIM */
+    TIM_TypeDef*        timx;
+    /* GPIO */
+    GPIO_TypeDef*       tr_gpio_port;
+    uint16_t            tr_gpio_pin;
+    GPIO_TypeDef*       eh_gpio_port;
+    uint16_t            eh_gpio_pin;
+} ult_dev_handle_t;
+/**
+ * @brief 超声波句柄
+ * 
+ */
+struct ult_handle
+{
+    /* base */
+    uint16_t distance_cm;
+    uint8_t  num;
+    uint8_t  state;
+    ult_dev_handle_t dev_handle;
+};
+```
