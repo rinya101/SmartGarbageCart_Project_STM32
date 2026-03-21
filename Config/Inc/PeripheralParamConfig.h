@@ -291,4 +291,48 @@ extern const uint8_t oled_init_cmd_seq[];
     .tim_counter_mode   = TIM_CounterMode_Up,\
     .tim_division       = TIM_CKD_DIV1,\
 }
+/* ----------------------- 循迹模块 配置 ------------------------- */
+#define TRACKER_A_EXTI_HANDLE(void)  EXTI4_IRQHandler(void)
+#define TRACKER_A_DEFAULT_CONFIG() (track_cfg_t){\
+    /* TRACKER */\
+    .id                 = TRACKER_A,\
+    /* RCC */\
+    .rcc_gpio           = RCC_AHB1Periph_GPIOA,\
+    .gpio_port          = GPIOA,\
+    .gpio_pin           = GPIO_Pin_4,\
+    .gpio_mode          = GPIO_Mode_IN,\
+    .gpio_otype         = GPIO_OType_PP,\
+    .gpio_speed         = GPIO_Speed_25MHz,\
+    .gpio_pupd          = GPIO_PuPd_UP,\
+    /* EXTI */\
+    .exti_line          = EXTI_Line4,\
+    .exti_mode          = EXTI_Mode_Interrupt,\
+    .exti_trigger       = EXTI_Trigger_Rising_Falling,\
+    /* NVIC */\
+    .nvic_irqn          = EXTI4_IRQn,\
+    .nvic_pri           = 6,\
+    .nvic_subpri        = 0\
+}
+#define TRACKER_B_EXTI_HANDLE(void)  EXTI9_5_IRQHandler(void)
+#define TRACKER_B_DEFAULT_CONFIG() (track_cfg_t){\
+    /* TRACKER */\
+    .id                 = TRACKER_B,\
+    /* RCC */\
+    .rcc_gpio           = RCC_AHB1Periph_GPIOA,\
+    .gpio_port          = GPIOA,\
+    .gpio_pin           = GPIO_Pin_5,\
+    .gpio_mode          = GPIO_Mode_IN,\
+    .gpio_otype         = GPIO_OType_PP,\
+    .gpio_speed         = GPIO_Speed_25MHz,\
+    .gpio_pupd          = GPIO_PuPd_UP,\
+    /* EXTI */\
+    .exti_line          = EXTI_Line5,\
+    .exti_mode          = EXTI_Mode_Interrupt,\
+    .exti_trigger       = EXTI_Trigger_Rising_Falling,\
+    /* NVIC */\
+    .nvic_irqn          = EXTI9_5_IRQn,\
+    .nvic_pri           = 7,\
+    .nvic_subpri        = 0\
+}
+
 #endif  /* PeripheralParamConfig.h */

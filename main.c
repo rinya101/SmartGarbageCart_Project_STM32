@@ -9,6 +9,7 @@
 #include "PeripheralParamConfig.h"
 #include "bsp_ultrasonic.h"
 #include "bsp_oled.h"
+#include "bsp_tracking.h"
 void app(void *pvParameters);
 void led_init(void);
 
@@ -67,41 +68,22 @@ void app(void *pvParameters)
     encoder_attach_event(encoder_cfg);
     encoder_init(g_encoder, encoder_cfg);
     vPortFree(encoder_cfg);/* 释放内存 */
-    /* 超声波模块1初始化 */
-    ult_handle_t ult1_handle;
-    ult_cfg_t ult1_cfg;
-    ult1_cfg = ULT_FIRST_DEFAULT_CONDFIG();
-    bsp_ultrasonic_init(&ult1_handle, &ult1_cfg);
-    /* 超声波模块2 */
-    ult_handle_t ult2_handle;
-    ult_cfg_t ult2_cfg;
-    ult2_cfg = ULT_SECOND_DEFAULT_CONDFIG();
-    bsp_ultrasonic_init(&ult2_handle, &ult2_cfg);
-    /* 超声波模块3 */
-    ult_handle_t ult3_handle;
-    ult_cfg_t ult3_cfg;
-    ult3_cfg = ULT_THIRD_DEFAULT_CONDFIG();
-    bsp_ultrasonic_init(&ult3_handle, &ult3_cfg);
+    /* 循迹模块 A路 初始化 */
+    track_handle_t trackA_handle;
+    track_cfg_t trackA_cfg = TRACKER_A_DEFAULT_CONFIG();
+    bsp_tracking_init(&trackA_handle, &trackA_cfg);
+    /* 循迹模块 B路 初始化 */
+    track_handle_t trackB_handle;
+    track_cfg_t trackB_cfg = TRACKER_B_DEFAULT_CONFIG();
+    bsp_tracking_init(&trackB_handle, &trackB_cfg);
     uint16_t count = 0;
     while(1)
     {
         count++;
-        if (ult1_handle.state == ULT_READY)
-        {
-            bsp_ultrasonic_trigger(&ult1_handle);
-        }
-        if (ult2_handle.state == ULT_READY)
-        {
-            bsp_ultrasonic_trigger(&ult2_handle);
-        }
-        if (ult3_handle.state == ULT_READY)
-        {
-            bsp_ultrasonic_trigger(&ult3_handle);
-        }
         vTaskDelay(50);
-        // printf("first distance:%d\n second distance:%d\n",
-        //     bsp_ultrasonic_get_distance(&ult1_handle),
-        //     bsp_ultrasonic_get_distance(&ult2_handle));
+        printf("track_A_state = %s\ntrack_B_state = %s\n", 
+            trackA_handle.sta ? "On_line": "Off_line",
+            trackB_handle.sta );
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)

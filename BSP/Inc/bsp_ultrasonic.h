@@ -48,8 +48,8 @@ typedef struct
     /* GPIO */
     GPIO_TypeDef*       tr_gpio_port;
     GPIO_TypeDef*       eh_gpio_port;
-    uint16_t            tr_gpio_pin;
-    uint16_t            eh_gpio_pin;
+    uint32_t            tr_gpio_pin;
+    uint32_t            eh_gpio_pin;
     GPIOMode_TypeDef    tr_gpio_mode;
     GPIOMode_TypeDef    eh_gpio_mode;
     GPIOOType_TypeDef   tr_gpio_otype;
