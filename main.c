@@ -68,22 +68,11 @@ void app(void *pvParameters)
     encoder_attach_event(encoder_cfg);
     encoder_init(g_encoder, encoder_cfg);
     vPortFree(encoder_cfg);/* 释放内存 */
-    /* 循迹模块 A路 初始化 */
-    track_handle_t trackA_handle;
-    track_cfg_t trackA_cfg = TRACKER_A_DEFAULT_CONFIG();
-    bsp_tracking_init(&trackA_handle, &trackA_cfg);
-    /* 循迹模块 B路 初始化 */
-    track_handle_t trackB_handle;
-    track_cfg_t trackB_cfg = TRACKER_B_DEFAULT_CONFIG();
-    bsp_tracking_init(&trackB_handle, &trackB_cfg);
     uint16_t count = 0;
     while(1)
     {
         count++;
-        vTaskDelay(50);
-        printf("track_A_state = %s\ntrack_B_state = %s\n", 
-            trackA_handle.sta ? "On_line": "Off_line",
-            trackB_handle.sta );
+        vTaskDelay(150);
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)
@@ -92,7 +81,6 @@ void app(void *pvParameters)
                 printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
             }
         }
-
     }
 }
 void led_init(void)

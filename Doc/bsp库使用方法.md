@@ -1027,7 +1027,7 @@ void app(void *pvParameters)
         vTaskDelay(50);
         printf("track_A_state = %s\ntrack_B_state = %s\n", 
             trackA_handle.sta ? "On_line": "Off_line",
-            trackB_handle.sta );
+            trackB_handle.sta ? "On_line": "Off_line");
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)

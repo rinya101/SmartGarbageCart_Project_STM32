@@ -28,6 +28,7 @@ virtualFolder:
             - path: ../../BSP/Inc/bsp_oled.h
             - path: ../../BSP/Inc/bsp_ultrasonic.h
             - path: ../../BSP/Inc/bsp_tracking.h
+            - path: ../../BSP/Inc/bsp_it.h
           folders: []
         - name: Src
           files:
@@ -37,6 +38,7 @@ virtualFolder:
             - path: ../../BSP/Src/bsp_oled.c
             - path: ../../BSP/Src/bsp_ultrasonic.c
             - path: ../../BSP/Src/bsp_tracking.c
+            - path: ../../BSP/Src/bsp_it.c
           folders: []
     - name: Drivers
       files: []

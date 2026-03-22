@@ -18,11 +18,13 @@ track_handle_t* s_track_c_handle = NULL;
 track_handle_t* s_track_d_handle = NULL;
 track_handle_t* s_track_e_handle = NULL;
 /*-------------------------------循迹中断服务函数--------------------------------------*/
+
 /**
- * @brief A路循迹中断处理函数
+ * @brief A 循迹中断处理函数
  * 
+ * @param param 
  */
-void TRACKER_A_EXTI_HANDLE(void)
+void tracker_a_exti_handler(void* param)
 {
     if (EXTI_GetITStatus(s_track_a_handle->dev.exti_line) != RESET)
     {
@@ -42,8 +44,9 @@ void TRACKER_A_EXTI_HANDLE(void)
 /**
  * @brief B路循迹中断处理函数
  * 
+ * @param param 
  */
-void TRACKER_B_EXTI_HANDLE(void)
+void tracker_b_exti_handler(void* param)
 {
     if (EXTI_GetITStatus(s_track_b_handle->dev.exti_line) != RESET)
     {
@@ -60,7 +63,6 @@ void TRACKER_B_EXTI_HANDLE(void)
         }
     }
 }
-
 /**
  * @brief 循迹初始化
  * 

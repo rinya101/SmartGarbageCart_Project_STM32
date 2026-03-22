@@ -17,8 +17,8 @@
 #define USART_STRING_END_CR             '\r'        /* 字符串回车符 */
 #define USART_STRING_END_LF             '\n'        /* 字符串换行符 */
 #define USART_STRING_END_NULL           '\0'        /* 字符串结束符 */
-#define USART1_IRQ_HANDLE(void)         USART1_IRQHandler(void)
-#define USART2_IRQ_HANDLE(void)         USART2_IRQHandler(void)
+//#define USART1_IRQ_HANDLE(void)         USART1_IRQHandler(void)
+//#define USART2_IRQ_HANDLE(void)         USART2_IRQHandler(void)
 /**
  * @brief USART 默认初始化配置 
  * @note 修改 usart_tx_source 与 usart_rx_source 对应接口 任务交给程序员自己配置
@@ -69,9 +69,9 @@
     .dma_sub_priority       = 0}
 
 /* ---------------------------------- 编码器 配置 ----------------------------- */
-#define ENCODER_BTN_IRQ_HANDLE(void)    EXTI15_10_IRQHandler(void)
-#define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI15_10_IRQHandler(void)
-#define ENCODER_TIM_IRQ_HANDLE(void)    TIM5_IRQHandler(void)
+//#define ENCODER_BTN_IRQ_HANDLE(void)    EXTI15_10_IRQHandler(void)
+//#define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI15_10_IRQHandler(void)
+//#define ENCODER_TIM_IRQ_HANDLE(void)    TIM5_IRQHandler(void)
 /**
  * @note 根据实际情况修改 中断服务函数参考 bsp_encoder_it.c 中的函数：
  * 
@@ -173,8 +173,8 @@ extern const uint8_t oled_init_cmd_seq[];
     .height             = OLED_HEIGHT\
 }
 /* ----------------------- 超声波模块（HC-SR04） 配置 ------------------------- */
-#define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
-#define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
+//#define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
+//#define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
 #define ULT_FIRST_DEFAULT_CONDFIG() (ult_cfg_t){\
     /* NUM */\
     .num = 1,\
@@ -213,7 +213,7 @@ extern const uint8_t oled_init_cmd_seq[];
     .tim_counter_mode   = TIM_CounterMode_Up,\
     .tim_division       = TIM_CKD_DIV1,\
 }
-#define ULT_SECOND_EH_EXTI_HANDLE(void) EXTI2_IRQHandler(void)
+//#define ULT_SECOND_EH_EXTI_HANDLE(void) EXTI2_IRQHandler(void)
 #define ULT_SECOND_DEFAULT_CONDFIG() (ult_cfg_t){\
     /* NUM */\
     .num = 2,\
@@ -252,7 +252,7 @@ extern const uint8_t oled_init_cmd_seq[];
     .tim_counter_mode   = TIM_CounterMode_Up,\
     .tim_division       = TIM_CKD_DIV1,\
 }
-#define ULT_THIRD_EH_EXTI_HANDLE(void)  EXTI3_IRQHandler(void)
+//#define ULT_THIRD_EH_EXTI_HANDLE(void)  EXTI3_IRQHandler(void)
 #define ULT_THIRD_DEFAULT_CONDFIG() (ult_cfg_t){\
     /* NUM */\
     .num = 3,\
@@ -292,7 +292,7 @@ extern const uint8_t oled_init_cmd_seq[];
     .tim_division       = TIM_CKD_DIV1,\
 }
 /* ----------------------- 循迹模块 配置 ------------------------- */
-#define TRACKER_A_EXTI_HANDLE(void)  EXTI4_IRQHandler(void)
+//#define TRACKER_A_EXTI_HANDLE(void)  EXTI4_IRQHandler(void)
 #define TRACKER_A_DEFAULT_CONFIG() (track_cfg_t){\
     /* TRACKER */\
     .id                 = TRACKER_A,\
@@ -313,7 +313,7 @@ extern const uint8_t oled_init_cmd_seq[];
     .nvic_pri           = 6,\
     .nvic_subpri        = 0\
 }
-#define TRACKER_B_EXTI_HANDLE(void)  EXTI9_5_IRQHandler(void)
+//#define TRACKER_B_EXTI_HANDLE(void)  EXTI9_5_IRQHandler(void)
 #define TRACKER_B_DEFAULT_CONFIG() (track_cfg_t){\
     /* TRACKER */\
     .id                 = TRACKER_B,\

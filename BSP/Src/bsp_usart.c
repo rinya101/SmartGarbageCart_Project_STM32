@@ -13,14 +13,14 @@
 #endif
 
 usart_handle_t*     g_usart1_handle = NULL;
-usart_handle_t*     g_usart2_handle = NULL;
 
 /**
- * @brief USART1 中断处理函数
+ * @brief 主消息处理函数
+ * 
+ * @param handle 
  */
-void USART1_IRQHandler(void)
+void main_message_irq_handler(void *param)
 {
-
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
     {
         uint8_t ch = USART_ReceiveData(USART1);
@@ -50,44 +50,10 @@ void USART1_IRQHandler(void)
 }
 
 /**
- * @brief USART2 中断处理函数
- */
-void USART2_IRQHandler(void)
-{
-    if (g_usart2_handle == NULL) return;
-
-    if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
-    {
-        uint8_t ch = USART_ReceiveData(USART2);
-        if (ch == USART_STRING_END_CR || ch == USART_STRING_END_LF)
-        {
-            if (g_usart2_handle->buf_index < USART_RECEIVE_BUF_SIZE)
-            {
-                g_usart2_handle->rx_buf[g_usart2_handle->buf_index] = USART_STRING_END_NULL;
-            }
-            g_usart2_handle->new_msg_flag = 1;
-            g_usart2_handle->rx_len = g_usart2_handle->buf_index;
-            g_usart2_handle->buf_index = 0;
-            if (g_usart2_handle->rx_callback != NULL)
-            {
-                g_usart2_handle->rx_callback(g_usart2_handle);
-            }
-        }
-        else
-        {
-            if (g_usart2_handle->buf_index < USART_RECEIVE_BUF_SIZE - 1)
-            {
-                g_usart2_handle->rx_buf[g_usart2_handle->buf_index++] = ch;
-            }
-        }
-        USART_ClearITPendingBit(USART2, USART_IT_RXNE);
-    }
-}
-/**
- * @brief DMA 传输 中断
+ * @brief DMA 中断处理函数
  * 
  */
-void DMA2_Stream7_IRQHandler(void)
+void DMA_main_message_irq_handler(void* param)
 {
     /* DAM 传输完成 */
     if(DMA_GetITStatus(DMA2_Stream7, DMA_IT_TCIF7) != RESET)
@@ -97,7 +63,6 @@ void DMA2_Stream7_IRQHandler(void)
         DMA_Cmd(DMA2_Stream7, DISABLE);
     }
 }
-
 /**
  * @brief 串口时钟初始化
  * 

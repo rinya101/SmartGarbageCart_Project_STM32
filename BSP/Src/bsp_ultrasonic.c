@@ -52,11 +52,13 @@ static __weak void ult_data_updata_event(void* data[])
 
 }
 
+
 /**
- * @brief 第一个超声波 外部中断处理函数
+ * @brief first 超声波外部中断处理函数
  * 
+ * @param param 
  */
-void ULT_FIRST_EH_EXTI_HANDLE(void)
+void ult_first_eh_exti_handler(void* param)
 {
     uint32_t counter = 0;
     if (EXTI_GetITStatus(s_ult_first_handle->dev_handle.eh_exti_line) != RESET)
@@ -82,9 +84,11 @@ void ULT_FIRST_EH_EXTI_HANDLE(void)
     }
 }
 /**
- * @brief 第二个超声波 外部中断处理函数
+ * @brief second 超声波 外部中断处理函数
+ * 
+ * @param param 
  */
-void ULT_SECOND_EH_EXTI_HANDLE(void)
+void ult_second_eh_exti_handler(void* param)
 {
     if (EXTI_GetITStatus(s_ult_second_handle->dev_handle.eh_exti_line) != RESET)
     {
@@ -112,9 +116,12 @@ void ULT_SECOND_EH_EXTI_HANDLE(void)
 }
 
 /**
- * @brief 第三个超声波 外部中断处理函数
+ * @brief  third 超声波中断服务函数
+ * 
+ * @param param
+ * @retval None
  */
-void ULT_THIRD_EH_EXTI_HANDLE(void)
+void ult_third_eh_exti_handler(void* param)
 {
     if (EXTI_GetITStatus(s_ult_third_handle->dev_handle.eh_exti_line) != RESET)
     {
@@ -141,10 +148,11 @@ void ULT_THIRD_EH_EXTI_HANDLE(void)
     }
 }
 /**
- * @brief 定时器中断处理函数
+ * @brief 超声波定时器中断处理函数
  * 
+ * @param param 
  */
-void ULT_TIM_HANDLE(void)
+void ult_tim_handler(void* param)
 {
     if (TIM_GetITStatus(s_ult_first_handle->dev_handle.timx, TIM_IT_Update) != RESET)
     {
@@ -160,7 +168,6 @@ void ULT_TIM_HANDLE(void)
         ult_data_updata_event(ult_all_data);
     }
 }
-
 /**
  * @brief 获取 GPIO 端口源 (给 SYSCFG 使用)
  */

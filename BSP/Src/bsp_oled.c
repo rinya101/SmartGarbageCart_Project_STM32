@@ -18,11 +18,8 @@ oled_handle_t* s_oled_handle = NULL;
  * 
  */
 static uint8_t s_screen_buf[OLED_WIDTH * OLED_HEIGHT / OLED_PAGE_SIZE];
-/**
- * @brief 
- * 
- */
-void OLED_DMA_IRQ_HANDLE(void)
+
+void oled_dma_irq_handler(void* param)
 {
     if (DMA_GetITStatus(s_oled_handle->dma_stream, DMA_IT_TCIF6) != RESET)
     {

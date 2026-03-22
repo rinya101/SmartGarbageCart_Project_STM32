@@ -16,47 +16,39 @@
  * 
  */
 static encoder_handle_t* s_encoder_handle = NULL;
+
 /**
- * @brief 编码器外部中断
+ * @brief 编码器中断处理函数
  * 
+ * @param param 
  */
-#if (ENCODER_BTN_IRQ_HANDLE == ENCODER_LEFT_IRQ_HANDLE)
-void ENCODER_BTN_IRQ_HANDLE(void)
+void encoder_btn_irq_handler(void* param)
 {
     if (EXTI_GetITStatus(s_encoder_handle->btn_exti_line) != RESET)
     {
         s_encoder_handle->btn_cb(s_encoder_handle);
         EXTI_ClearITPendingBit(s_encoder_handle->btn_exti_line);
     }
+}
+/**
+ * @brief 编码器中断处理函数
+ * 
+ * @param param 
+ */
+void encoder_left_irq_handler(void* param)
+{
     if (EXTI_GetITStatus(s_encoder_handle->left_exti_line) != RESET)
     {
         s_encoder_handle->encoder_cb(s_encoder_handle);
         EXTI_ClearITPendingBit(s_encoder_handle->left_exti_line);
     }
 }
-#else
-void ENCODER_BTN_IRQ_HANDLE(void)
-{
-    if (EXTI_GetITStatus(g_encoder->btn_exti_line) != RESET)
-    {
-        g_encoder->btn_cb(g_encoder);
-        EXTI_ClearITPendingBit(g_encoder->btn_exti_line);
-    }
-}
-void ENCODER_LEFT_IRQ_HANDLE(void)
-{
-    if (EXTI_GetITStatus(g_encoder->left_exti_line) != RESET)
-    {
-        g_encoder->encoder_cb(g_encoder);
-        EXTI_ClearITPendingBit(g_encoder->left_exti_line);
-    }
-}
-#endif
 /**
  * @brief TIM 中断服务函数
  * 
+ * @param param 
  */
-void ENCODER_TIM_IRQ_HANDLE(void)
+void encoder_tim_irq_handler(void* param)
 {
     if (TIM_GetITStatus(s_encoder_handle->timx, TIM_IT_Update) != RESET)
     {
