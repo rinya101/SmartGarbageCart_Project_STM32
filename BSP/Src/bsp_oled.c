@@ -140,7 +140,7 @@ static void bsp_oled_write_cmd(oled_handle_t* oled_handle, uint8_t cmd)
     I2C_GenerateSTART(oled_handle->i2cx, ENABLE);
     while (!I2C_CheckEvent(oled_handle->i2cx, I2C_EVENT_MASTER_MODE_SELECT));
     I2C_Send7bitAddress(oled_handle->i2cx, oled_handle->oled_addr, I2C_Direction_Transmitter);
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+    while (!I2C_CheckEvent(oled_handle->i2cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
     I2C_SendData(oled_handle->i2cx, OLED_CMD_MODE);
     while (!I2C_CheckEvent(oled_handle->i2cx, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
     I2C_SendData(oled_handle->i2cx, cmd);

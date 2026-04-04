@@ -335,4 +335,40 @@ extern const uint8_t oled_init_cmd_seq[];
     .nvic_subpri        = 0\
 }
 
+
+/* ----------------------- 指南针模块 配置 ------------------------- */
+#define COMPASS_ADDR    0x58
+#define COMPASS_DEFAULT_CONFIG() (compass_cfg_t){\
+    /* RCC */\
+    .gpio_sda_rcc       = RCC_AHB1Periph_GPIOB,\
+    .gpio_scl_rcc       = RCC_AHB1Periph_GPIOA,\
+    .i2c_rcc            = RCC_APB1Periph_I2C3,\
+    /* GPIO */\
+    .gpio_sda_port      = GPIOB,\
+    .gpio_scl_port      = GPIOA,\
+    .gpio_sda_source    = GPIO_PinSource8,\
+    .gpio_scl_source    = GPIO_PinSource8,\
+    .gpio_sda_af        = GPIO_AF9_I2C3,\
+    .gpio_scl_af        = GPIO_AF_I2C3,\
+    .gpio_sda_pin       = GPIO_Pin_8,\
+    .gpio_scl_pin       = GPIO_Pin_8,\
+    .gpio_sda_mode      = GPIO_Mode_AF,\
+    .gpio_scl_mode      = GPIO_Mode_AF,\
+    .gpio_sda_otype     = GPIO_OType_OD,\
+    .gpio_scl_otype     = GPIO_OType_OD,\
+    .gpio_sda_pu        = GPIO_PuPd_UP,\
+    .gpio_scl_pu        = GPIO_PuPd_UP,\
+    .gpio_sda_speed     = GPIO_Speed_50MHz,\
+    .gpio_scl_speed     = GPIO_Speed_50MHz,\
+    /* I2C */\
+    .i2c                = I2C3,\
+    .i2c_mode           = I2C_Mode_I2C,\
+    .i2c_duty           = I2C_DutyCycle_2,\
+    .i2c_own_addr       = 0x00,\
+    .i2c_ack            = I2C_Ack_Enable,\
+    .i2c_ack_addr       = I2C_AcknowledgedAddress_7bit,\
+    .i2c_speed          = 100000,\
+    /* Base */\
+    .addr               = COMPASS_ADDR\
+};
 #endif  /* PeripheralParamConfig.h */

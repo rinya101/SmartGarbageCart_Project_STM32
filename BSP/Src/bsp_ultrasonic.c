@@ -51,8 +51,6 @@ static __weak void ult_data_updata_event(void* data[])
     );
 
 }
-
-
 /**
  * @brief first 超声波外部中断处理函数
  * 

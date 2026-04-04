@@ -1150,3 +1150,184 @@ struct track_handle
     track_dev_handle_t  dev;
 };
 ```
+## 电子罗盘模块（QMC5883P）
+### 示例
+```C
+
+#include "stm32f4xx.h"
+#include "SysClockConfig.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "bsp_usart.h"
+#include <string.h>
+#include "bsp_encoder.h"
+#include "PeripheralParamConfig.h"
+#include "bsp_ultrasonic.h"
+#include "bsp_oled.h"
+#include "bsp_tracking.h"
+#include "bsp_compass.h"
+void app(void *pvParameters);
+void led_init(void);
+oled_handle_t oled;
+compass_handle_t compass;
+int main(void)
+{
+    /* 时钟配置 */
+    SysClockConfig_HSE25MHZ();
+    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));
+    g_usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
+    if (g_usart1_handle == NULL)
+    {
+        while(1); // 内存不足
+    }
+    memset(g_usart1_handle, 0, sizeof(usart_handle_t));
+    usart_cfg_t *cfg = pvPortMalloc(sizeof(usart_cfg_t));
+    if (cfg == NULL)
+    {
+        while(1);// 内存不足
+    }
+    memset(cfg, 0, sizeof(cfg));
+    *cfg = USART1_DEFAULT_CONFIG();
+    bsp_usart_init(g_usart1_handle, *cfg);
+    vPortFree(cfg);/* 释放内存 */
+    printf("[info] FreeRTOS start!\r\n");
+    /* 创建任务 */
+    if(xTaskCreate(app, "app", 1024, NULL, 5, NULL) != pdPASS)
+    {
+        printf("create task failed\r\n");
+    }
+    vTaskStartScheduler();
+    while(1)
+    {
+        printf("[Error]: FreeRTOS scheduler error!\r\n");
+    }
+}
+
+/**
+ * @brief 用户任务
+ */
+void app(void *pvParameters)
+{
+    compass_cfg_t* compass_cfg = &COMPASS_DEFAULT_CONFIG();
+    bsp_compass_init(&compass, compass_cfg);
+    uint16_t count = 0;
+    while(1)
+    {
+        count++;
+        bsp_compass_read(&compass);
+        printf("angle: %.2f x:%d\ty:%d\tz:%d\tcount:%d\n",compass.data->angle,
+               compass.data->x, compass.data->y, compass.data->z,
+               count);
+        vTaskDelay(100);
+        if (g_usart1_handle != NULL)
+        {
+            if (g_usart1_handle->new_msg_flag)
+            {
+                g_usart1_handle->new_msg_flag = 0;
+                printf("usart Receive: %s\n",g_usart1_handle->rx_buf);
+            }
+        }
+    }
+}
+void led_init(void)
+{
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+```
+### 私有全局变量
+```C
+/**
+ * @brief 指南针数据
+ * 
+ */
+copmass_data_t s_compass_data;
+```
+### 枚举 
+```C
+/**
+ * @brief 指南针模块状态枚举
+ * 
+ */
+typedef enum 
+{
+    COMPASS_OK      = 0,
+    COMPASS_ERROR   = 1,
+} compass_status_t;
+```
+### 结构体
+```C
+/**
+ * @brief 指南针数据结构体
+ * 
+ */
+typedef struct 
+{
+    int16_t x;
+    int16_t y;
+    int16_t z;
+    float angle;
+} copmass_data_t;
+/**
+ * @brief 指南针模块配置结构体
+ * 
+ */
+typedef struct 
+{
+    /* RCC */
+    uint32_t            gpio_sda_rcc;
+    uint32_t            gpio_scl_rcc;
+    uint32_t            i2c_rcc;
+    /* GPIO */
+    GPIO_TypeDef*       gpio_sda_port;
+    GPIO_TypeDef*       gpio_scl_port;
+    uint16_t            gpio_sda_source;
+    uint16_t            gpio_scl_source;
+    uint8_t             gpio_sda_af;
+    uint8_t             gpio_scl_af;
+    uint32_t            gpio_sda_pin;
+    uint32_t            gpio_scl_pin;
+    GPIOMode_TypeDef    gpio_sda_mode;
+    GPIOMode_TypeDef    gpio_scl_mode;
+    GPIOOType_TypeDef   gpio_sda_otype;
+    GPIOOType_TypeDef   gpio_scl_otype;
+    GPIOPuPd_TypeDef    gpio_sda_pu;
+    GPIOPuPd_TypeDef    gpio_scl_pu;
+    GPIOSpeed_TypeDef   gpio_sda_speed;
+    GPIOSpeed_TypeDef   gpio_scl_speed;
+    /* I2C */
+    I2C_TypeDef*        i2c;
+    uint16_t            i2c_mode;
+    uint16_t            i2c_duty;
+    uint16_t            i2c_own_addr;
+    uint16_t            i2c_ack;
+    uint16_t            i2c_ack_addr;
+    uint32_t            i2c_speed;
+    /* Base */
+    uint8_t             addr;
+} compass_cfg_t;
+typedef struct
+{
+    I2C_TypeDef*        i2c;
+    uint8_t             addr;
+} compass_dev_t;
+/**
+ * @brief 指南针模块句柄
+ * 
+ */
+struct compass_handle
+{
+    /* Base */
+    copmass_data_t *data;
+    uint8_t         id; // 模块ID 0x80 
+    /* Dev */
+    compass_dev_t dev;
+};
+```

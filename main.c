@@ -10,13 +10,16 @@
 #include "bsp_ultrasonic.h"
 #include "bsp_oled.h"
 #include "bsp_tracking.h"
+#include "bsp_compass.h"
 void app(void *pvParameters);
 void led_init(void);
-
+oled_handle_t oled;
+compass_handle_t compass;
 int main(void)
 {
     /* 时钟配置 */
     SysClockConfig_HSE25MHZ();
+    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));
     g_usart1_handle = pvPortMalloc(sizeof(usart_handle_t));
     if (g_usart1_handle == NULL)
     {
@@ -50,29 +53,17 @@ int main(void)
  */
 void app(void *pvParameters)
 {
-    /* 编码器配置 */
-    encoder_handle_t* g_encoder = pvPortMalloc(sizeof(encoder_handle_t));
-    if (g_encoder == NULL)
-    {
-        while(1); /* 内存不足 */
-    }
-    memset(g_encoder, 0, sizeof(encoder_handle_t));
-    encoder_cfg_t *encoder_cfg = pvPortMalloc(sizeof(encoder_cfg_t));
-    if (encoder_cfg == NULL)
-    {
-        while(1); /* 内存不足 */
-    }
-    memset(encoder_cfg, 0, sizeof(encoder_cfg_t));
-    *encoder_cfg = ENCODER_DEFAULT_CONFIG();
-    encoder_attach_callback(encoder_cfg);
-    encoder_attach_event(encoder_cfg);
-    encoder_init(g_encoder, encoder_cfg);
-    vPortFree(encoder_cfg);/* 释放内存 */
+    compass_cfg_t* compass_cfg = &COMPASS_DEFAULT_CONFIG();
+    bsp_compass_init(&compass, compass_cfg);
     uint16_t count = 0;
     while(1)
     {
         count++;
-        vTaskDelay(150);
+        bsp_compass_read(&compass);
+        printf("angle: %.2f x:%d\ty:%d\tz:%d\tcount:%d\n",compass.data->angle,
+               compass.data->x, compass.data->y, compass.data->z,
+               count);
+        vTaskDelay(100);
         if (g_usart1_handle != NULL)
         {
             if (g_usart1_handle->new_msg_flag)
