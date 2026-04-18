@@ -3,7 +3,11 @@
 #ifndef NULL
 #define NULL (void*)0
 #endif
-
+/**
+ * @brief 初始化电机时钟
+ * 
+ * @param cfg 
+ */
 static void motor_clk_init(motor_cfg_t *cfg)
 {
     RCC_AHB1PeriphClockCmd(cfg->gpio_m1a_rcc, ENABLE);
@@ -12,7 +16,11 @@ static void motor_clk_init(motor_cfg_t *cfg)
     RCC_AHB1PeriphClockCmd(cfg->gpio_m2b_rcc, ENABLE);
     RCC_APB1PeriphClockCmd(cfg->tim_rcc, ENABLE);
 }
-
+/**
+ * @brief 电机GPIO初始化
+ * 
+ * @param cfg 
+ */
 static void motor_gpio_init(motor_cfg_t *cfg)
 {
     GPIO_InitTypeDef gpio_init;
@@ -51,7 +59,11 @@ static void motor_gpio_init(motor_cfg_t *cfg)
     GPIO_Init(cfg->gpio_m2a_port, &gpio_init);
     GPIO_PinAFConfig(cfg->gpio_m2a_port, cfg->gpio_m2a_pin_source, cfg->gpio_m2a_af);
 }
-
+/**
+ * @brief 电机定时器初始化
+ * 
+ * @param cfg 
+ */
 static void motor_tim_init(motor_cfg_t *cfg)
 {
     TIM_TimeBaseInitTypeDef tim_init;
@@ -74,7 +86,12 @@ static void motor_tim_init(motor_cfg_t *cfg)
     TIM_ARRPreloadConfig(cfg->tim, ENABLE);
     TIM_Cmd(cfg->tim, ENABLE);
 }
-
+/**
+ * @brief 电机初始化
+ * 
+ * @param handle 
+ * @param cfg 
+ */
 void bsp_motor_init(motor_handle_t *handle, motor_cfg_t *cfg)
 {
     if (handle == NULL || cfg == NULL) return;
@@ -97,9 +114,13 @@ void bsp_motor_init(motor_handle_t *handle, motor_cfg_t *cfg)
     bsp_motor_stop(handle);
 }
 
-// 输入 x：-1000 ~ 1000
-// 输出 y：-1000 ~ 1000（正弦平滑曲线）
-int16_t calculate_smooth_speed(int16_t x)
+/**
+ * @brief 速度调制（正弦）
+ * @note 输入 0 ~ 1000 ，输出 0 ~ 1000
+ * @param x 
+ * @return int16_t 
+ */
+static int16_t calculate_smooth_speed(int16_t x)
 {
     // 限制范围：-1000 ~ 1000
     if(x < -1000) x = -1000;
@@ -111,9 +132,19 @@ int16_t calculate_smooth_speed(int16_t x)
     // 转成整数速度值
     return (int16_t)y;
 }
+/**
+ * @brief 设置电机速度
+ * 
+ * @param handle 
+ * @param speed1 
+ * @param speed2 
+ */
 void bsp_motor_set_speed(motor_handle_t *handle, int16_t speed1, int16_t speed2)
 {
     if (handle == NULL) return;
+    /* 数值更新 */
+    handle->speed1 = speed1;
+    handle->speed2 = speed2;
     speed1 = calculate_smooth_speed(speed1);
     speed2 = calculate_smooth_speed(speed2);
     uint32_t ccr1 = 0, ccr2 = 0;
@@ -142,7 +173,11 @@ void bsp_motor_set_speed(motor_handle_t *handle, int16_t speed1, int16_t speed2)
     TIM_SetCompare1(handle->dev.tim, ccr1);
     TIM_SetCompare2(handle->dev.tim, ccr2); 
 }
-
+/**
+ * @brief 电机停止
+ * 
+ * @param handle 
+ */
 void bsp_motor_stop(motor_handle_t *handle)
 {
     bsp_motor_set_speed(handle, 0, 0);

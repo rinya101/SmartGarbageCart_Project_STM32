@@ -33,6 +33,7 @@ virtualFolder:
             - path: ../../BSP/Inc/bsp_buzzer.h
             - path: ../../BSP/Inc/bsp_motor.h
             - path: ../../BSP/Inc/welcome.h
+            - path: ../../BSP/Inc/bsp_servo.h
           folders: []
         - name: Src
           files:
@@ -47,6 +48,7 @@ virtualFolder:
             - path: ../../BSP/Src/bsp_buzzer.c
             - path: ../../BSP/Src/bsp_motor.c
             - path: ../../BSP/Src/welcome.c
+            - path: ../../BSP/Src/bsp_servo.c
           folders: []
     - name: Drivers
       files: []

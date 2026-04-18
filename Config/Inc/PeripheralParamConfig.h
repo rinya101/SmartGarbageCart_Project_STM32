@@ -278,28 +278,24 @@ extern const uint8_t oled_init_cmd_seq[];
     .nvic_pri           = 6,\
     .nvic_subpri        = 3\
 }
-#define TRACKER_C_DEFAULT_CONFIG() (track_cfg_t){\
-    /* TRACKER */\
-    .id                 = TRACKER_C,\
-    /* RCC */\
-    .rcc_gpio           = RCC_AHB1Periph_GPIOB,\
-    .gpio_port          = GPIOB,\
-    .gpio_pin           = GPIO_Pin_5,\
-    .gpio_mode          = GPIO_Mode_IN,\
-    .gpio_otype         = GPIO_OType_PP,\
-    .gpio_speed         = GPIO_Speed_25MHz,\
-    .gpio_pupd          = GPIO_PuPd_UP,\
-    .gpio_port_source   = EXTI_PortSourceGPIOB,\
-    .gpio_pin_source    = EXTI_PinSource5,\
-    /* EXTI */\
-    .exti_line          = EXTI_Line5,\
-    .exti_mode          = EXTI_Mode_Interrupt,\
-    .exti_trigger       = EXTI_Trigger_Rising_Falling,\
-    /* NVIC */\
-    .nvic_irqn          = EXTI9_5_IRQn,\
-    .nvic_pri           = 7,\
-    .nvic_subpri        = 2\
-}
+#define TRACKER_C_DEFAULT_CONFIG() (track_cfg_t){           \
+    /* TRACKER */                                           \
+    .id = TRACKER_C, /* RCC */                              \
+    .rcc_gpio = RCC_AHB1Periph_GPIOB,                       \
+    .gpio_port = GPIOB,                                     \
+    .gpio_pin = GPIO_Pin_5,                                 \
+    .gpio_mode = GPIO_Mode_IN,                              \
+    .gpio_otype = GPIO_OType_PP,                            \
+    .gpio_speed = GPIO_Speed_25MHz,                         \
+    .gpio_pupd = GPIO_PuPd_UP,                              \
+    .gpio_port_source = EXTI_PortSourceGPIOB,               \
+    .gpio_pin_source = EXTI_PinSource5, /* EXTI */          \
+    .exti_line = EXTI_Line5,                                \
+    .exti_mode = EXTI_Mode_Interrupt,                       \
+    .exti_trigger = EXTI_Trigger_Rising_Falling, /* NVIC */ \
+    .nvic_irqn = EXTI9_5_IRQn,                              \
+    .nvic_pri = 7,                                          \
+    .nvic_subpri = 2}
 
 /* ----------------------- 指南针模块 配置 ------------------------- */
 #define COMPASS_ADDR    0x58
@@ -347,5 +343,100 @@ extern const uint8_t oled_init_cmd_seq[];
     .prescaler      = 10 - 1,        /* 100MHz /10 = 10MHz → 0.1us */\
     .period         = 10000,         /* 1kHz 默认频率 */\
     .duty           = 1000,          /* 温和占空比 */\
+}
+
+/* ----------------------- 马达 配置 ------------------------- */
+#define MOTOR_DEFAULT_CONFIG() (motor_cfg_t){                          \
+    /* RCC */                                              \
+    .gpio_m1a_rcc        = RCC_AHB1Periph_GPIOA,           \
+    .gpio_m1b_rcc        = RCC_AHB1Periph_GPIOB,           \
+    .gpio_m2a_rcc        = RCC_AHB1Periph_GPIOA,           \
+    .gpio_m2b_rcc        = RCC_AHB1Periph_GPIOB,           \
+    .tim_rcc             = RCC_APB1Periph_TIM2,            \
+    /* GPIO PORT */                                        \
+    .gpio_m1a_port       = GPIOA,                          \
+    .gpio_m1b_port       = GPIOB,                          \
+    .gpio_m2a_port       = GPIOA,                          \
+    .gpio_m2b_port       = GPIOB,                          \
+    /* GPIO PIN */                                         \
+    .gpio_m1a_pin        = GPIO_Pin_0,                     \
+    .gpio_m1b_pin        = GPIO_Pin_10,                    \
+    .gpio_m2a_pin        = GPIO_Pin_1,                     \
+    .gpio_m2b_pin        = GPIO_Pin_12,                    \
+    /* MODE */                                             \
+    .gpio_m1a_mode       = GPIO_Mode_AF,                   \
+    .gpio_m1b_mode       = GPIO_Mode_OUT,                  \
+    .gpio_m2a_mode       = GPIO_Mode_AF,                   \
+    .gpio_m2b_mode       = GPIO_Mode_OUT,                  \
+    /* OTYPER */                                           \
+    .gpio_m1a_otype      = GPIO_OType_PP,                  \
+    .gpio_m1b_otype      = GPIO_OType_PP,                  \
+    .gpio_m2a_otype      = GPIO_OType_PP,                  \
+    .gpio_m2b_otype      = GPIO_OType_PP,                  \
+    /* SPEED */                                            \
+    .gpio_m1a_speed      = GPIO_Speed_100MHz,              \
+    .gpio_m1b_speed      = GPIO_Speed_100MHz,              \
+    .gpio_m2a_speed      = GPIO_Speed_100MHz,              \
+    .gpio_m2b_speed      = GPIO_Speed_100MHz,              \
+    /* PUPD */                                             \
+    .gpio_m1a_pu         = GPIO_PuPd_NOPULL,               \
+    .gpio_m1b_pu         = GPIO_PuPd_NOPULL,               \
+    .gpio_m2a_pu         = GPIO_PuPd_NOPULL,               \
+    .gpio_m2b_pu         = GPIO_PuPd_NOPULL,               \
+    /* AF */                                               \
+    .gpio_m1a_pin_source = GPIO_PinSource0,                \
+    .gpio_m2a_pin_source = GPIO_PinSource1,                \
+    .gpio_m1a_af         = GPIO_AF_TIM2,                   \
+    .gpio_m2a_af         = GPIO_AF_TIM2,                   \
+    /* TIM */                                              \
+    .tim                 = TIM2,                           \
+    .tim_channel1        = TIM_Channel_1,                   \
+    .tim_channel2        = TIM_Channel_2,                   \
+    .tim_pre             = 100 - 1,                         \
+    .tim_period          = 1000 - 1,                      \
+    .tim_div             = TIM_CKD_DIV1,                   \
+    .tim_mode            = TIM_CounterMode_Up,             \
+    .tim_rep             = 0,                              \
+}
+
+/* ----------------------- 舵机 配置 ------------------------- */
+#define SERVO1_DEFAULT_CONFIG() (servo_cfg_t){ \
+    .gpio_clk      = RCC_AHB1Periph_GPIOB, \
+    .tim_clk       = RCC_APB2Periph_TIM1, \
+    .gpio_port     = GPIOB, \
+    .gpio_pin      = GPIO_Pin_13, \
+    .gpio_af_src   = GPIO_PinSource13, \
+    .gpio_af       = GPIO_AF_TIM1, \
+    .tim           = TIM1, \
+    .tim_prescaler = 100 - 1, \
+    .tim_period    = 20000 - 1, \
+    .channel       = TIM_Channel_1, \
+    .duty          = 1500 \
+}
+#define SERVO2_DEFAULT_CONFIG() (servo_cfg_t){ \
+    .gpio_clk      = RCC_AHB1Periph_GPIOB, \
+    .tim_clk       = RCC_APB2Periph_TIM1, \
+    .gpio_port     = GPIOB, \
+    .gpio_pin      = GPIO_Pin_14, \
+    .gpio_af_src   = GPIO_PinSource14, \
+    .gpio_af       = GPIO_AF_TIM1, \
+    .tim           = TIM1, \
+    .tim_prescaler = 100 - 1, \
+    .tim_period    = 20000 - 1, \
+    .channel       = TIM_Channel_2, \
+    .duty          = 1500 \
+}
+#define SERVO3_DEFAULT_CONFIG() (servo_cfg_t){ \
+    .gpio_clk      = RCC_AHB1Periph_GPIOB, \
+    .tim_clk       = RCC_APB2Periph_TIM1, \
+    .gpio_port     = GPIOB, \
+    .gpio_pin      = GPIO_Pin_15, \
+    .gpio_af_src   = GPIO_PinSource15, \
+    .gpio_af       = GPIO_AF_TIM1, \
+    .tim           = TIM1, \
+    .tim_prescaler = 100 - 1, \
+    .tim_period    = 20000 - 1, \
+    .channel       = TIM_Channel_3, \
+    .duty          = 1500 \
 }
 #endif  /* PeripheralParamConfig.h */

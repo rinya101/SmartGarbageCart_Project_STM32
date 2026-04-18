@@ -13,6 +13,7 @@
 #include "bsp_compass.h"
 #include "bsp_motor.h"
 #include "bsp_buzzer.h"
+#include "bsp_servo.h"
 void app(void *pvParameters);
 void led_init(void);
 message_handle_t msg;
@@ -24,6 +25,9 @@ track_handle_t track_a;
 track_handle_t track_b;
 track_handle_t track_c;
 motor_handle_t motor;
+servo_handle_t servo1;
+servo_handle_t servo2;
+servo_handle_t servo3;
 int main(void)
 {
     /* 时钟配置 */
@@ -58,48 +62,66 @@ void app(void *pvParameters)
     bsp_ultrasonic_init(&ult, &ULT_DEFAULT_CONDFIG());
     /* 蜂鸣器初始化 */
     bsp_buzzer_init(&buzzer, &BUZZER_DEFAULT_CONFIG());
-    buzzer_play_dandelion_interlude(&buzzer);
+    //buzzer_play_dandelion_interlude(&buzzer);
     /* 循迹初始化 */
     bsp_tracking_init(&track_a, &TRACKER_A_DEFAULT_CONFIG());
     bsp_tracking_init(&track_b, &TRACKER_B_DEFAULT_CONFIG());
     bsp_tracking_init(&track_c, &TRACKER_C_DEFAULT_CONFIG());
     /* 马达初始化 */
     bsp_motor_init(&motor, &MOTOR_DEFAULT_CONFIG());
+    /* 舵机初始化 */
+    bsp_servo_init(&servo1, &SERVO1_DEFAULT_CONFIG());
+    bsp_servo_init(&servo2, &SERVO2_DEFAULT_CONFIG());
+    bsp_servo_init(&servo3, &SERVO3_DEFAULT_CONFIG());
+
     bsp_oled_welcome(&oled);
     bsp_buzzer_on(&buzzer);
     vTaskDelay(200);
     bsp_buzzer_off(&buzzer);
 
-    for (int16_t speed = -1000; speed < 1000; speed += 10)
-    {
-        printf("[Info]: Speed: %d\r\n", speed);
-        bsp_motor_set_speed(&motor, speed, speed);
-        vTaskDelay(200);
-    }
-    bsp_motor_set_speed(&motor, 0, 0);
     uint16_t count = 0;
+    float angle = 0;
+    uint16_t us = 500;
     while(1)
     {
         count++;
-        bsp_compass_read(&compass);
-        bsp_ultrasonic_trigger(&ult);
-        printf("angle: %.2f x:%d\ty:%d\tz:%d\tdistance:%d\tbuzz:%s\tleft:%s\tmid:%s\tright:%s\tcount:%d\n",compass.data->angle,
-               compass.data->x, compass.data->y, compass.data->z,
-               ult.distance_cm,
-               buzzer.is_open ? "on" : "off",
-               track_a.sta ? "black" : "white",
-               track_b.sta ? "black" : "white",
-               track_c.sta ? "black" : "white",
-               count);
-        if (ult.distance_cm < 20   &&  ult.distance_cm > 1)
+        // bsp_compass_read(&compass);
+        // bsp_ultrasonic_trigger(&ult);
+        // printf("angle: %.2f x:%d\ty:%d\tz:%d\tdistance:%d\tbuzz:%s\tleft:%s\tmid:%s\tright:%s\tcount:%d\n",compass.data->angle,
+        //        compass.data->x, compass.data->y, compass.data->z,
+        //        ult.distance_cm,
+        //        buzzer.is_open ? "on" : "off",
+        //        track_a.sta ? "black" : "white",
+        //        track_b.sta ? "black" : "white",
+        //        track_c.sta ? "black" : "white",
+        //        count);
+        // if (ult.distance_cm < 20   &&  ult.distance_cm > 1)
+        // {
+        //     bsp_buzzer_on(&buzzer);
+        // }
+        // else
+        // {
+        //     bsp_buzzer_off(&buzzer);
+        // }
+        // angle += 10;
+        // if (angle > 180)
+        // {
+        //     angle = 0;
+        // }
+        // printf("angle: %.2f\n",angle);
+        // bsp_servo_set_angle(&servo1, angle);
+        // bsp_servo_set_angle(&servo2, angle);
+        // bsp_servo_set_angle(&servo3, angle);
+        us += 100;
+        if (us > 2500)
         {
-            bsp_buzzer_on(&buzzer);
+            us = 500;
         }
-        else
-        {
-            bsp_buzzer_off(&buzzer);
-        }
-        vTaskDelay(80);
+        bsp_servo_set_us(&servo1, us);
+        bsp_servo_set_us(&servo2, us);
+        bsp_servo_set_us(&servo3, us);
+        vTaskDelay(500);
+
         if (msg.new_msg_flag)
         {
             msg.new_msg_flag = 0;
