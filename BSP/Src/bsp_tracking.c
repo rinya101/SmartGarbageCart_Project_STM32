@@ -64,6 +64,28 @@ void tracker_b_exti_handler(void* param)
     }
 }
 /**
+ * @brief C路循迹中断处理函数
+ * 
+ * @param param 
+ */
+void tracker_c_exti_handler(void* param)
+{
+    if (EXTI_GetITStatus(s_track_c_handle->dev.exti_line) != RESET)
+    {
+        EXTI_ClearITPendingBit(s_track_c_handle->dev.exti_line);
+        uint8_t sta = GPIO_ReadInputDataBit(s_track_c_handle->dev.gpio_port, 
+                                            s_track_c_handle->dev.gpio_pin);
+        if (sta != 0)
+        {
+            s_track_c_handle->sta = TRACKER_STATE_BLACK;
+        }
+        else
+        {
+            s_track_c_handle->sta = TRACKER_STATE_WHITE;
+        }
+    }
+}
+/**
  * @brief 循迹初始化
  * 
  * @param handle 
@@ -102,6 +124,7 @@ void bsp_tracking_init(track_handle_t* handle, track_cfg_t* cfg)
     }
     /* 时钟使能 */
     RCC_AHB1PeriphClockCmd(cfg->rcc_gpio, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
     /* GPIO 配置 */
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Pin     = cfg->gpio_pin;
@@ -110,6 +133,7 @@ void bsp_tracking_init(track_handle_t* handle, track_cfg_t* cfg)
     GPIO_InitStructure.GPIO_Speed   = cfg->gpio_speed;
     GPIO_InitStructure.GPIO_PuPd    = cfg->gpio_pupd;
     GPIO_Init(cfg->gpio_port, &GPIO_InitStructure);
+    SYSCFG_EXTILineConfig(cfg->gpio_port_source, cfg->gpio_pin_source);
     /* 外部中断配置 */
     EXTI_InitTypeDef EXTI_InitStructure;
     EXTI_InitStructure.EXTI_Line    = cfg->exti_line;

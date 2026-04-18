@@ -39,8 +39,6 @@ typedef enum
  */
 typedef struct 
 {
-    /* NUM */
-    uint8_t             num;
     /* RCC */
     uint32_t            tr_gpio_rcc;
     uint32_t            eh_gpio_rcc;
@@ -58,6 +56,10 @@ typedef struct
     GPIOSpeed_TypeDef   eh_gpio_speed;
     GPIOPuPd_TypeDef    tr_gpio_pupd;
     GPIOPuPd_TypeDef    eh_gpio_pupd;
+    uint8_t             tr_port_source;
+    uint8_t             eh_port_source;
+    uint8_t             tr_pin_source;
+    uint8_t             eh_pin_source;
     /* EXTI */
     uint8_t             eh_exti_line;
     EXTIMode_TypeDef    eh_exti_mode;
@@ -98,7 +100,6 @@ struct ult_handle
 {
     /* base */
     uint16_t distance_cm;
-    uint8_t  num;
     uint8_t  state;
     ult_dev_handle_t dev_handle;
 };

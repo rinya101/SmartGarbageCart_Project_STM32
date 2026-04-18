@@ -7,6 +7,7 @@
  *               可以作为个人参考学习使用。
 *******************************************************************************/
 #include "bsp_oled.h"
+#include "welcome.h"
 /**
  * @brief OLED 句柄
  * @note 锚点
@@ -260,4 +261,17 @@ void bsp_oled_draw_point(oled_handle_t* oled_handle, uint8_t x, uint8_t y, uint8
     {
         *to_written_p &= ~(1 << bit_pos_y); // 清除对应位
     }
+}
+/**
+ * @brief OLED 欢迎界面
+ */
+void bsp_oled_welcome(oled_handle_t* oled_handle)
+{
+    const uint8_t *buf = (const uint8_t *)welcome;
+    for (uint16_t i = 0; i < 1024; i++)
+    {
+        oled_handle->screen_buf[i] = buf[i];
+    }
+
+    bsp_oled_refresh(oled_handle);
 }

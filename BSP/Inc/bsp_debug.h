@@ -18,7 +18,7 @@
         printf("[ERROR] " format " | file: %s | fun: %s | line: %d\r\n", ##__VA_ARGS__, __FILE__, __FUNCTION__, __LINE__)
 
     #define SGCS_WARN(format, ...) \
-        printf("[WARN]  " format " | file: %s | fun: %s | line: %d\r\n", ##__VA_ARGS__, __FILE__, __FUNCTION__, __LINE__)
+        printf("[WARR]  " format " | file: %s | fun: %s | line: %d\r\n", ##__VA_ARGS__, __FILE__, __FUNCTION__, __LINE__)
 
     #define SGCS_INFO(format, ...) \
         printf("[INFO]  " format " | file: %s | fun: %s | line: %d\r\n", ##__VA_ARGS__, __FILE__, __FUNCTION__, __LINE__)

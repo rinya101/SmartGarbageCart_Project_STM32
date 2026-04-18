@@ -48,7 +48,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\build\Keil\</OutputDirectory>
+          <OutputDirectory>build\Keil\</OutputDirectory>
           <OutputName>SGCS</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -385,22 +385,22 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../main.c</FilePath>
+              <FilePath>..\..\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_conf.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../stm32f4xx_conf.h</FilePath>
+              <FilePath>..\..\stm32f4xx_conf.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../stm32f4xx_it.c</FilePath>
+              <FilePath>..\..\stm32f4xx_it.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_it.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../stm32f4xx_it.h</FilePath>
+              <FilePath>..\..\stm32f4xx_it.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -410,12 +410,12 @@
             <File>
               <FileName>SysClockConfig.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Config/Src/SysClockConfig.c</FilePath>
+              <FilePath>..\..\Config\Src\SysClockConfig.c</FilePath>
             </File>
             <File>
               <FileName>PeripheralParamConfig.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Config/Src/PeripheralParamConfig.c</FilePath>
+              <FilePath>..\..\Config\Src\PeripheralParamConfig.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -425,22 +425,22 @@
             <File>
               <FileName>FreeRTOSConfig.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Config/Inc/FreeRTOSConfig.h</FilePath>
+              <FilePath>..\..\Config\Inc\FreeRTOSConfig.h</FilePath>
             </File>
             <File>
               <FileName>SysClockConfig.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Config/Inc/SysClockConfig.h</FilePath>
+              <FilePath>..\..\Config\Inc\SysClockConfig.h</FilePath>
             </File>
             <File>
               <FileName>PeripheralParamConfig.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Config/Inc/PeripheralParamConfig.h</FilePath>
+              <FilePath>..\..\Config\Inc\PeripheralParamConfig.h</FilePath>
             </File>
             <File>
               <FileName>bsp_pin_cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_pin_cfg.h</FilePath>
+              <FilePath>..\..\BSP\Inc\bsp_pin_cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -450,17 +450,17 @@
             <File>
               <FileName>heap_4.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/port/heap_4.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\port\heap_4.c</FilePath>
             </File>
             <File>
               <FileName>port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/port/port.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\port\port.c</FilePath>
             </File>
             <File>
               <FileName>portmacro.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/port/portmacro.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\port\portmacro.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -470,37 +470,37 @@
             <File>
               <FileName>croutine.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/croutine.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\croutine.c</FilePath>
             </File>
             <File>
               <FileName>event_groups.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/event_groups.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\event_groups.c</FilePath>
             </File>
             <File>
               <FileName>list.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/list.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\list.c</FilePath>
             </File>
             <File>
               <FileName>queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/queue.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\queue.c</FilePath>
             </File>
             <File>
               <FileName>stream_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/stream_buffer.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\stream_buffer.c</FilePath>
             </File>
             <File>
               <FileName>tasks.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/tasks.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\tasks.c</FilePath>
             </File>
             <File>
               <FileName>timers.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/src/timers.c</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\src\timers.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -510,107 +510,107 @@
             <File>
               <FileName>atomic.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/atomic.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\atomic.h</FilePath>
             </File>
             <File>
               <FileName>croutine.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/croutine.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\croutine.h</FilePath>
             </File>
             <File>
               <FileName>deprecated_definitions.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/deprecated_definitions.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\deprecated_definitions.h</FilePath>
             </File>
             <File>
               <FileName>event_groups.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/event_groups.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\event_groups.h</FilePath>
             </File>
             <File>
               <FileName>FreeRTOS.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/FreeRTOS.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\FreeRTOS.h</FilePath>
             </File>
             <File>
               <FileName>list.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/list.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\list.h</FilePath>
             </File>
             <File>
               <FileName>message_buffer.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/message_buffer.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\message_buffer.h</FilePath>
             </File>
             <File>
               <FileName>mpu_prototypes.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/mpu_prototypes.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\mpu_prototypes.h</FilePath>
             </File>
             <File>
               <FileName>mpu_syscall_numbers.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/mpu_syscall_numbers.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\mpu_syscall_numbers.h</FilePath>
             </File>
             <File>
               <FileName>mpu_wrappers.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/mpu_wrappers.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\mpu_wrappers.h</FilePath>
             </File>
             <File>
               <FileName>newlib-freertos.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/newlib-freertos.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\newlib-freertos.h</FilePath>
             </File>
             <File>
               <FileName>picolibc-freertos.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/picolibc-freertos.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\picolibc-freertos.h</FilePath>
             </File>
             <File>
               <FileName>portable.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/portable.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\portable.h</FilePath>
             </File>
             <File>
               <FileName>projdefs.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/projdefs.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\projdefs.h</FilePath>
             </File>
             <File>
               <FileName>queue.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/queue.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\queue.h</FilePath>
             </File>
             <File>
               <FileName>semphr.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/semphr.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\semphr.h</FilePath>
             </File>
             <File>
               <FileName>stack_macros.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/stack_macros.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\stack_macros.h</FilePath>
             </File>
             <File>
               <FileName>StackMacros.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/StackMacros.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\StackMacros.h</FilePath>
             </File>
             <File>
               <FileName>stream_buffer.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/stream_buffer.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\stream_buffer.h</FilePath>
             </File>
             <File>
               <FileName>task.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/task.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\task.h</FilePath>
             </File>
             <File>
               <FileName>timers.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Middlewares/FreeRTOS/inc/timers.h</FilePath>
+              <FilePath>..\..\Middlewares\FreeRTOS\inc\timers.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -620,17 +620,17 @@
             <File>
               <FileName>stm32f4xx.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/System/stm32f4xx.h</FilePath>
+              <FilePath>..\..\Drivers\System\stm32f4xx.h</FilePath>
             </File>
             <File>
               <FileName>system_stm32f4xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/System/system_stm32f4xx.c</FilePath>
+              <FilePath>..\..\Drivers\System\system_stm32f4xx.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32f4xx.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/System/system_stm32f4xx.h</FilePath>
+              <FilePath>..\..\Drivers\System\system_stm32f4xx.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -640,387 +640,387 @@
             <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/misc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\misc.c</FilePath>
             </File>
             <File>
               <FileName>misc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/misc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\misc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_adc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_adc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_adc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_adc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_adc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_can.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_can.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_can.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_can.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_can.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cec.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cec.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cec.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cec.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cec.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_crc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_crc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_crc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_crc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_crc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cryp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cryp.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cryp.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cryp.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cryp.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cryp.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cryp_aes.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cryp_aes.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cryp_aes.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cryp_des.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cryp_des.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cryp_des.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_cryp_tdes.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_cryp_tdes.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_cryp_tdes.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dac.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dac.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dac.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dac.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dac.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dbgmcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dbgmcu.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dbgmcu.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dbgmcu.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dbgmcu.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dbgmcu.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dcmi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dcmi.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dcmi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dcmi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dcmi.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dcmi.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dfsdm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dfsdm.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dfsdm.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dfsdm.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dfsdm.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dfsdm.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dma.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dma.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dma.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dma.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dma.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dma2d.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dma2d.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dma2d.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dma2d.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dma2d.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dma2d.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dsi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dsi.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dsi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_dsi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_dsi.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_dsi.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_exti.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_exti.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_exti.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_exti.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_exti.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_flash.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_flash.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_flash.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_flash.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_flash.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_flash_ramfunc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_flash_ramfunc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_flash_ramfunc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_flash_ramfunc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_flash_ramfunc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_flash_ramfunc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_fmpi2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_fmpi2c.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_fmpi2c.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_fmpi2c.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_fmpi2c.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_fmpi2c.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_gpio.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_gpio.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_gpio.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_gpio.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_gpio.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_hash.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_hash.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hash.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_hash.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_hash.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hash_md5.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_hash_md5.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_hash_md5.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hash_sha1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_hash_sha1.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_hash_sha1.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_i2c.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_i2c.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_i2c.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_i2c.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_i2c.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_iwdg.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_iwdg.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_iwdg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_iwdg.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_iwdg.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_lptim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_lptim.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_lptim.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_lptim.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_lptim.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_lptim.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_ltdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_ltdc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_ltdc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_ltdc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_ltdc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_ltdc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_pwr.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_pwr.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_pwr.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_pwr.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_pwr.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_qspi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_qspi.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_qspi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_qspi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_qspi.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_qspi.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_rcc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_rcc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rcc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_rcc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_rcc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rng.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_rng.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_rng.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rng.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_rng.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_rng.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_rtc.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_rtc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rtc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_rtc.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_rtc.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_sai.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_sai.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_sai.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_sai.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_sai.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_sai.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_sdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_sdio.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_sdio.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_sdio.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_sdio.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_sdio.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_spdifrx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_spdifrx.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_spdifrx.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_spdifrx.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_spdifrx.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_spdifrx.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_spi.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_spi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_spi.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_spi.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_spi.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_syscfg.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_syscfg.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_syscfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_syscfg.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_syscfg.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_tim.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_tim.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_tim.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_tim.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_tim.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_usart.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_usart.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_usart.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_usart.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_usart.h</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_wwdg.c</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_wwdg.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_wwdg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/STM32F4XX_Driver/stm32f4xx_wwdg.h</FilePath>
+              <FilePath>..\..\Drivers\STM32F4XX_Driver\stm32f4xx_wwdg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1030,7 +1030,7 @@
             <File>
               <FileName>startup_stm32f411xe.s</FileName>
               <FileType>2</FileType>
-              <FilePath>../../Drivers/CMSIS/Device/startup_stm32f411xe.s</FilePath>
+              <FilePath>..\..\Drivers\CMSIS\Device\startup_stm32f411xe.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1040,22 +1040,22 @@
             <File>
               <FileName>core_cm4.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/CMSIS/Core/core_cm4.h</FilePath>
+              <FilePath>..\..\Drivers\CMSIS\Core\core_cm4.h</FilePath>
             </File>
             <File>
               <FileName>core_cmFunc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/CMSIS/Core/core_cmFunc.h</FilePath>
+              <FilePath>..\..\Drivers\CMSIS\Core\core_cmFunc.h</FilePath>
             </File>
             <File>
               <FileName>core_cmInstr.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/CMSIS/Core/core_cmInstr.h</FilePath>
+              <FilePath>..\..\Drivers\CMSIS\Core\core_cmInstr.h</FilePath>
             </File>
             <File>
               <FileName>core_cmSimd.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../Drivers/CMSIS/Core/core_cmSimd.h</FilePath>
+              <FilePath>..\..\Drivers\CMSIS\Core\core_cmSimd.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1063,29 +1063,44 @@
           <GroupName>BSP/Src</GroupName>
           <Files>
             <File>
-              <FileName>bsp_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../BSP/Src/bsp_usart.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_encoder.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../BSP/Src/bsp_encoder.c</FilePath>
+              <FilePath>..\..\BSP\Src\bsp_encoder.c</FilePath>
             </File>
             <File>
               <FileName>bsp_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../BSP/Src/bsp_debug.c</FilePath>
+              <FilePath>..\..\BSP\Src\bsp_debug.c</FilePath>
             </File>
             <File>
               <FileName>bsp_oled.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../BSP/Src/bsp_oled.c</FilePath>
+              <FilePath>..\..\BSP\Src\bsp_oled.c</FilePath>
             </File>
             <File>
               <FileName>bsp_ultrasonic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../BSP/Src/bsp_ultrasonic.c</FilePath>
+              <FilePath>..\..\BSP\Src\bsp_ultrasonic.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_tracking.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\BSP\Src\bsp_tracking.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\BSP\Src\bsp_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_compass.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\BSP\Src\bsp_compass.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_message.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\BSP\Src\bsp_message.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1093,29 +1108,44 @@
           <GroupName>BSP/Inc</GroupName>
           <Files>
             <File>
-              <FileName>bsp_usart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_usart.h</FilePath>
-            </File>
-            <File>
               <FileName>bsp_encoder.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_encoder.h</FilePath>
+              <FilePath>..\..\BSP\Inc\bsp_encoder.h</FilePath>
             </File>
             <File>
               <FileName>bsp_debug.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_debug.h</FilePath>
+              <FilePath>..\..\BSP\Inc\bsp_debug.h</FilePath>
             </File>
             <File>
               <FileName>bsp_oled.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_oled.h</FilePath>
+              <FilePath>..\..\BSP\Inc\bsp_oled.h</FilePath>
             </File>
             <File>
               <FileName>bsp_ultrasonic.h</FileName>
               <FileType>5</FileType>
-              <FilePath>../../BSP/Inc/bsp_ultrasonic.h</FilePath>
+              <FilePath>..\..\BSP\Inc\bsp_ultrasonic.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_tracking.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\BSP\Inc\bsp_tracking.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_it.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\BSP\Inc\bsp_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_compass.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\BSP\Inc\bsp_compass.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_message.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\BSP\Inc\bsp_message.h</FilePath>
             </File>
           </Files>
         </Group>

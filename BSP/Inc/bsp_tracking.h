@@ -56,6 +56,8 @@ typedef struct
     GPIOOType_TypeDef   gpio_otype;
     GPIOSpeed_TypeDef   gpio_speed;
     GPIOPuPd_TypeDef    gpio_pupd;
+    uint8_t             gpio_port_source;
+    uint8_t             gpio_pin_source;
     /* EXTI */
     uint32_t            exti_line;
     EXTIMode_TypeDef    exti_mode;

@@ -24,22 +24,40 @@
  * @note 修改 usart_tx_source 与 usart_rx_source 对应接口 任务交给程序员自己配置
  * @note 注意 DMA 通道 与 USART 通道的对应关系
  */
-#define USART1_DEFAULT_CONFIG()     (usart_cfg_t){\
-    .usart                  = USART1,\
+#define USART1_DEFAULT_CONFIG()     (message_cfg_t){\
+    /* RCC  */\
+    .usart_rcc              = RCC_APB2Periph_USART1,\
+    .tx_pin_rcc             = RCC_AHB1Periph_GPIOA,\
+    .rx_pin_rcc             = RCC_AHB1Periph_GPIOA,\
+    /* GPIO */\
     .tx_port                = USART1_TX_PORT,\
     .rx_port                = USART1_RX_PORT,\
     .tx_pin                 = USART1_TX_PIN,\
     .rx_pin                 = USART1_RX_PIN,\
+    .tx_mode                = GPIO_Mode_AF,\
+    .rx_mode                = GPIO_Mode_AF,\
+    .tx_otype               = GPIO_OType_OD,\
+    .rx_otype               = GPIO_OType_OD,\
+    .tx_pu                  = GPIO_PuPd_UP,\
+    .rx_pu                  = GPIO_PuPd_UP,\
+    .tx_speed               = GPIO_Speed_50MHz,\
+    .rx_speed               = GPIO_Speed_50MHz,\
     .usart_tx_source        = GPIO_PinSource9,\
     .usart_rx_source        = GPIO_PinSource10,\
+    .usart_af               = GPIO_AF_USART1,\
+    /* NVIC */\
+    .irq_channel            = USART1_IRQn,\
     .preemption_priority    = 5,\
     .sub_priority           = 0,\
+    /* USART */\
+    .usart                  = USART1,\
     .baudrate               = 115200,\
     .usart_mode             = USART_Mode_Rx | USART_Mode_Tx,\
     .usart_parity           = USART_Parity_No,\
     .usart_stopbit          = USART_StopBits_1,\
     .usart_wordlength       = USART_WordLength_8b,\
     .hfc                    = USART_HardwareFlowControl_None,\
+    /* DMA */\
     .tx_dma_stream          = DMA2_Stream7,\
     .tx_dma_channel         = DMA_Channel_4,\
     .tx_dma_irq             = DMA2_Stream7_IRQn,\
@@ -69,14 +87,14 @@
     .dma_sub_priority       = 0}
 
 /* ---------------------------------- 编码器 配置 ----------------------------- */
-//#define ENCODER_BTN_IRQ_HANDLE(void)    EXTI15_10_IRQHandler(void)
-//#define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI15_10_IRQHandler(void)
-//#define ENCODER_TIM_IRQ_HANDLE(void)    TIM5_IRQHandler(void)
+#define ENCODER_BTN_IRQ_HANDLE(void)    EXTI2_IRQHandler(void)
+#define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI0_IRQHandler(void)
+#define ENCODER_TIM_IRQ_HANDLE(void)    TIM5_IRQHandler(void)
 /**
  * @note 根据实际情况修改 中断服务函数参考 bsp_encoder_it.c 中的函数：
  * 
  */
-#define ENCODER_DEFAULT_CONFIG()    (const encoder_cfg_t){\
+#define ENCODER_DEFAULT_CONFIG()    (encoder_cfg_t){\
     /* RCC */\
     .btn_clk            = RCC_AHB1Periph_GPIOB,\
     .left_clk           = RCC_AHB1Periph_GPIOB,\
@@ -84,12 +102,12 @@
     .syscfg_clk         = RCC_APB2Periph_SYSCFG,\
     .tim_clk            = RCC_APB1Periph_TIM5,\
     /* GPIO */\
-    .btn_port           = ENCODER_BTN_PORT,\
-    .btn_pin            = ENCODER_BTN_PIN,\
-    .left_port          = ENCODER_LEFT_PORT,\
-    .left_pin           = ENCODER_LEFT_PIN,\
-    .right_port         = ENCODER_RIGHT_PORT,\
-    .right_pin          = ENCODER_RIGHT_PIN,\
+    .btn_port           = GPIOB,\
+    .btn_pin            = GPIO_Pin_2,\
+    .left_port          = GPIOB,\
+    .left_pin           = GPIO_Pin_0,\
+    .right_port         = GPIOB,\
+    .right_pin          = GPIO_Pin_1,\
     /* TIM */\
     .timx               = TIM5,\
     .tim_prescaler      = (uint16_t)(1000 - 1),\
@@ -97,17 +115,17 @@
     .tim_counter_mode   = TIM_CounterMode_Up,\
     .tim_division       = TIM_CKD_DIV1,\
     /* EXIT */\
-    .btn_exti_line      = EXTI_Line14,\
+    .btn_exti_line      = EXTI_Line2,\
     .btn_trigger        = EXTI_Trigger_Rising_Falling,\
-    .left_exti_line     = EXTI_Line12,\
+    .left_exti_line     = EXTI_Line0,\
     .left_trigger       = EXTI_Trigger_Falling,\
     /* NVIC */\
-    .btn_irq_channel    = EXTI15_10_IRQn,\
-    .left_irq_channel   = EXTI15_10_IRQn,\
+    .btn_irq_channel    = EXTI2_IRQn,\
+    .left_irq_channel   = EXTI0_IRQn,\
     .preemption_priority= 5,\
     .sub_priority       = 0,\
     .tim_irq_channel    = TIM5_IRQn,\
-    .tim_irq_prepriority= 5,\
+    .tim_irq_prepriority= 6,\
     .tim_irq_subpriority= 0,\
     .press_long_time    = 40000 /* 最大 uint16_t */\
 }
@@ -175,9 +193,7 @@ extern const uint8_t oled_init_cmd_seq[];
 /* ----------------------- 超声波模块（HC-SR04） 配置 ------------------------- */
 //#define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
 //#define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
-#define ULT_FIRST_DEFAULT_CONDFIG() (ult_cfg_t){\
-    /* NUM */\
-    .num = 1,\
+#define ULT_DEFAULT_CONDFIG() (ult_cfg_t){\
     /* RCC */\
     .tr_gpio_rcc = RCC_AHB1Periph_GPIOA,\
     .eh_gpio_rcc = RCC_AHB1Periph_GPIOA,\
@@ -185,8 +201,8 @@ extern const uint8_t oled_init_cmd_seq[];
     /* GPIO */\
     .tr_gpio_port   = GPIOA,\
     .eh_gpio_port   = GPIOA,\
-    .tr_gpio_pin    = GPIO_Pin_11,\
-    .eh_gpio_pin    = GPIO_Pin_1,\
+    .tr_gpio_pin    = GPIO_Pin_6,\
+    .eh_gpio_pin    = GPIO_Pin_7,\
     .tr_gpio_mode   = GPIO_Mode_OUT,\
     .eh_gpio_mode   = GPIO_Mode_IN,\
     .tr_gpio_otype  = GPIO_OType_PP,\
@@ -195,94 +211,20 @@ extern const uint8_t oled_init_cmd_seq[];
     .eh_gpio_speed  = GPIO_Speed_50MHz,\
     .tr_gpio_pupd   = GPIO_PuPd_NOPULL,\
     .eh_gpio_pupd   = GPIO_PuPd_UP,\
+    .tr_port_source = EXTI_PortSourceGPIOA,\
+    .eh_port_source = EXTI_PortSourceGPIOA,\
+    .tr_pin_source  = EXTI_PinSource6,\
+    .eh_pin_source  = EXTI_PinSource7,\
     /* EXTI */\
-    .eh_exti_line   = EXTI_Line1,\
+    .eh_exti_line   = EXTI_Line7,\
     .eh_exti_mode   = EXTI_Mode_Interrupt,\
     .eh_exti_trigger= EXTI_Trigger_Rising_Falling,\
     /* NVIC */\
-    .eh_nvic_irqn   = EXTI1_IRQn,\
-    .eh_nvic_pri    = 5,\
+    .eh_nvic_irqn   = EXTI9_5_IRQn,\
+    .eh_nvic_pri    = 3,\
     .eh_nvic_subpri = 0,\
     .tim_nvic_irqn  = TIM3_IRQn,\
-    .tim_nvic_pri   = 6,\
-    .tim_nvic_subpri= 0,\
-    /* TIM */\
-    .timx               = TIM3,\
-    .tim_prescaler      = 100 - 1, /* 1MHZ 1us */\
-    .tim_period         = 10000 - 1, /* 1us*10000 = 10ms */\
-    .tim_counter_mode   = TIM_CounterMode_Up,\
-    .tim_division       = TIM_CKD_DIV1,\
-}
-//#define ULT_SECOND_EH_EXTI_HANDLE(void) EXTI2_IRQHandler(void)
-#define ULT_SECOND_DEFAULT_CONDFIG() (ult_cfg_t){\
-    /* NUM */\
-    .num = 2,\
-    /* RCC */\
-    .tr_gpio_rcc = RCC_AHB1Periph_GPIOA,\
-    .eh_gpio_rcc = RCC_AHB1Periph_GPIOA,\
-    .tim_rcc     = RCC_APB1Periph_TIM3,\
-    /* GPIO */\
-    .tr_gpio_port   = GPIOA,\
-    .eh_gpio_port   = GPIOA,\
-    .tr_gpio_pin    = GPIO_Pin_11,\
-    .eh_gpio_pin    = GPIO_Pin_2,\
-    .tr_gpio_mode   = GPIO_Mode_OUT,\
-    .eh_gpio_mode   = GPIO_Mode_IN,\
-    .tr_gpio_otype  = GPIO_OType_PP,\
-    .eh_gpio_otype  = GPIO_OType_PP,\
-    .tr_gpio_speed  = GPIO_Speed_25MHz,\
-    .eh_gpio_speed  = GPIO_Speed_50MHz,\
-    .tr_gpio_pupd   = GPIO_PuPd_NOPULL,\
-    .eh_gpio_pupd   = GPIO_PuPd_UP,\
-    /* EXTI */\
-    .eh_exti_line   = EXTI_Line2,\
-    .eh_exti_mode   = EXTI_Mode_Interrupt,\
-    .eh_exti_trigger= EXTI_Trigger_Rising_Falling,\
-    /* NVIC */\
-    .eh_nvic_irqn   = EXTI2_IRQn,\
-    .eh_nvic_pri    = 6,\
-    .eh_nvic_subpri = 0,\
-    .tim_nvic_irqn  = TIM3_IRQn,\
-    .tim_nvic_pri   = 6,\
-    .tim_nvic_subpri= 0,\
-    /* TIM */\
-    .timx               = TIM3,\
-    .tim_prescaler      = 100 - 1, /* 1MHZ 1us */\
-    .tim_period         = 10000 - 1, /* 1us*10000 = 10ms */\
-    .tim_counter_mode   = TIM_CounterMode_Up,\
-    .tim_division       = TIM_CKD_DIV1,\
-}
-//#define ULT_THIRD_EH_EXTI_HANDLE(void)  EXTI3_IRQHandler(void)
-#define ULT_THIRD_DEFAULT_CONDFIG() (ult_cfg_t){\
-    /* NUM */\
-    .num = 3,\
-    /* RCC */\
-    .tr_gpio_rcc = RCC_AHB1Periph_GPIOA,\
-    .eh_gpio_rcc = RCC_AHB1Periph_GPIOA,\
-    .tim_rcc     = RCC_APB1Periph_TIM3,\
-    /* GPIO */\
-    .tr_gpio_port   = GPIOA,\
-    .eh_gpio_port   = GPIOA,\
-    .tr_gpio_pin    = GPIO_Pin_11,\
-    .eh_gpio_pin    = GPIO_Pin_3,\
-    .tr_gpio_mode   = GPIO_Mode_OUT,\
-    .eh_gpio_mode   = GPIO_Mode_IN,\
-    .tr_gpio_otype  = GPIO_OType_PP,\
-    .eh_gpio_otype  = GPIO_OType_PP,\
-    .tr_gpio_speed  = GPIO_Speed_25MHz,\
-    .eh_gpio_speed  = GPIO_Speed_50MHz,\
-    .tr_gpio_pupd   = GPIO_PuPd_NOPULL,\
-    .eh_gpio_pupd   = GPIO_PuPd_UP,\
-    /* EXTI */\
-    .eh_exti_line   = EXTI_Line3,\
-    .eh_exti_mode   = EXTI_Mode_Interrupt,\
-    .eh_exti_trigger= EXTI_Trigger_Rising_Falling,\
-    /* NVIC */\
-    .eh_nvic_irqn   = EXTI3_IRQn,\
-    .eh_nvic_pri    = 7,\
-    .eh_nvic_subpri = 0,\
-    .tim_nvic_irqn  = TIM3_IRQn,\
-    .tim_nvic_pri   = 6,\
+    .tim_nvic_pri   = 4,\
     .tim_nvic_subpri= 0,\
     /* TIM */\
     .timx               = TIM3,\
@@ -292,18 +234,41 @@ extern const uint8_t oled_init_cmd_seq[];
     .tim_division       = TIM_CKD_DIV1,\
 }
 /* ----------------------- 循迹模块 配置 ------------------------- */
-//#define TRACKER_A_EXTI_HANDLE(void)  EXTI4_IRQHandler(void)
 #define TRACKER_A_DEFAULT_CONFIG() (track_cfg_t){\
     /* TRACKER */\
     .id                 = TRACKER_A,\
     /* RCC */\
-    .rcc_gpio           = RCC_AHB1Periph_GPIOA,\
-    .gpio_port          = GPIOA,\
+    .rcc_gpio           = RCC_AHB1Periph_GPIOB,\
+    .gpio_port          = GPIOB,\
+    .gpio_pin           = GPIO_Pin_3,\
+    .gpio_mode          = GPIO_Mode_IN,\
+    .gpio_otype         = GPIO_OType_PP,\
+    .gpio_speed         = GPIO_Speed_25MHz,\
+    .gpio_pupd          = GPIO_PuPd_UP,\
+    .gpio_port_source   = EXTI_PortSourceGPIOB,\
+    .gpio_pin_source    = EXTI_PinSource3,\
+    /* EXTI */\
+    .exti_line          = EXTI_Line3,\
+    .exti_mode          = EXTI_Mode_Interrupt,\
+    .exti_trigger       = EXTI_Trigger_Rising_Falling,\
+    /* NVIC */\
+    .nvic_irqn          = EXTI3_IRQn,\
+    .nvic_pri           = 5,\
+    .nvic_subpri        = 4\
+}
+#define TRACKER_B_DEFAULT_CONFIG() (track_cfg_t){\
+    /* TRACKER */\
+    .id                 = TRACKER_B,\
+    /* RCC */\
+    .rcc_gpio           = RCC_AHB1Periph_GPIOB,\
+    .gpio_port          = GPIOB,\
     .gpio_pin           = GPIO_Pin_4,\
     .gpio_mode          = GPIO_Mode_IN,\
     .gpio_otype         = GPIO_OType_PP,\
     .gpio_speed         = GPIO_Speed_25MHz,\
     .gpio_pupd          = GPIO_PuPd_UP,\
+    .gpio_port_source   = EXTI_PortSourceGPIOB,\
+    .gpio_pin_source    = EXTI_PinSource4,\
     /* EXTI */\
     .exti_line          = EXTI_Line4,\
     .exti_mode          = EXTI_Mode_Interrupt,\
@@ -311,20 +276,21 @@ extern const uint8_t oled_init_cmd_seq[];
     /* NVIC */\
     .nvic_irqn          = EXTI4_IRQn,\
     .nvic_pri           = 6,\
-    .nvic_subpri        = 0\
+    .nvic_subpri        = 3\
 }
-//#define TRACKER_B_EXTI_HANDLE(void)  EXTI9_5_IRQHandler(void)
-#define TRACKER_B_DEFAULT_CONFIG() (track_cfg_t){\
+#define TRACKER_C_DEFAULT_CONFIG() (track_cfg_t){\
     /* TRACKER */\
-    .id                 = TRACKER_B,\
+    .id                 = TRACKER_C,\
     /* RCC */\
-    .rcc_gpio           = RCC_AHB1Periph_GPIOA,\
-    .gpio_port          = GPIOA,\
+    .rcc_gpio           = RCC_AHB1Periph_GPIOB,\
+    .gpio_port          = GPIOB,\
     .gpio_pin           = GPIO_Pin_5,\
     .gpio_mode          = GPIO_Mode_IN,\
     .gpio_otype         = GPIO_OType_PP,\
     .gpio_speed         = GPIO_Speed_25MHz,\
     .gpio_pupd          = GPIO_PuPd_UP,\
+    .gpio_port_source   = EXTI_PortSourceGPIOB,\
+    .gpio_pin_source    = EXTI_PinSource5,\
     /* EXTI */\
     .exti_line          = EXTI_Line5,\
     .exti_mode          = EXTI_Mode_Interrupt,\
@@ -332,13 +298,12 @@ extern const uint8_t oled_init_cmd_seq[];
     /* NVIC */\
     .nvic_irqn          = EXTI9_5_IRQn,\
     .nvic_pri           = 7,\
-    .nvic_subpri        = 0\
+    .nvic_subpri        = 2\
 }
-
 
 /* ----------------------- 指南针模块 配置 ------------------------- */
 #define COMPASS_ADDR    0x58
-#define COMPASS_DEFAULT_CONFIG() (compass_cfg_t){\
+#define COMPASS_DEFAULT_CONFIG() (const compass_cfg_t){\
     /* RCC */\
     .gpio_sda_rcc       = RCC_AHB1Periph_GPIOB,\
     .gpio_scl_rcc       = RCC_AHB1Periph_GPIOA,\
@@ -370,5 +335,17 @@ extern const uint8_t oled_init_cmd_seq[];
     .i2c_speed          = 100000,\
     /* Base */\
     .addr               = COMPASS_ADDR\
-};
+}
+/* ----------------------- 蜂鸣器 配置 ------------------------- */
+#define BUZZER_DEFAULT_CONFIG() (buzzer_cfg_t){\
+    .gpio_rcc       = RCC_AHB1Periph_GPIOB,\
+    .tim_rcc        = RCC_APB1Periph_TIM4,\
+    .gpio_port      = GPIOB,\
+    .gpio_pin       = GPIO_Pin_9,\
+    .timx           = TIM4,\
+    .tim_channel    = TIM_Channel_4,\
+    .prescaler      = 10 - 1,        /* 100MHz /10 = 10MHz → 0.1us */\
+    .period         = 10000,         /* 1kHz 默认频率 */\
+    .duty           = 1000,          /* 温和占空比 */\
+}
 #endif  /* PeripheralParamConfig.h */

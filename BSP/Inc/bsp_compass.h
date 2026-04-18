@@ -99,9 +99,12 @@ struct compass_handle
     /* Base */
     copmass_data_t *data;
     uint8_t         id; // 模块ID 0x80 
+    int16_t         x_offset;
+    int16_t         y_offset;
     /* Dev */
     compass_dev_t dev;
 };
-compass_status_t bsp_compass_init(compass_handle_t *compass_handle, compass_cfg_t *cfg);
+compass_status_t bsp_compass_init(compass_handle_t *compass_handle, const compass_cfg_t *cfg);
 compass_status_t bsp_compass_read(compass_handle_t *compass_handle);
+void bsp_compass_calibrate(compass_handle_t *compass_handle);
 #endif

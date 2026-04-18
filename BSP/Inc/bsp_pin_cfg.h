@@ -87,10 +87,10 @@ PC 组
 
 /* --------------------------- ENCODER(编码器) 引脚 --------------------------- */
 #define ENCODER_BTN_PORT                GPIOB
-#define ENCODER_BTN_PIN                 GPIO_Pin_14
+#define ENCODER_BTN_PIN                 GPIO_Pin_2
 
 #define ENCODER_LEFT_PORT               GPIOB
-#define ENCODER_LEFT_PIN                GPIO_Pin_12
+#define ENCODER_LEFT_PIN                GPIO_Pin_0
 
 #define ENCODER_RIGHT_PORT              GPIOB
-#define ENCODER_RIGHT_PIN               GPIO_Pin_13
+#define ENCODER_RIGHT_PIN               GPIO_Pin_1

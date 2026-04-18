@@ -621,7 +621,7 @@ void led_init(void)
 }
 
 ```
-### 全局变量
+### 私有全局变量
 ```C
 /**
  * @brief OLED 句柄

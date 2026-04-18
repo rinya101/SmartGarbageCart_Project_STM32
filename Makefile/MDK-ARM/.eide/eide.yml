@@ -22,7 +22,6 @@ virtualFolder:
       folders:
         - name: Inc
           files:
-            - path: ../../BSP/Inc/bsp_usart.h
             - path: ../../BSP/Inc/bsp_encoder.h
             - path: ../../BSP/Inc/bsp_debug.h
             - path: ../../BSP/Inc/bsp_oled.h
@@ -30,10 +29,13 @@ virtualFolder:
             - path: ../../BSP/Inc/bsp_tracking.h
             - path: ../../BSP/Inc/bsp_it.h
             - path: ../../BSP/Inc/bsp_compass.h
+            - path: ../../BSP/Inc/bsp_message.h
+            - path: ../../BSP/Inc/bsp_buzzer.h
+            - path: ../../BSP/Inc/bsp_motor.h
+            - path: ../../BSP/Inc/welcome.h
           folders: []
         - name: Src
           files:
-            - path: ../../BSP/Src/bsp_usart.c
             - path: ../../BSP/Src/bsp_encoder.c
             - path: ../../BSP/Src/bsp_debug.c
             - path: ../../BSP/Src/bsp_oled.c
@@ -41,6 +43,10 @@ virtualFolder:
             - path: ../../BSP/Src/bsp_tracking.c
             - path: ../../BSP/Src/bsp_it.c
             - path: ../../BSP/Src/bsp_compass.c
+            - path: ../../BSP/Src/bsp_message.c
+            - path: ../../BSP/Src/bsp_buzzer.c
+            - path: ../../BSP/Src/bsp_motor.c
+            - path: ../../BSP/Src/welcome.c
           folders: []
     - name: Drivers
       files: []
@@ -263,7 +269,8 @@ targets:
         - ../../Middlewares/FreeRTOS/inc
         - ../../BSP/Inc
         - ../../BSP/Src
-    excludeList: []
+    excludeList:
+      - <virtual_root>/BSP/Src/bsp_usart.c
     settings:
       debugger: cortex-debug
     toolchain: AC5

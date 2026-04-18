@@ -24,19 +24,8 @@
 #define _BSP_ENCODER_H
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_tim.h"
-#include "bsp_pin_cfg.h"
 #include "bsp_debug.h"
 typedef struct encoder_handle encoder_handle_t;
-/**
- * @brief 编码器回调函数
- * 
- */
-typedef void (*encoder_cb_t)(encoder_handle_t *handle);
-/**
- * @brief 编码器按键回调函数
- * 
- */
-typedef void (*encoder_btn_cb_t)(encoder_handle_t *handle);
 /**
  * @brief TIM5 回调函数
  * 
@@ -125,8 +114,6 @@ typedef struct
     /* ENCODER */
     uint16_t                press_long_time;
     /* CallBack */
-    encoder_cb_t            event_cb;
-    encoder_btn_cb_t        btn_cb;
     tim5_callback_t         tim_cb;
     /* EVENT */
     encoder_left_event      left_event;
@@ -160,8 +147,6 @@ struct encoder_handle
     uint32_t                btn_exti_line;
     uint32_t                left_exti_line;
     /* CallBack */
-    encoder_cb_t            encoder_cb;
-    encoder_btn_cb_t        btn_cb;
     tim5_callback_t         tim_cb;
     /* TIM */
     TIM_TypeDef*            timx;
@@ -172,7 +157,6 @@ struct encoder_handle
     btn_long_press_event    btn_long_press_event;
 };
 /* 注意使用顺序 如下 */
-void encoder_attach_callback(encoder_cfg_t *cfg);
 void encoder_attach_event(encoder_cfg_t *cfg);
 void encoder_init(encoder_handle_t* handle, encoder_cfg_t* cfg);
 #endif

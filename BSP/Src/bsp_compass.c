@@ -10,6 +10,8 @@
 #include "bsp_compass.h"
 #include "bsp_debug.h"
 #include <math.h>
+#include "FreeRTOS.h"
+#include "task.h"
 /**
  * @brief 指南针数据
  * 
@@ -267,7 +269,7 @@ static compass_status_t compass_read_bytes(compass_handle_t *handle, uint8_t reg
  * 
  * @param cfg 
  */
-static void compass_clk_init(compass_cfg_t *cfg)
+static void compass_clk_init(const compass_cfg_t *cfg)
 {
     /* GPIO CLK */
     RCC_AHB1PeriphClockCmd(cfg->gpio_sda_rcc, ENABLE);
@@ -280,7 +282,7 @@ static void compass_clk_init(compass_cfg_t *cfg)
  * 
  * @param cfg 
  */
-static void compass_gpio_init(compass_cfg_t *cfg)
+static void compass_gpio_init(const compass_cfg_t *cfg)
 {
     /* AF */
     GPIO_PinAFConfig(cfg->gpio_sda_port, cfg->gpio_sda_source, cfg->gpio_sda_af);
@@ -308,7 +310,7 @@ static void compass_gpio_init(compass_cfg_t *cfg)
  * 
  * @param cfg 
  */
-static void compass_i2c_init(compass_cfg_t *cfg)
+static void compass_i2c_init(const compass_cfg_t *cfg)
 {
     /* 默认 */
     I2C_DeInit(cfg->i2c);
@@ -348,7 +350,7 @@ static void compass_sensor_init(compass_handle_t *handle)
  * @param compass_handle 
  * @param compass_cfg 
  */
-compass_status_t bsp_compass_init(compass_handle_t *compass_handle, compass_cfg_t *cfg)
+compass_status_t bsp_compass_init(compass_handle_t *compass_handle,const compass_cfg_t *cfg)
 {
     compass_status_t status = COMPASS_OK;
     /* 传感器句柄 */
@@ -368,7 +370,7 @@ compass_status_t bsp_compass_init(compass_handle_t *compass_handle, compass_cfg_
     return status;
 }
 /**
- * @brief 获取指南针数据
+ * @brief 获取指南针数据（已加入硬铁补偿 + 角度补偿）
  * 
  * @param compass_handle 
  */
@@ -382,14 +384,80 @@ compass_status_t bsp_compass_read(compass_handle_t *compass_handle)
         SGCS_ERROR("compass read data fail!");
         return status;
     }
+
+    // 原始数据拼接
     int16_t x = (buf[1] << 8) | buf[0];
     int16_t y = (buf[3] << 8) | buf[2];
     int16_t z = (buf[5] << 8) | buf[4];
+
+    // ===================== 【补偿：硬铁偏移】 =====================
+    // 根据你提供的 北/东/南/西 4点校准数据计算得出
+    const int16_t x_offset = 372;  // X 补偿
+    const int16_t y_offset = -294; // Y 补偿
+    const int16_t z_offset = -361; // Z 补偿
+
+    x += x_offset;  // 原始X + 补偿
+    y += y_offset;  // 原始Y + 补偿
+    z += z_offset;  // 原始Z + 补偿
+
+    // 存入补偿后的坐标
     compass_handle->data->x = x;
     compass_handle->data->y = y;
     compass_handle->data->z = z;
+
+    // ===================== 【补偿：角度校准】 =====================
     float angle = atan2(y, x) * 180.0f / 3.1415926f;
     if(angle < 0) angle += 360.0f;
+
+    // 角度补偿：测量值 - 21.13°
+    const float angle_offset = -21.13f;
+    angle += angle_offset;
+    if(angle < 0) angle += 360.0f;  // 防止负角度
+    if(angle > 360) angle -= 360.0f;
+
+    // 存入补偿后的角度
     compass_handle->data->angle = angle;
+
     return status;
+}
+
+/**
+ * @brief 指南针一键自动校准（水平转一圈即可）
+ * 校准原理：采集最大/最小值，求中点 = 硬铁偏移
+ */
+void bsp_compass_calibrate(compass_handle_t *compass_handle)
+{
+    int16_t x, y;
+    int16_t x_min = 32767, x_max = -32768;
+    int16_t y_min = 32767, y_max = -32768;
+
+    SGCS_INFO("开始校准指南针... 请水平旋转设备 360°");
+    vTaskDelay(1000);
+
+    // 连续采样 500 次，采集最大最小值
+    for (int i = 0; i < 500; i++)
+    {
+        uint8_t buf[6];
+        compass_read_bytes(compass_handle, QMC5883P_XOUT_L_REG, buf, 6);
+
+        x = (buf[1] << 8) | buf[0];
+        y = (buf[3] << 8) | buf[2];
+
+        // 更新极值
+        if (x < x_min) x_min = x;
+        if (x > x_max) x_max = x;
+        if (y < y_min) y_min = y;
+        if (y > y_max) y_max = y;
+        printf("x: %d, y: %d\n", x, y);
+        vTaskDelay(20); // 20ms 采样一次
+    }
+
+    // 计算偏移：(最大值 + 最小值)/2
+    compass_handle->x_offset = (x_min + x_max) / 2;
+    compass_handle->y_offset = (y_min + y_max) / 2;
+
+    SGCS_INFO("指南针校准完成！");
+    SGCS_INFO("X偏移: %d, Y偏移: %d",
+              compass_handle->x_offset,
+              compass_handle->y_offset);
 }
