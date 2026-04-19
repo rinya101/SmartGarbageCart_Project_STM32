@@ -1,9 +1,9 @@
 #include "bsp_it.h"
 #include "bsp_debug.h"
 /*------------------------ 编码器 -----------------------------*/
-extern void encoder_tim_irq_handler(void* param);
-extern void encoder_btn_irq_handler(void* param);
-extern void encoder_left_irq_handler(void* param);
+extern void encoder_tim_IRQHandler(void* param);
+extern void encoder_btn_IRQhandler(void* param);
+extern void encoder_a_IRQhandler(void* param);
 /*------------------------ OLED DMA ---------------------------*/
 extern void oled_dma_irq_handler(void* param);
 /*------------------------ 循迹 -------------------------------*/
@@ -17,23 +17,29 @@ extern void ult_tim_handler(void* param);
 extern void main_message_irq_handler(void *param);
 extern void DMA_main_message_irq_handler(void* param);
 
+/*------------------------ 编码器 -----------------------------*/
 /**
- * @brief EXTI0_IRQHandler
- * 
+ * @brief  定时器中断（1ms 定时）
+ */
+void TIM5_IRQHandler(void)
+{
+    encoder_tim_IRQHandler((void*)"TIM5_IRQHandler");
+}
+/**
+ * @brief  A 相中断（旋转）
  */
 void EXTI0_IRQHandler(void)
 {
-    //encoder_left_irq_handler((void*)"EXTI0_IRQHandler");
+    encoder_a_IRQhandler((void*)"EXTI0_IRQHandler");
 }
-
 /**
- * @brief EXTI2_IRQHandler
- * 
+ * @brief  按键中断（按下触发）
  */
 void EXTI2_IRQHandler(void)
 {
-    //encoder_btn_irq_handler((void*)"EXTI2_IRQHandler");
+    encoder_btn_IRQhandler((void*)"EXTI2_IRQHandler");
 }
+
 /**
  * @brief EXTI3_IRQHandler
  * 
@@ -75,14 +81,7 @@ void TIM3_IRQHandler(void)
     ult_tim_handler((void*)"TIM3_IRQHandler");
 }
 
-/**
- * @brief TIM5_IRQHandler
- * 
- */
-void TIM5_IRQHandler(void)
-{
-    //encoder_tim_irq_handler((void*)"TIM5_IRQHandler");
-}
+
 /**
  * @brief USART1_IRQHandler
  * 

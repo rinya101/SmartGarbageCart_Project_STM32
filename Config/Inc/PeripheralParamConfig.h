@@ -87,47 +87,51 @@
     .dma_sub_priority       = 0}
 
 /* ---------------------------------- 编码器 配置 ----------------------------- */
-#define ENCODER_BTN_IRQ_HANDLE(void)    EXTI2_IRQHandler(void)
-#define ENCODER_LEFT_IRQ_HANDLE(void)   EXTI0_IRQHandler(void)
-#define ENCODER_TIM_IRQ_HANDLE(void)    TIM5_IRQHandler(void)
 /**
  * @note 根据实际情况修改 中断服务函数参考 bsp_encoder_it.c 中的函数：
  * 
  */
-#define ENCODER_DEFAULT_CONFIG()    (encoder_cfg_t){\
-    /* RCC */\
-    .btn_clk            = RCC_AHB1Periph_GPIOB,\
-    .left_clk           = RCC_AHB1Periph_GPIOB,\
-    .right_clk          = RCC_AHB1Periph_GPIOB,\
-    .syscfg_clk         = RCC_APB2Periph_SYSCFG,\
-    .tim_clk            = RCC_APB1Periph_TIM5,\
-    /* GPIO */\
-    .btn_port           = GPIOB,\
-    .btn_pin            = GPIO_Pin_2,\
-    .left_port          = GPIOB,\
-    .left_pin           = GPIO_Pin_0,\
-    .right_port         = GPIOB,\
-    .right_pin          = GPIO_Pin_1,\
-    /* TIM */\
-    .timx               = TIM5,\
-    .tim_prescaler      = (uint16_t)(1000 - 1),\
-    .tim_period         = (uint16_t)(60000 - 1),\
-    .tim_counter_mode   = TIM_CounterMode_Up,\
-    .tim_division       = TIM_CKD_DIV1,\
-    /* EXIT */\
-    .btn_exti_line      = EXTI_Line2,\
-    .btn_trigger        = EXTI_Trigger_Rising_Falling,\
-    .left_exti_line     = EXTI_Line0,\
-    .left_trigger       = EXTI_Trigger_Falling,\
-    /* NVIC */\
-    .btn_irq_channel    = EXTI2_IRQn,\
-    .left_irq_channel   = EXTI0_IRQn,\
-    .preemption_priority= 5,\
-    .sub_priority       = 0,\
-    .tim_irq_channel    = TIM5_IRQn,\
-    .tim_irq_prepriority= 6,\
-    .tim_irq_subpriority= 0,\
-    .press_long_time    = 40000 /* 最大 uint16_t */\
+#define ENCODER_DEFAULT_CONFIG()  (const encoder_cfg_t){\
+    .gpio_a_clk      = RCC_AHB1Periph_GPIOB,    \
+    .gpio_b_clk      = RCC_AHB1Periph_GPIOB,    \
+    .gpio_btn_clk    = RCC_AHB1Periph_GPIOB,    \
+    .tim_clk         = RCC_APB1Periph_TIM5,     \
+                                                            \
+    .gpio_a_port     = GPIOB,                    \
+    .gpio_b_port     = GPIOB,                    \
+    .gpio_btn_port   = GPIOB,                    \
+                                                            \
+    .gpio_a_pin      = GPIO_Pin_0,               \
+    .gpio_b_pin      = GPIO_Pin_1,               \
+    .gpio_btn_pin    = GPIO_Pin_2,               \
+                                                            \
+    .exti_a_port_src = EXTI_PortSourceGPIOB,    \
+    .exti_a_pin_src  = EXTI_PinSource0,         \
+                                                            \
+    .exti_btn_port_src = EXTI_PortSourceGPIOB,  \
+    .exti_btn_pin_src  = EXTI_PinSource2,       \
+                                                            \
+    .exti_a_line     = EXTI_Line0,              \
+    .exti_btn_line   = EXTI_Line2,              \
+                                                            \
+    .exti_a_trigger  = EXTI_Trigger_Falling, \
+    .exti_btn_trigger= EXTI_Trigger_Rising_Falling,    \
+                                                            \
+    .nvic_a_priority    = 5,                    \
+    .nvic_a_subpriority = 0,                    \
+    .nvic_a_irq         = EXTI0_IRQn,           \
+                                                            \
+    .nvic_btn_priority  = 6,                    \
+    .nvic_btn_subpriority=0,                    \
+    .nvic_btn_irq       = EXTI2_IRQn,           \
+                                                            \
+    .nvic_tim_priority  = 4,                    \
+    .nvic_tim_subpriority=0,                    \
+    .nvic_tim_irq       = TIM5_IRQn,            \
+                                                            \
+    .tim              = TIM5,                   \
+    .tim_psc          = 1000 - 1,                \
+    .tim_arr          = 50000 - 1,               \
 }
 /* ---------------------------------- OLED 配置 ----------------------------- */
 extern const uint8_t oled_init_cmd_seq[];

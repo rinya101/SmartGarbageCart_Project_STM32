@@ -14,6 +14,7 @@
 #include "bsp_motor.h"
 #include "bsp_buzzer.h"
 #include "bsp_servo.h"
+#include "bsp_encoder.h"
 void app(void *pvParameters);
 void led_init(void);
 message_handle_t msg;
@@ -28,6 +29,31 @@ motor_handle_t motor;
 servo_handle_t servo1;
 servo_handle_t servo2;
 servo_handle_t servo3;
+encoder_handle_t encoder;
+
+
+static void press(const void *pvParameters)
+{
+    printf("press\n");
+} 
+static void long_press(const void *pvParameters)
+{
+    printf("long press\n");
+}
+static void release(const void *pvParameters)
+{
+    printf("release\n");
+}
+static void rotate_counterclockwise(const void *pvParameters)
+{
+    encoder_handle_t *handle = (encoder_handle_t*)pvParameters;
+    printf("count: %d\r\n",handle->count);
+}
+static void rotate_clockwise(const void *pvParameters)
+{
+    encoder_handle_t *handle = (encoder_handle_t*)pvParameters;
+    printf("count: %d\r\n",handle->count);
+}
 int main(void)
 {
     /* 时钟配置 */
@@ -61,19 +87,26 @@ void app(void *pvParameters)
     /* 超声波初始化 */
     bsp_ultrasonic_init(&ult, &ULT_DEFAULT_CONDFIG());
     /* 蜂鸣器初始化 */
-    bsp_buzzer_init(&buzzer, &BUZZER_DEFAULT_CONFIG());
+    //bsp_buzzer_init(&buzzer, &BUZZER_DEFAULT_CONFIG());
     //buzzer_play_dandelion_interlude(&buzzer);
     /* 循迹初始化 */
     bsp_tracking_init(&track_a, &TRACKER_A_DEFAULT_CONFIG());
     bsp_tracking_init(&track_b, &TRACKER_B_DEFAULT_CONFIG());
     bsp_tracking_init(&track_c, &TRACKER_C_DEFAULT_CONFIG());
     /* 马达初始化 */
-    bsp_motor_init(&motor, &MOTOR_DEFAULT_CONFIG());
+    //bsp_motor_init(&motor, &MOTOR_DEFAULT_CONFIG());
     /* 舵机初始化 */
     bsp_servo_init(&servo1, &SERVO1_DEFAULT_CONFIG());
     bsp_servo_init(&servo2, &SERVO2_DEFAULT_CONFIG());
     bsp_servo_init(&servo3, &SERVO3_DEFAULT_CONFIG());
-
+    /* 编码器初始化 */
+    encoder_cfg_t encoder_config = ENCODER_DEFAULT_CONFIG();
+    encoder.event_callback.press = press;
+    encoder.event_callback.longpress = long_press;
+    encoder.event_callback.release = release;
+    encoder.event_callback.rotate_clockwise = rotate_clockwise;
+    encoder.event_callback.rotate_counterclockwise = rotate_counterclockwise;
+    bsp_encoder_init(&encoder, &encoder_config);
     bsp_oled_welcome(&oled);
     bsp_buzzer_on(&buzzer);
     vTaskDelay(200);
@@ -81,7 +114,6 @@ void app(void *pvParameters)
 
     uint16_t count = 0;
     float angle = 0;
-    uint16_t us = 500;
     while(1)
     {
         count++;
@@ -97,11 +129,11 @@ void app(void *pvParameters)
         //        count);
         // if (ult.distance_cm < 20   &&  ult.distance_cm > 1)
         // {
-        //     bsp_buzzer_on(&buzzer);
+        //     //bsp_buzzer_on(&buzzer);
         // }
         // else
         // {
-        //     bsp_buzzer_off(&buzzer);
+        //     //bsp_buzzer_off(&buzzer);
         // }
         // angle += 10;
         // if (angle > 180)
@@ -112,14 +144,6 @@ void app(void *pvParameters)
         // bsp_servo_set_angle(&servo1, angle);
         // bsp_servo_set_angle(&servo2, angle);
         // bsp_servo_set_angle(&servo3, angle);
-        us += 100;
-        if (us > 2500)
-        {
-            us = 500;
-        }
-        bsp_servo_set_us(&servo1, us);
-        bsp_servo_set_us(&servo2, us);
-        bsp_servo_set_us(&servo3, us);
         vTaskDelay(500);
 
         if (msg.new_msg_flag)

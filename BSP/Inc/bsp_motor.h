@@ -1,3 +1,12 @@
+/*******************************************************************************
+ *      文    件: bsp_motor.c
+ *      说    明: 适用于STM32F4(具体为 STM32F411CEU6) 的 电机 BSP驱动
+ *      版    本: V1.0
+ *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
+ *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
+ *               可以作为个人参考学习使用。
+*******************************************************************************/
+
 #ifndef _BSP_MOTOR_H
 #define _BSP_MOTOR_H
 
@@ -96,10 +105,7 @@ struct motor_handle
     int16_t             speed1;
     int16_t             speed2;
 };
-
-
 void bsp_motor_init(motor_handle_t *handle, motor_cfg_t *cfg);
 void bsp_motor_set_speed(motor_handle_t *handle, int16_t speed1, int16_t speed2);
 void bsp_motor_stop(motor_handle_t *handle);
-
 #endif
