@@ -267,7 +267,7 @@ void bsp_oled_draw_point(oled_handle_t* oled_handle, uint8_t x, uint8_t y, uint8
  */
 void bsp_oled_welcome(oled_handle_t* oled_handle)
 {
-    const uint8_t *buf = (const uint8_t *)welcome;
+    const uint8_t *buf = (const uint8_t *)eva;
     for (uint16_t i = 0; i < 1024; i++)
     {
         oled_handle->screen_buf[i] = buf[i];

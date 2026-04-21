@@ -28,7 +28,7 @@ void main_message_irq_handler(void *param)
     if (USART_GetITStatus(s_message->usart, USART_IT_RXNE) != RESET)
     {
         uint8_t ch = USART_ReceiveData(s_message->usart);
-        if (ch == USART_STRING_END_CR || ch == USART_STRING_END_LF)
+        if (ch == USART_STRING_END_LF)
         {
             if (s_message->buf_index < USART_RECEIVE_BUF_SIZE)
             {

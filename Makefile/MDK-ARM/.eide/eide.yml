@@ -34,6 +34,8 @@ virtualFolder:
             - path: ../../BSP/Inc/bsp_motor.h
             - path: ../../BSP/Inc/welcome.h
             - path: ../../BSP/Inc/bsp_servo.h
+            - path: ../../BSP/Inc/bsp_battery.h
+            - path: ../../BSP/Inc/bsp_esp32_msg.h
           folders: []
         - name: Src
           files:
@@ -49,6 +51,8 @@ virtualFolder:
             - path: ../../BSP/Src/bsp_motor.c
             - path: ../../BSP/Src/welcome.c
             - path: ../../BSP/Src/bsp_servo.c
+            - path: ../../BSP/Src/bsp_battery.c
+            - path: ../../BSP/Src/bsp_esp32_msg.c
           folders: []
     - name: Drivers
       files: []

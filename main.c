@@ -1,4 +1,3 @@
-
 #include "stm32f4xx.h"
 #include "SysClockConfig.h"
 #include "FreeRTOS.h"
@@ -15,6 +14,9 @@
 #include "bsp_buzzer.h"
 #include "bsp_servo.h"
 #include "bsp_encoder.h"
+#include "bsp_battery.h"
+#include "bsp_esp32_msg.h"
+#include "string.h"
 void app(void *pvParameters);
 void led_init(void);
 message_handle_t msg;
@@ -30,8 +32,8 @@ servo_handle_t servo1;
 servo_handle_t servo2;
 servo_handle_t servo3;
 encoder_handle_t encoder;
-
-
+battery_handle_t battery;
+esp32_msg_handle_t esp32_msg;
 static void press(const void *pvParameters)
 {
     printf("press\n");
@@ -60,8 +62,13 @@ int main(void)
     SysClockConfig_HSE25MHZ();
     SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));
     led_init();
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     bsp_message_init(&msg, &USART1_DEFAULT_CONFIG());
     printf("msg init ok \r\n");
+    /* ESP32 通讯初始化 */
+    bsp_esp32_msg_init(&esp32_msg, &ESP32_MSG_USART6_DEFAULT_CONFIG());
+    bsp_esp32_msg_send(&esp32_msg, "msg init ok \r\n", strlen("msg init ok \r\n"));
+    printf("esp32 msg init ok \r\n");
     /* 创建任务 */
     if(xTaskCreate(app, "app", 1024, NULL, 5, NULL) != pdPASS)
     {
@@ -70,10 +77,9 @@ int main(void)
     vTaskStartScheduler();
     while(1)
     {
-        printf("[Error]: FreeRTOS scheduler error!\r\n");
+
     }
 }
-
 /**
  * @brief 用户任务
  */
@@ -107,6 +113,9 @@ void app(void *pvParameters)
     encoder.event_callback.rotate_clockwise = rotate_clockwise;
     encoder.event_callback.rotate_counterclockwise = rotate_counterclockwise;
     bsp_encoder_init(&encoder, &encoder_config);
+    /* 电池测量初始化 */
+    bsp_battery_init(&battery, &BATTERY_DEFAULT_CONFIG());
+
     bsp_oled_welcome(&oled);
     bsp_buzzer_on(&buzzer);
     vTaskDelay(200);
@@ -144,8 +153,15 @@ void app(void *pvParameters)
         // bsp_servo_set_angle(&servo1, angle);
         // bsp_servo_set_angle(&servo2, angle);
         // bsp_servo_set_angle(&servo3, angle);
-        vTaskDelay(500);
-
+        // printf("battery: %.2fV\n",bsp_battery_get_voltage(&battery));
+        // printf("level: %d%%\n",bsp_battery_get_level(&battery));
+        // bsp_esp32_msg_send(&esp32_msg, "hello world\r\n", 13);
+        vTaskDelay(10);
+        if (esp32_msg.new_msg_flag)
+        {
+            esp32_msg.new_msg_flag = 0;
+            bsp_esp32_msg_send(&esp32_msg, esp32_msg.buf, esp32_msg.rx_len);
+        }
         if (msg.new_msg_flag)
         {
             msg.new_msg_flag = 0;

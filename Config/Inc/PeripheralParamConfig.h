@@ -5,283 +5,301 @@
  *      作    者: Rinya101(http://github.com/rinya101) 学号：220802040137
  *      版权说明：本程序代码仅用于 2026 本科毕业设计，不得用于其他商业用途，
  *               可以作为个人参考学习使用。
-*******************************************************************************/
+ *******************************************************************************/
 #ifndef _PERIPHERAL_PARAM_CONFIG_H
 #define _PERIPHERAL_PARAM_CONFIG_H
 #include "stm32f4xx.h"
 /* ---------------------------------- DEBUG 配置 ----------------------------- */
-#define DEBUG   1
-#define DETAIL  0
-/* ---------------------------------- USART 配置 ----------------------------- */
-#define USART_RECEIVE_BUF_SIZE          64         /* 缓存区大小 */
-#define USART_STRING_END_CR             '\r'        /* 字符串回车符 */
-#define USART_STRING_END_LF             '\n'        /* 字符串换行符 */
-#define USART_STRING_END_NULL           '\0'        /* 字符串结束符 */
-//#define USART1_IRQ_HANDLE(void)         USART1_IRQHandler(void)
-//#define USART2_IRQ_HANDLE(void)         USART2_IRQHandler(void)
+#define DEBUG 1
+#define DETAIL 0
+/* ---------------------------------- USART1 配置 ----------------------------- */
+#define USART_RECEIVE_BUF_SIZE 64  /* 缓存区大小 */
+#define USART_STRING_END_CR '\r'   /* 字符串回车符 */
+#define USART_STRING_END_LF '\n'   /* 字符串换行符 */
+#define USART_STRING_END_NULL '\0' /* 字符串结束符 */
+// #define USART1_IRQ_HANDLE(void)         USART1_IRQHandler(void)
+// #define USART2_IRQ_HANDLE(void)         USART2_IRQHandler(void)
 /**
- * @brief USART 默认初始化配置 
+ * @brief USART 默认初始化配置
  * @note 修改 usart_tx_source 与 usart_rx_source 对应接口 任务交给程序员自己配置
  * @note 注意 DMA 通道 与 USART 通道的对应关系
  */
-#define USART1_DEFAULT_CONFIG()     (message_cfg_t){\
-    /* RCC  */\
-    .usart_rcc              = RCC_APB2Periph_USART1,\
-    .tx_pin_rcc             = RCC_AHB1Periph_GPIOA,\
-    .rx_pin_rcc             = RCC_AHB1Periph_GPIOA,\
-    /* GPIO */\
-    .tx_port                = USART1_TX_PORT,\
-    .rx_port                = USART1_RX_PORT,\
-    .tx_pin                 = USART1_TX_PIN,\
-    .rx_pin                 = USART1_RX_PIN,\
-    .tx_mode                = GPIO_Mode_AF,\
-    .rx_mode                = GPIO_Mode_AF,\
-    .tx_otype               = GPIO_OType_OD,\
-    .rx_otype               = GPIO_OType_OD,\
-    .tx_pu                  = GPIO_PuPd_UP,\
-    .rx_pu                  = GPIO_PuPd_UP,\
-    .tx_speed               = GPIO_Speed_50MHz,\
-    .rx_speed               = GPIO_Speed_50MHz,\
-    .usart_tx_source        = GPIO_PinSource9,\
-    .usart_rx_source        = GPIO_PinSource10,\
-    .usart_af               = GPIO_AF_USART1,\
-    /* NVIC */\
-    .irq_channel            = USART1_IRQn,\
-    .preemption_priority    = 5,\
-    .sub_priority           = 0,\
-    /* USART */\
-    .usart                  = USART1,\
-    .baudrate               = 115200,\
-    .usart_mode             = USART_Mode_Rx | USART_Mode_Tx,\
-    .usart_parity           = USART_Parity_No,\
-    .usart_stopbit          = USART_StopBits_1,\
-    .usart_wordlength       = USART_WordLength_8b,\
-    .hfc                    = USART_HardwareFlowControl_None,\
-    /* DMA */\
-    .tx_dma_stream          = DMA2_Stream7,\
-    .tx_dma_channel         = DMA_Channel_4,\
-    .tx_dma_irq             = DMA2_Stream7_IRQn,\
-    .dma_preemption_priority= 5,\
-    .dma_sub_priority       = 0}
-
-#define USART2_DEFAULT_CONFIG()     (usart_cfg_t){\
-    .usart                  = USART2,\
-    .tx_port                = USART2_TX_PORT,\
-    .rx_port                = USART2_RX_PORT,\
-    .tx_pin                 = USART2_TX_PIN,\
-    .rx_pin                 = USART2_RX_PIN,\
-    .usart_tx_source        = GPIO_PinSource2,\
-    .usart_rx_source        = GPIO_PinSource3,\
-    .preemption_priority    = 5,\
-    .sub_priority           = 0,\
-    .baudrate               = 115200,\
-    .usart_mode             = USART_Mode_Rx | USART_Mode_Tx,\
-    .usart_parity           = USART_Parity_No,\
-    .usart_stopbit          = USART_StopBits_1,\
-    .usart_wordlength       = USART_WordLength_8b,\
-    .hfc                    = USART_HardwareFlowControl_None,\
-    .tx_dma_stream          = DMA1_Stream6,\
-    .tx_dma_channel         = DMA_Channel_4,\
-    .tx_dma_irq             = DMA1_Stream6_IRQn,\
-    .dma_preemption_priority= 5,\
-    .dma_sub_priority       = 0}
+#define USART1_DEFAULT_CONFIG() (message_cfg_t){     \
+    /* RCC  */                                       \
+    .usart_rcc = RCC_APB2Periph_USART1,              \
+    .tx_pin_rcc = RCC_AHB1Periph_GPIOA,              \
+    .rx_pin_rcc = RCC_AHB1Periph_GPIOA, /* GPIO */   \
+    .tx_port = USART1_TX_PORT,                       \
+    .rx_port = USART1_RX_PORT,                       \
+    .tx_pin = USART1_TX_PIN,                         \
+    .rx_pin = USART1_RX_PIN,                         \
+    .tx_mode = GPIO_Mode_AF,                         \
+    .rx_mode = GPIO_Mode_AF,                         \
+    .tx_otype = GPIO_OType_OD,                       \
+    .rx_otype = GPIO_OType_OD,                       \
+    .tx_pu = GPIO_PuPd_UP,                           \
+    .rx_pu = GPIO_PuPd_UP,                           \
+    .tx_speed = GPIO_Speed_50MHz,                    \
+    .rx_speed = GPIO_Speed_50MHz,                    \
+    .usart_tx_source = GPIO_PinSource9,              \
+    .usart_rx_source = GPIO_PinSource10,             \
+    .usart_af = GPIO_AF_USART1, /* NVIC */           \
+    .irq_channel = USART1_IRQn,                      \
+    .preemption_priority = 5,                        \
+    .sub_priority = 0, /* USART */                   \
+    .usart = USART1,                                 \
+    .baudrate = 115200,                              \
+    .usart_mode = USART_Mode_Rx | USART_Mode_Tx,     \
+    .usart_parity = USART_Parity_No,                 \
+    .usart_stopbit = USART_StopBits_1,               \
+    .usart_wordlength = USART_WordLength_8b,         \
+    .hfc = USART_HardwareFlowControl_None, /* DMA */ \
+    .tx_dma_stream = DMA2_Stream7,                   \
+    .tx_dma_channel = DMA_Channel_4,                 \
+    .tx_dma_irq = DMA2_Stream7_IRQn,                 \
+    .dma_preemption_priority = 5,                    \
+    .dma_sub_priority = 0}
+/* ---------------------------------- USART6 配置 ----------------------------- */
+#define ESP32_MSG_USART6_DEFAULT_CONFIG() (esp32_msg_cfg_t){ \
+    /* RCC 时钟 */                                           \
+    .gpio_rcc = RCC_AHB1Periph_GPIOA,                        \
+    .usart_rcc = RCC_APB2Periph_USART6,                      \
+                                                             \
+    /* GPIO TX = PA11 */                                     \
+    .gpio_tx_port = GPIOA,                                   \
+    .gpio_tx_pin = GPIO_Pin_11,                              \
+    .gpio_tx_pin_src = GPIO_PinSource11,                     \
+    .gpio_tx_pin_af = GPIO_AF_USART6,                        \
+                                                             \
+    /* GPIO RX = PA12 */                                     \
+    .gpio_rx_port = GPIOA,                                   \
+    .gpio_rx_pin = GPIO_Pin_12,                              \
+    .gpio_rx_pin_src = GPIO_PinSource12,                     \
+    .gpio_rx_pin_af = GPIO_AF_USART6,                        \
+                                                             \
+    /* 串口参数 115200 8N1 */                                \
+    .usart = USART6,                                         \
+    .usart_baudrate = 115200,                                \
+    .usart_parity = USART_Parity_No,                         \
+    .usart_stopbits = USART_StopBits_1,                      \
+    .usart_wordlen = USART_WordLength_8b,                    \
+                                                             \
+    .usart_irq = USART6_IRQn,                                \
+    .usart_irq_preemptionpriority = 5,                       \
+    .usart_irq_subpriority = 0,                              \
+                                                             \
+    /* 接收缓冲区（内部默认） */                             \
+    .buf = NULL,                                             \
+    .buf_len = 0,                                            \
+    .buf_index = 0}
+#define USART2_DEFAULT_CONFIG() (usart_cfg_t){   \
+    .usart = USART2,                             \
+    .tx_port = USART2_TX_PORT,                   \
+    .rx_port = USART2_RX_PORT,                   \
+    .tx_pin = USART2_TX_PIN,                     \
+    .rx_pin = USART2_RX_PIN,                     \
+    .usart_tx_source = GPIO_PinSource2,          \
+    .usart_rx_source = GPIO_PinSource3,          \
+    .preemption_priority = 5,                    \
+    .sub_priority = 0,                           \
+    .baudrate = 115200,                          \
+    .usart_mode = USART_Mode_Rx | USART_Mode_Tx, \
+    .usart_parity = USART_Parity_No,             \
+    .usart_stopbit = USART_StopBits_1,           \
+    .usart_wordlength = USART_WordLength_8b,     \
+    .hfc = USART_HardwareFlowControl_None,       \
+    .tx_dma_stream = DMA1_Stream6,               \
+    .tx_dma_channel = DMA_Channel_4,             \
+    .tx_dma_irq = DMA1_Stream6_IRQn,             \
+    .dma_preemption_priority = 5,                \
+    .dma_sub_priority = 0}
 
 /* ---------------------------------- 编码器 配置 ----------------------------- */
 /**
  * @note 根据实际情况修改 中断服务函数参考 bsp_encoder_it.c 中的函数：
- * 
+ *
  */
-#define ENCODER_DEFAULT_CONFIG()  (const encoder_cfg_t){\
-    .gpio_a_clk      = RCC_AHB1Periph_GPIOB,    \
-    .gpio_b_clk      = RCC_AHB1Periph_GPIOB,    \
-    .gpio_btn_clk    = RCC_AHB1Periph_GPIOB,    \
-    .tim_clk         = RCC_APB1Periph_TIM5,     \
-                                                            \
-    .gpio_a_port     = GPIOB,                    \
-    .gpio_b_port     = GPIOB,                    \
-    .gpio_btn_port   = GPIOB,                    \
-                                                            \
-    .gpio_a_pin      = GPIO_Pin_0,               \
-    .gpio_b_pin      = GPIO_Pin_1,               \
-    .gpio_btn_pin    = GPIO_Pin_2,               \
-                                                            \
-    .exti_a_port_src = EXTI_PortSourceGPIOB,    \
-    .exti_a_pin_src  = EXTI_PinSource0,         \
-                                                            \
-    .exti_btn_port_src = EXTI_PortSourceGPIOB,  \
-    .exti_btn_pin_src  = EXTI_PinSource2,       \
-                                                            \
-    .exti_a_line     = EXTI_Line0,              \
-    .exti_btn_line   = EXTI_Line2,              \
-                                                            \
-    .exti_a_trigger  = EXTI_Trigger_Falling, \
-    .exti_btn_trigger= EXTI_Trigger_Rising_Falling,    \
-                                                            \
-    .nvic_a_priority    = 5,                    \
-    .nvic_a_subpriority = 0,                    \
-    .nvic_a_irq         = EXTI0_IRQn,           \
-                                                            \
-    .nvic_btn_priority  = 6,                    \
-    .nvic_btn_subpriority=0,                    \
-    .nvic_btn_irq       = EXTI2_IRQn,           \
-                                                            \
-    .nvic_tim_priority  = 4,                    \
-    .nvic_tim_subpriority=0,                    \
-    .nvic_tim_irq       = TIM5_IRQn,            \
-                                                            \
-    .tim              = TIM5,                   \
-    .tim_psc          = 1000 - 1,                \
-    .tim_arr          = 50000 - 1,               \
-}
+#define ENCODER_DEFAULT_CONFIG()                         \
+    (const encoder_cfg_t)                                \
+    {                                                    \
+        .gpio_a_clk = RCC_AHB1Periph_GPIOB,              \
+        .gpio_b_clk = RCC_AHB1Periph_GPIOB,              \
+        .gpio_btn_clk = RCC_AHB1Periph_GPIOB,            \
+        .tim_clk = RCC_APB1Periph_TIM5,                  \
+                                                         \
+        .gpio_a_port = GPIOB,                            \
+        .gpio_b_port = GPIOB,                            \
+        .gpio_btn_port = GPIOB,                          \
+                                                         \
+        .gpio_a_pin = GPIO_Pin_0,                        \
+        .gpio_b_pin = GPIO_Pin_1,                        \
+        .gpio_btn_pin = GPIO_Pin_2,                      \
+                                                         \
+        .exti_a_port_src = EXTI_PortSourceGPIOB,         \
+        .exti_a_pin_src = EXTI_PinSource0,               \
+                                                         \
+        .exti_btn_port_src = EXTI_PortSourceGPIOB,       \
+        .exti_btn_pin_src = EXTI_PinSource2,             \
+                                                         \
+        .exti_a_line = EXTI_Line0,                       \
+        .exti_btn_line = EXTI_Line2,                     \
+                                                         \
+        .exti_a_trigger = EXTI_Trigger_Falling,          \
+        .exti_btn_trigger = EXTI_Trigger_Rising_Falling, \
+                                                         \
+        .nvic_a_priority = 5,                            \
+        .nvic_a_subpriority = 0,                         \
+        .nvic_a_irq = EXTI0_IRQn,                        \
+                                                         \
+        .nvic_btn_priority = 6,                          \
+        .nvic_btn_subpriority = 0,                       \
+        .nvic_btn_irq = EXTI2_IRQn,                      \
+                                                         \
+        .nvic_tim_priority = 4,                          \
+        .nvic_tim_subpriority = 0,                       \
+        .nvic_tim_irq = TIM5_IRQn,                       \
+                                                         \
+        .tim = TIM5,                                     \
+        .tim_psc = 1000 - 1,                             \
+        .tim_arr = 50000 - 1,                            \
+    }
 /* ---------------------------------- OLED 配置 ----------------------------- */
 extern const uint8_t oled_init_cmd_seq[];
-#define OLED_INIT_CMD_SEQ_SIZE      32
+#define OLED_INIT_CMD_SEQ_SIZE 32
 /* 硬件寄存器配置 */
-#define OLED_ADDR       0x78 /* I2C 地址 */
-#define OLED_WIDTH      128  /* OLED 宽度 */
-#define OLED_HEIGHT     64   /* OLED 高度 */
-#define OLED_PAGE_SIZE  8    /* 每页显示 8 行 */
-#define OLED_BUF_SIZE   (OLED_WIDTH * OLED_PAGE_SIZE)
+#define OLED_ADDR 0x78   /* I2C 地址 */
+#define OLED_WIDTH 128   /* OLED 宽度 */
+#define OLED_HEIGHT 64   /* OLED 高度 */
+#define OLED_PAGE_SIZE 8 /* 每页显示 8 行 */
+#define OLED_BUF_SIZE (OLED_WIDTH * OLED_PAGE_SIZE)
 #define OLED_BUF_BIT_SIZE (OLED_WIDTH * OLED_HEIGHT)
 #define OLED_DMA_IRQ_HANDLE DMA1_Channel7_IRQHandler
 /* 软件寄存器配置 */
-#define OLED_DATA_MODE   0x40 /* 数据模式 */
-#define OLED_CMD_MODE    0x00 /* 命令模式 */
-#define OLED_PAGE(page)        (0xB0 + (page))                  /* 设置页地址 */
-#define OLED_COL_LOW(col)      (0x00 | ((col) & 0x0F))          /* 设置列地址低4位 */
-#define OLED_COL_HIGH(col)     (0x10 | (((col) >> 4) & 0x0F))   /* 设置列地址高4位 */
-#define OLED_DEFAULT_CONFIG()    (oled_cfg_t){\
-    /* GPIO 配置 */\
-    .scl_clk            = RCC_AHB1Periph_GPIOB,\
-    .sda_clk            = RCC_AHB1Periph_GPIOB,\
-    .scl_port           = GPIOB,\
-    .sda_port           = GPIOB,\
-    .scl_pin            = GPIO_Pin_6,\
-    .sda_pin            = GPIO_Pin_7,\
-    .scl_pu             = GPIO_PuPd_UP,\
-    .sda_pu             = GPIO_PuPd_UP,\
-    .scl_speed          = GPIO_Speed_100MHz,\
-    .sda_speed          = GPIO_Speed_100MHz,\
-    .scl_mode           = GPIO_Mode_AF,\
-    .sda_mode           = GPIO_Mode_AF,\
-    .scl_otype          = GPIO_OType_OD,\
-    .sda_otype          = GPIO_OType_OD,\
-    .scl_source         = GPIO_PinSource6,\
-    .sda_source         = GPIO_PinSource7,\
-    .scl_af             = GPIO_AF_I2C1,\
-    .sda_af             = GPIO_AF_I2C1,\
-    /* I2C 配置 */\
-    .i2c_clk            = RCC_APB1Periph_I2C1,\
-    .i2cx               = I2C1,\
-    .i2c_mode           = I2C_Mode_I2C,\
-    .i2c_ack            = I2C_Ack_Enable,\
-    .i2c_ack_addr       = I2C_AcknowledgedAddress_7bit,\
-    .i2c_duty           = I2C_DutyCycle_2,\
-    .i2c_speed          = 400000,\
-    .i2c_own_addr       = 0x00,\
-    /* DMA 配置 */\
-    .dma_clk            = RCC_AHB1Periph_DMA1,\
-    .dma_stream         = DMA1_Stream7,\
-    .tx_dma_channel     = DMA_Channel_1,\
-    .dma_priority       = DMA_Priority_High,\
-    .dma_irq_channel    = DMA1_Stream7_IRQn,\
-    .dma_irq_prio       = 5,\
-    .dma_irq_sub_prio   = 0,\
-    /* SYSCFG 配置 */\
-    .syscfg_clk         = RCC_APB2Periph_SYSCFG,\
-    /* OLED 配置 */\
-    .i2c_addr           = OLED_ADDR,\
-    .width              = OLED_WIDTH,\
-    .height             = OLED_HEIGHT\
-}
+#define OLED_DATA_MODE 0x40                               /* 数据模式 */
+#define OLED_CMD_MODE 0x00                                /* 命令模式 */
+#define OLED_PAGE(page) (0xB0 + (page))                   /* 设置页地址 */
+#define OLED_COL_LOW(col) (0x00 | ((col) & 0x0F))         /* 设置列地址低4位 */
+#define OLED_COL_HIGH(col) (0x10 | (((col) >> 4) & 0x0F)) /* 设置列地址高4位 */
+#define OLED_DEFAULT_CONFIG()                                      \
+    (oled_cfg_t)                                                   \
+    {                                                              \
+        /* GPIO 配置 */                                            \
+        .scl_clk = RCC_AHB1Periph_GPIOB,                           \
+        .sda_clk = RCC_AHB1Periph_GPIOB,                           \
+        .scl_port = GPIOB,                                         \
+        .sda_port = GPIOB,                                         \
+        .scl_pin = GPIO_Pin_6,                                     \
+        .sda_pin = GPIO_Pin_7,                                     \
+        .scl_pu = GPIO_PuPd_UP,                                    \
+        .sda_pu = GPIO_PuPd_UP,                                    \
+        .scl_speed = GPIO_Speed_100MHz,                            \
+        .sda_speed = GPIO_Speed_100MHz,                            \
+        .scl_mode = GPIO_Mode_AF,                                  \
+        .sda_mode = GPIO_Mode_AF,                                  \
+        .scl_otype = GPIO_OType_OD,                                \
+        .sda_otype = GPIO_OType_OD,                                \
+        .scl_source = GPIO_PinSource6,                             \
+        .sda_source = GPIO_PinSource7,                             \
+        .scl_af = GPIO_AF_I2C1,                                    \
+        .sda_af = GPIO_AF_I2C1, /* I2C 配置 */                     \
+        .i2c_clk = RCC_APB1Periph_I2C1,                            \
+        .i2cx = I2C1,                                              \
+        .i2c_mode = I2C_Mode_I2C,                                  \
+        .i2c_ack = I2C_Ack_Enable,                                 \
+        .i2c_ack_addr = I2C_AcknowledgedAddress_7bit,              \
+        .i2c_duty = I2C_DutyCycle_2,                               \
+        .i2c_speed = 400000,                                       \
+        .i2c_own_addr = 0x00, /* DMA 配置 */                       \
+        .dma_clk = RCC_AHB1Periph_DMA1,                            \
+        .dma_stream = DMA1_Stream7,                                \
+        .tx_dma_channel = DMA_Channel_1,                           \
+        .dma_priority = DMA_Priority_High,                         \
+        .dma_irq_channel = DMA1_Stream7_IRQn,                      \
+        .dma_irq_prio = 5,                                         \
+        .dma_irq_sub_prio = 0,                   /* SYSCFG 配置 */ \
+        .syscfg_clk = RCC_APB2Periph_SYSCFG, /* OLED 配置 */       \
+        .i2c_addr = OLED_ADDR,                                     \
+        .width = OLED_WIDTH,                                       \
+        .height = OLED_HEIGHT                                      \
+    }
 /* ----------------------- 超声波模块（HC-SR04） 配置 ------------------------- */
-//#define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
-//#define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
-#define ULT_DEFAULT_CONDFIG() (ult_cfg_t){\
-    /* RCC */\
-    .tr_gpio_rcc = RCC_AHB1Periph_GPIOA,\
-    .eh_gpio_rcc = RCC_AHB1Periph_GPIOA,\
-    .tim_rcc     = RCC_APB1Periph_TIM3,\
-    /* GPIO */\
-    .tr_gpio_port   = GPIOA,\
-    .eh_gpio_port   = GPIOA,\
-    .tr_gpio_pin    = GPIO_Pin_6,\
-    .eh_gpio_pin    = GPIO_Pin_7,\
-    .tr_gpio_mode   = GPIO_Mode_OUT,\
-    .eh_gpio_mode   = GPIO_Mode_IN,\
-    .tr_gpio_otype  = GPIO_OType_PP,\
-    .eh_gpio_otype  = GPIO_OType_PP,\
-    .tr_gpio_speed  = GPIO_Speed_25MHz,\
-    .eh_gpio_speed  = GPIO_Speed_50MHz,\
-    .tr_gpio_pupd   = GPIO_PuPd_NOPULL,\
-    .eh_gpio_pupd   = GPIO_PuPd_UP,\
-    .tr_port_source = EXTI_PortSourceGPIOA,\
-    .eh_port_source = EXTI_PortSourceGPIOA,\
-    .tr_pin_source  = EXTI_PinSource6,\
-    .eh_pin_source  = EXTI_PinSource7,\
-    /* EXTI */\
-    .eh_exti_line   = EXTI_Line7,\
-    .eh_exti_mode   = EXTI_Mode_Interrupt,\
-    .eh_exti_trigger= EXTI_Trigger_Rising_Falling,\
-    /* NVIC */\
-    .eh_nvic_irqn   = EXTI9_5_IRQn,\
-    .eh_nvic_pri    = 3,\
-    .eh_nvic_subpri = 0,\
-    .tim_nvic_irqn  = TIM3_IRQn,\
-    .tim_nvic_pri   = 4,\
-    .tim_nvic_subpri= 0,\
-    /* TIM */\
-    .timx               = TIM3,\
-    .tim_prescaler      = 100 - 1, /* 1MHZ 1us */\
-    .tim_period         = 10000 - 1, /* 1us*10000 = 10ms */\
-    .tim_counter_mode   = TIM_CounterMode_Up,\
-    .tim_division       = TIM_CKD_DIV1,\
-}
+// #define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
+// #define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
+#define ULT_DEFAULT_CONDFIG()                                      \
+    (ult_cfg_t)                                                    \
+    {                                                              \
+        /* RCC */                                                  \
+        .tr_gpio_rcc = RCC_AHB1Periph_GPIOA,                       \
+        .eh_gpio_rcc = RCC_AHB1Periph_GPIOA,                       \
+        .tim_rcc = RCC_APB1Periph_TIM3, /* GPIO */                 \
+            .tr_gpio_port = GPIOA,                                 \
+        .eh_gpio_port = GPIOA,                                     \
+        .tr_gpio_pin = GPIO_Pin_6,                                 \
+        .eh_gpio_pin = GPIO_Pin_7,                                 \
+        .tr_gpio_mode = GPIO_Mode_OUT,                             \
+        .eh_gpio_mode = GPIO_Mode_IN,                              \
+        .tr_gpio_otype = GPIO_OType_PP,                            \
+        .eh_gpio_otype = GPIO_OType_PP,                            \
+        .tr_gpio_speed = GPIO_Speed_25MHz,                         \
+        .eh_gpio_speed = GPIO_Speed_50MHz,                         \
+        .tr_gpio_pupd = GPIO_PuPd_NOPULL,                          \
+        .eh_gpio_pupd = GPIO_PuPd_UP,                              \
+        .tr_port_source = EXTI_PortSourceGPIOA,                    \
+        .eh_port_source = EXTI_PortSourceGPIOA,                    \
+        .tr_pin_source = EXTI_PinSource6,                          \
+        .eh_pin_source = EXTI_PinSource7, /* EXTI */               \
+            .eh_exti_line = EXTI_Line7,                            \
+        .eh_exti_mode = EXTI_Mode_Interrupt,                       \
+        .eh_exti_trigger = EXTI_Trigger_Rising_Falling, /* NVIC */ \
+            .eh_nvic_irqn = EXTI9_5_IRQn,                          \
+        .eh_nvic_pri = 6,                                          \
+        .eh_nvic_subpri = 0,                                       \
+        .tim_nvic_irqn = TIM3_IRQn,                                \
+        .tim_nvic_pri = 4,                                         \
+        .tim_nvic_subpri = 0, /* TIM */                            \
+            .timx = TIM3,                                          \
+        .tim_prescaler = 100 - 1,    /* 1MHZ 1us */                \
+            .tim_period = 10000 - 1, /* 1us*10000 = 10ms */        \
+            .tim_counter_mode = TIM_CounterMode_Up,                \
+        .tim_division = TIM_CKD_DIV1,                              \
+    }
 /* ----------------------- 循迹模块 配置 ------------------------- */
-#define TRACKER_A_DEFAULT_CONFIG() (track_cfg_t){\
-    /* TRACKER */\
-    .id                 = TRACKER_A,\
-    /* RCC */\
-    .rcc_gpio           = RCC_AHB1Periph_GPIOB,\
-    .gpio_port          = GPIOB,\
-    .gpio_pin           = GPIO_Pin_3,\
-    .gpio_mode          = GPIO_Mode_IN,\
-    .gpio_otype         = GPIO_OType_PP,\
-    .gpio_speed         = GPIO_Speed_25MHz,\
-    .gpio_pupd          = GPIO_PuPd_UP,\
-    .gpio_port_source   = EXTI_PortSourceGPIOB,\
-    .gpio_pin_source    = EXTI_PinSource3,\
-    /* EXTI */\
-    .exti_line          = EXTI_Line3,\
-    .exti_mode          = EXTI_Mode_Interrupt,\
-    .exti_trigger       = EXTI_Trigger_Rising_Falling,\
-    /* NVIC */\
-    .nvic_irqn          = EXTI3_IRQn,\
-    .nvic_pri           = 5,\
-    .nvic_subpri        = 4\
-}
-#define TRACKER_B_DEFAULT_CONFIG() (track_cfg_t){\
-    /* TRACKER */\
-    .id                 = TRACKER_B,\
-    /* RCC */\
-    .rcc_gpio           = RCC_AHB1Periph_GPIOB,\
-    .gpio_port          = GPIOB,\
-    .gpio_pin           = GPIO_Pin_4,\
-    .gpio_mode          = GPIO_Mode_IN,\
-    .gpio_otype         = GPIO_OType_PP,\
-    .gpio_speed         = GPIO_Speed_25MHz,\
-    .gpio_pupd          = GPIO_PuPd_UP,\
-    .gpio_port_source   = EXTI_PortSourceGPIOB,\
-    .gpio_pin_source    = EXTI_PinSource4,\
-    /* EXTI */\
-    .exti_line          = EXTI_Line4,\
-    .exti_mode          = EXTI_Mode_Interrupt,\
-    .exti_trigger       = EXTI_Trigger_Rising_Falling,\
-    /* NVIC */\
-    .nvic_irqn          = EXTI4_IRQn,\
-    .nvic_pri           = 6,\
-    .nvic_subpri        = 3\
-}
+#define TRACKER_A_DEFAULT_CONFIG() (track_cfg_t){           \
+    /* TRACKER */                                           \
+    .id = TRACKER_A, /* RCC */                              \
+    .rcc_gpio = RCC_AHB1Periph_GPIOB,                       \
+    .gpio_port = GPIOB,                                     \
+    .gpio_pin = GPIO_Pin_3,                                 \
+    .gpio_mode = GPIO_Mode_IN,                              \
+    .gpio_otype = GPIO_OType_PP,                            \
+    .gpio_speed = GPIO_Speed_25MHz,                         \
+    .gpio_pupd = GPIO_PuPd_UP,                              \
+    .gpio_port_source = EXTI_PortSourceGPIOB,               \
+    .gpio_pin_source = EXTI_PinSource3, /* EXTI */          \
+    .exti_line = EXTI_Line3,                                \
+    .exti_mode = EXTI_Mode_Interrupt,                       \
+    .exti_trigger = EXTI_Trigger_Rising_Falling, /* NVIC */ \
+    .nvic_irqn = EXTI3_IRQn,                                \
+    .nvic_pri = 5,                                          \
+    .nvic_subpri = 4}
+#define TRACKER_B_DEFAULT_CONFIG() (track_cfg_t){           \
+    /* TRACKER */                                           \
+    .id = TRACKER_B, /* RCC */                              \
+    .rcc_gpio = RCC_AHB1Periph_GPIOB,                       \
+    .gpio_port = GPIOB,                                     \
+    .gpio_pin = GPIO_Pin_4,                                 \
+    .gpio_mode = GPIO_Mode_IN,                              \
+    .gpio_otype = GPIO_OType_PP,                            \
+    .gpio_speed = GPIO_Speed_25MHz,                         \
+    .gpio_pupd = GPIO_PuPd_UP,                              \
+    .gpio_port_source = EXTI_PortSourceGPIOB,               \
+    .gpio_pin_source = EXTI_PinSource4, /* EXTI */          \
+    .exti_line = EXTI_Line4,                                \
+    .exti_mode = EXTI_Mode_Interrupt,                       \
+    .exti_trigger = EXTI_Trigger_Rising_Falling, /* NVIC */ \
+    .nvic_irqn = EXTI4_IRQn,                                \
+    .nvic_pri = 6,                                          \
+    .nvic_subpri = 3}
 #define TRACKER_C_DEFAULT_CONFIG() (track_cfg_t){           \
     /* TRACKER */                                           \
     .id = TRACKER_C, /* RCC */                              \
@@ -302,145 +320,151 @@ extern const uint8_t oled_init_cmd_seq[];
     .nvic_subpri = 2}
 
 /* ----------------------- 指南针模块 配置 ------------------------- */
-#define COMPASS_ADDR    0x58
-#define COMPASS_DEFAULT_CONFIG() (const compass_cfg_t){\
-    /* RCC */\
-    .gpio_sda_rcc       = RCC_AHB1Periph_GPIOB,\
-    .gpio_scl_rcc       = RCC_AHB1Periph_GPIOA,\
-    .i2c_rcc            = RCC_APB1Periph_I2C3,\
-    /* GPIO */\
-    .gpio_sda_port      = GPIOB,\
-    .gpio_scl_port      = GPIOA,\
-    .gpio_sda_source    = GPIO_PinSource8,\
-    .gpio_scl_source    = GPIO_PinSource8,\
-    .gpio_sda_af        = GPIO_AF9_I2C3,\
-    .gpio_scl_af        = GPIO_AF_I2C3,\
-    .gpio_sda_pin       = GPIO_Pin_8,\
-    .gpio_scl_pin       = GPIO_Pin_8,\
-    .gpio_sda_mode      = GPIO_Mode_AF,\
-    .gpio_scl_mode      = GPIO_Mode_AF,\
-    .gpio_sda_otype     = GPIO_OType_OD,\
-    .gpio_scl_otype     = GPIO_OType_OD,\
-    .gpio_sda_pu        = GPIO_PuPd_UP,\
-    .gpio_scl_pu        = GPIO_PuPd_UP,\
-    .gpio_sda_speed     = GPIO_Speed_50MHz,\
-    .gpio_scl_speed     = GPIO_Speed_50MHz,\
-    /* I2C */\
-    .i2c                = I2C3,\
-    .i2c_mode           = I2C_Mode_I2C,\
-    .i2c_duty           = I2C_DutyCycle_2,\
-    .i2c_own_addr       = 0x00,\
-    .i2c_ack            = I2C_Ack_Enable,\
-    .i2c_ack_addr       = I2C_AcknowledgedAddress_7bit,\
-    .i2c_speed          = 100000,\
-    /* Base */\
-    .addr               = COMPASS_ADDR\
-}
+#define COMPASS_ADDR 0x58
+#define COMPASS_DEFAULT_CONFIG()                      \
+    (const compass_cfg_t)                             \
+    {                                                 \
+        /* RCC */                                     \
+        .gpio_sda_rcc = RCC_AHB1Periph_GPIOB,         \
+        .gpio_scl_rcc = RCC_AHB1Periph_GPIOA,         \
+        .i2c_rcc = RCC_APB1Periph_I2C3, /* GPIO */    \
+            .gpio_sda_port = GPIOB,                   \
+        .gpio_scl_port = GPIOA,                       \
+        .gpio_sda_source = GPIO_PinSource8,           \
+        .gpio_scl_source = GPIO_PinSource8,           \
+        .gpio_sda_af = GPIO_AF9_I2C3,                 \
+        .gpio_scl_af = GPIO_AF_I2C3,                  \
+        .gpio_sda_pin = GPIO_Pin_8,                   \
+        .gpio_scl_pin = GPIO_Pin_8,                   \
+        .gpio_sda_mode = GPIO_Mode_AF,                \
+        .gpio_scl_mode = GPIO_Mode_AF,                \
+        .gpio_sda_otype = GPIO_OType_OD,              \
+        .gpio_scl_otype = GPIO_OType_OD,              \
+        .gpio_sda_pu = GPIO_PuPd_UP,                  \
+        .gpio_scl_pu = GPIO_PuPd_UP,                  \
+        .gpio_sda_speed = GPIO_Speed_50MHz,           \
+        .gpio_scl_speed = GPIO_Speed_50MHz, /* I2C */ \
+            .i2c = I2C3,                              \
+        .i2c_mode = I2C_Mode_I2C,                     \
+        .i2c_duty = I2C_DutyCycle_2,                  \
+        .i2c_own_addr = 0x00,                         \
+        .i2c_ack = I2C_Ack_Enable,                    \
+        .i2c_ack_addr = I2C_AcknowledgedAddress_7bit, \
+        .i2c_speed = 100000, /* Base */               \
+            .addr = COMPASS_ADDR                      \
+    }
 /* ----------------------- 蜂鸣器 配置 ------------------------- */
-#define BUZZER_DEFAULT_CONFIG() (buzzer_cfg_t){\
-    .gpio_rcc       = RCC_AHB1Periph_GPIOB,\
-    .tim_rcc        = RCC_APB1Periph_TIM4,\
-    .gpio_port      = GPIOB,\
-    .gpio_pin       = GPIO_Pin_9,\
-    .timx           = TIM4,\
-    .tim_channel    = TIM_Channel_4,\
-    .prescaler      = 10 - 1,        /* 100MHz /10 = 10MHz → 0.1us */\
-    .period         = 10000,         /* 1kHz 默认频率 */\
-    .duty           = 1000,          /* 温和占空比 */\
-}
+#define BUZZER_DEFAULT_CONFIG()                               \
+    (buzzer_cfg_t)                                            \
+    {                                                         \
+        .gpio_rcc = RCC_AHB1Periph_GPIOB,                     \
+        .tim_rcc = RCC_APB1Periph_TIM4,                       \
+        .gpio_port = GPIOB,                                   \
+        .gpio_pin = GPIO_Pin_9,                               \
+        .timx = TIM4,                                         \
+        .tim_channel = TIM_Channel_4,                         \
+        .prescaler = 10 - 1, /* 100MHz /10 = 10MHz → 0.1us */ \
+            .period = 10000, /* 1kHz 默认频率 */              \
+            .duty = 1000,    /* 温和占空比 */                 \
+    }
 
 /* ----------------------- 马达 配置 ------------------------- */
-#define MOTOR_DEFAULT_CONFIG() (motor_cfg_t){                          \
-    /* RCC */                                              \
-    .gpio_m1a_rcc        = RCC_AHB1Periph_GPIOA,           \
-    .gpio_m1b_rcc        = RCC_AHB1Periph_GPIOB,           \
-    .gpio_m2a_rcc        = RCC_AHB1Periph_GPIOA,           \
-    .gpio_m2b_rcc        = RCC_AHB1Periph_GPIOB,           \
-    .tim_rcc             = RCC_APB1Periph_TIM2,            \
-    /* GPIO PORT */                                        \
-    .gpio_m1a_port       = GPIOA,                          \
-    .gpio_m1b_port       = GPIOB,                          \
-    .gpio_m2a_port       = GPIOA,                          \
-    .gpio_m2b_port       = GPIOB,                          \
-    /* GPIO PIN */                                         \
-    .gpio_m1a_pin        = GPIO_Pin_0,                     \
-    .gpio_m1b_pin        = GPIO_Pin_10,                    \
-    .gpio_m2a_pin        = GPIO_Pin_1,                     \
-    .gpio_m2b_pin        = GPIO_Pin_12,                    \
-    /* MODE */                                             \
-    .gpio_m1a_mode       = GPIO_Mode_AF,                   \
-    .gpio_m1b_mode       = GPIO_Mode_OUT,                  \
-    .gpio_m2a_mode       = GPIO_Mode_AF,                   \
-    .gpio_m2b_mode       = GPIO_Mode_OUT,                  \
-    /* OTYPER */                                           \
-    .gpio_m1a_otype      = GPIO_OType_PP,                  \
-    .gpio_m1b_otype      = GPIO_OType_PP,                  \
-    .gpio_m2a_otype      = GPIO_OType_PP,                  \
-    .gpio_m2b_otype      = GPIO_OType_PP,                  \
-    /* SPEED */                                            \
-    .gpio_m1a_speed      = GPIO_Speed_100MHz,              \
-    .gpio_m1b_speed      = GPIO_Speed_100MHz,              \
-    .gpio_m2a_speed      = GPIO_Speed_100MHz,              \
-    .gpio_m2b_speed      = GPIO_Speed_100MHz,              \
-    /* PUPD */                                             \
-    .gpio_m1a_pu         = GPIO_PuPd_NOPULL,               \
-    .gpio_m1b_pu         = GPIO_PuPd_NOPULL,               \
-    .gpio_m2a_pu         = GPIO_PuPd_NOPULL,               \
-    .gpio_m2b_pu         = GPIO_PuPd_NOPULL,               \
-    /* AF */                                               \
-    .gpio_m1a_pin_source = GPIO_PinSource0,                \
-    .gpio_m2a_pin_source = GPIO_PinSource1,                \
-    .gpio_m1a_af         = GPIO_AF_TIM2,                   \
-    .gpio_m2a_af         = GPIO_AF_TIM2,                   \
-    /* TIM */                                              \
-    .tim                 = TIM2,                           \
-    .tim_channel1        = TIM_Channel_1,                   \
-    .tim_channel2        = TIM_Channel_2,                   \
-    .tim_pre             = 100 - 1,                         \
-    .tim_period          = 1000 - 1,                      \
-    .tim_div             = TIM_CKD_DIV1,                   \
-    .tim_mode            = TIM_CounterMode_Up,             \
-    .tim_rep             = 0,                              \
-}
+#define MOTOR_DEFAULT_CONFIG()                          \
+    (motor_cfg_t)                                       \
+    {                                                   \
+        /* RCC */                                       \
+        .gpio_m1a_rcc = RCC_AHB1Periph_GPIOA,           \
+        .gpio_m1b_rcc = RCC_AHB1Periph_GPIOB,           \
+        .gpio_m2a_rcc = RCC_AHB1Periph_GPIOA,           \
+        .gpio_m2b_rcc = RCC_AHB1Periph_GPIOB,           \
+        .tim_rcc = RCC_APB1Periph_TIM2, /* GPIO PORT */ \
+            .gpio_m1a_port = GPIOA,                     \
+        .gpio_m1b_port = GPIOB,                         \
+        .gpio_m2a_port = GPIOA,                         \
+        .gpio_m2b_port = GPIOB, /* GPIO PIN */          \
+            .gpio_m1a_pin = GPIO_Pin_0,                 \
+        .gpio_m1b_pin = GPIO_Pin_10,                    \
+        .gpio_m2a_pin = GPIO_Pin_1,                     \
+        .gpio_m2b_pin = GPIO_Pin_12, /* MODE */         \
+            .gpio_m1a_mode = GPIO_Mode_AF,              \
+        .gpio_m1b_mode = GPIO_Mode_OUT,                 \
+        .gpio_m2a_mode = GPIO_Mode_AF,                  \
+        .gpio_m2b_mode = GPIO_Mode_OUT, /* OTYPER */    \
+            .gpio_m1a_otype = GPIO_OType_PP,            \
+        .gpio_m1b_otype = GPIO_OType_PP,                \
+        .gpio_m2a_otype = GPIO_OType_PP,                \
+        .gpio_m2b_otype = GPIO_OType_PP, /* SPEED */    \
+            .gpio_m1a_speed = GPIO_Speed_100MHz,        \
+        .gpio_m1b_speed = GPIO_Speed_100MHz,            \
+        .gpio_m2a_speed = GPIO_Speed_100MHz,            \
+        .gpio_m2b_speed = GPIO_Speed_100MHz, /* PUPD */ \
+            .gpio_m1a_pu = GPIO_PuPd_NOPULL,            \
+        .gpio_m1b_pu = GPIO_PuPd_NOPULL,                \
+        .gpio_m2a_pu = GPIO_PuPd_NOPULL,                \
+        .gpio_m2b_pu = GPIO_PuPd_NOPULL, /* AF */       \
+            .gpio_m1a_pin_source = GPIO_PinSource0,     \
+        .gpio_m2a_pin_source = GPIO_PinSource1,         \
+        .gpio_m1a_af = GPIO_AF_TIM2,                    \
+        .gpio_m2a_af = GPIO_AF_TIM2, /* TIM */          \
+            .tim = TIM2,                                \
+        .tim_channel1 = TIM_Channel_1,                  \
+        .tim_channel2 = TIM_Channel_2,                  \
+        .tim_pre = 100 - 1,                             \
+        .tim_period = 1000 - 1,                         \
+        .tim_div = TIM_CKD_DIV1,                        \
+        .tim_mode = TIM_CounterMode_Up,                 \
+        .tim_rep = 0,                                   \
+    }
 
 /* ----------------------- 舵机 配置 ------------------------- */
 #define SERVO1_DEFAULT_CONFIG() (servo_cfg_t){ \
-    .gpio_clk      = RCC_AHB1Periph_GPIOB, \
-    .tim_clk       = RCC_APB2Periph_TIM1, \
-    .gpio_port     = GPIOB, \
-    .gpio_pin      = GPIO_Pin_13, \
-    .gpio_af_src   = GPIO_PinSource13, \
-    .gpio_af       = GPIO_AF_TIM1, \
-    .tim           = TIM1, \
-    .tim_prescaler = 100 - 1, \
-    .tim_period    = 20000 - 1, \
-    .channel       = TIM_Channel_1, \
-    .duty          = 1500 \
-}
+    .gpio_clk = RCC_AHB1Periph_GPIOB,          \
+    .tim_clk = RCC_APB2Periph_TIM1,            \
+    .gpio_port = GPIOB,                        \
+    .gpio_pin = GPIO_Pin_13,                   \
+    .gpio_af_src = GPIO_PinSource13,           \
+    .gpio_af = GPIO_AF_TIM1,                   \
+    .tim = TIM1,                               \
+    .tim_prescaler = 100 - 1,                  \
+    .tim_period = 20000 - 1,                   \
+    .channel = TIM_Channel_1,                  \
+    .duty = 1500}
 #define SERVO2_DEFAULT_CONFIG() (servo_cfg_t){ \
-    .gpio_clk      = RCC_AHB1Periph_GPIOB, \
-    .tim_clk       = RCC_APB2Periph_TIM1, \
-    .gpio_port     = GPIOB, \
-    .gpio_pin      = GPIO_Pin_14, \
-    .gpio_af_src   = GPIO_PinSource14, \
-    .gpio_af       = GPIO_AF_TIM1, \
-    .tim           = TIM1, \
-    .tim_prescaler = 100 - 1, \
-    .tim_period    = 20000 - 1, \
-    .channel       = TIM_Channel_2, \
-    .duty          = 1500 \
-}
+    .gpio_clk = RCC_AHB1Periph_GPIOB,          \
+    .tim_clk = RCC_APB2Periph_TIM1,            \
+    .gpio_port = GPIOB,                        \
+    .gpio_pin = GPIO_Pin_14,                   \
+    .gpio_af_src = GPIO_PinSource14,           \
+    .gpio_af = GPIO_AF_TIM1,                   \
+    .tim = TIM1,                               \
+    .tim_prescaler = 100 - 1,                  \
+    .tim_period = 20000 - 1,                   \
+    .channel = TIM_Channel_2,                  \
+    .duty = 1500}
 #define SERVO3_DEFAULT_CONFIG() (servo_cfg_t){ \
-    .gpio_clk      = RCC_AHB1Periph_GPIOB, \
-    .tim_clk       = RCC_APB2Periph_TIM1, \
-    .gpio_port     = GPIOB, \
-    .gpio_pin      = GPIO_Pin_15, \
-    .gpio_af_src   = GPIO_PinSource15, \
-    .gpio_af       = GPIO_AF_TIM1, \
-    .tim           = TIM1, \
-    .tim_prescaler = 100 - 1, \
-    .tim_period    = 20000 - 1, \
-    .channel       = TIM_Channel_3, \
-    .duty          = 1500 \
-}
-#endif  /* PeripheralParamConfig.h */
+    .gpio_clk = RCC_AHB1Periph_GPIOB,          \
+    .tim_clk = RCC_APB2Periph_TIM1,            \
+    .gpio_port = GPIOB,                        \
+    .gpio_pin = GPIO_Pin_15,                   \
+    .gpio_af_src = GPIO_PinSource15,           \
+    .gpio_af = GPIO_AF_TIM1,                   \
+    .tim = TIM1,                               \
+    .tim_prescaler = 100 - 1,                  \
+    .tim_period = 20000 - 1,                   \
+    .channel = TIM_Channel_3,                  \
+    .duty = 1500}
+
+/* ----------------------- 电池电量采集 配置 ------------------------- */
+#define BATTERY_DEFAULT_CONFIG()          \
+    (const battery_cfg_t)                 \
+    {                                     \
+        .gpio_clk = RCC_AHB1Periph_GPIOA, \
+        .adc_clk = RCC_APB2Periph_ADC1,   \
+        .gpio_port = GPIOA,               \
+        .gpio_pin = GPIO_Pin_5,           \
+        .adc = ADC1,                      \
+        .adc_channel = ADC_Channel_5,     \
+        .offset = 1.106f,                 \
+    }
+
+#endif /* PeripheralParamConfig.h */
