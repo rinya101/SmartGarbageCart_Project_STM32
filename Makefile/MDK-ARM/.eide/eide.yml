@@ -12,10 +12,38 @@ virtualFolder:
       files: []
       folders:
         - name: Inc
-          files: []
+          files:
+            - path: ../../Application/Inc/app_battery.h
+            - path: ../../Application/Inc/app_buzzer.h
+            - path: ../../Application/Inc/app_compass.h
+            - path: ../../Application/Inc/app_debug.h
+            - path: ../../Application/Inc/app_encoder.h
+            - path: ../../Application/Inc/app_esp32_msg.h
+            - path: ../../Application/Inc/app_message.h
+            - path: ../../Application/Inc/app_motor.h
+            - path: ../../Application/Inc/app_oled.h
+            - path: ../../Application/Inc/app_pin_cfg.h
+            - path: ../../Application/Inc/app_servo.h
+            - path: ../../Application/Inc/app_tracking.h
+            - path: ../../Application/Inc/app_ultrasonic.h
+            - path: ../../Application/Inc/app_usart.h
+            - path: ../../Application/Inc/app_ctype.h
           folders: []
         - name: Src
-          files: []
+          files:
+            - path: ../../Application/Src/app_battery.c
+            - path: ../../Application/Src/app_buzzer.c
+            - path: ../../Application/Src/app_compass.c
+            - path: ../../Application/Src/app_debug.c
+            - path: ../../Application/Src/app_encoder.c
+            - path: ../../Application/Src/app_esp32_msg.c
+            - path: ../../Application/Src/app_message.c
+            - path: ../../Application/Src/app_motor.c
+            - path: ../../Application/Src/app_oled.c
+            - path: ../../Application/Src/app_servo.c
+            - path: ../../Application/Src/app_tracking.c
+            - path: ../../Application/Src/app_ultrasonic.c
+            - path: ../../Application/Src/app_usart.c
           folders: []
     - name: BSP
       files: []
@@ -208,7 +236,25 @@ virtualFolder:
           folders: []
     - name: Tasks
       files: []
-      folders: []
+      folders:
+        - name: Inc
+          files:
+            - path: ../../Tasks/Inc/task_app.h
+            - path: ../../Tasks/Inc/task_control.h
+            - path: ../../Tasks/Inc/task_esp32.h
+            - path: ../../Tasks/Inc/task_motor.h
+            - path: ../../Tasks/Inc/task_sensor.h
+            - path: ../../Tasks/Inc/task_ui.h
+          folders: []
+        - name: Src
+          files:
+            - path: ../../Tasks/Src/task_app.c
+            - path: ../../Tasks/Src/task_control.c
+            - path: ../../Tasks/Src/task_esp32.c
+            - path: ../../Tasks/Src/task_motor.c
+            - path: ../../Tasks/Src/task_sensor.c
+            - path: ../../Tasks/Src/task_ui.c
+          folders: []
     - name: Config
       files: []
       folders:

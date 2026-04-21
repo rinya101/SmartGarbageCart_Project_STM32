@@ -25,32 +25,42 @@ message_handle_t*     s_message;
  */
 void main_message_irq_handler(void *param)
 {
-    if (USART_GetITStatus(s_message->usart, USART_IT_RXNE) != RESET)
+if (USART_GetITStatus(s_message->usart, USART_IT_RXNE) != RESET)
+{
+    uint8_t ch = USART_ReceiveData(s_message->usart);
+    
+    /* 接收换行符，表示一帧数据结束 */
+    if (ch == USART_STRING_END_LF)
     {
-        uint8_t ch = USART_ReceiveData(s_message->usart);
-        if (ch == USART_STRING_END_LF)
+        /* 添加字符串结束符 */
+        if (s_message->buf_index < USART_RECEIVE_BUF_SIZE)
         {
-            if (s_message->buf_index < USART_RECEIVE_BUF_SIZE)
-            {
-                s_message->rx_buf[s_message->buf_index] = USART_STRING_END_NULL;
-            }
-            s_message->new_msg_flag = 1;
-            s_message->rx_len = s_message->buf_index;
-            s_message->buf_index = 0;
-            if (s_message->rx_callback != NULL)
-            {
-                s_message->rx_callback(s_message);
-            }
+            s_message->rx_buf[s_message->buf_index] = USART_STRING_END_NULL;
         }
-        else
+        
+        /* 设置消息标志 & 长度 */
+        s_message->new_msg_flag = 1;
+        s_message->rx_len = s_message->buf_index;
+        s_message->buf_index = 0;
+        
+        /* 接收回调函数 */
+        if (s_message->rx_callback != NULL)
         {
-            if (s_message->buf_index < USART_RECEIVE_BUF_SIZE - 1)
-            {
-                s_message->rx_buf[s_message->buf_index++] = ch;
-            }
+            s_message->rx_callback(s_message);
         }
-        USART_ClearITPendingBit(s_message->usart, USART_IT_RXNE);
     }
+    else
+    {
+        /* 正常数据，安全存入缓冲区 */
+        if (s_message->buf_index < USART_RECEIVE_BUF_SIZE - 1)
+        {
+            s_message->rx_buf[s_message->buf_index++] = ch;
+        }
+    }
+    
+    /* 清除中断标志 */
+    USART_ClearITPendingBit(s_message->usart, USART_IT_RXNE);
+}
 }
 
 /**

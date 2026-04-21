@@ -19,8 +19,12 @@ static uint8_t esp32_msg_buf[ESP32_MSG_BUF_SIZE];
  * @note 作为中断锚点
  */
 static esp32_msg_handle_t* s_msg_handle;
-
-void USART6_IRQHandler(void)
+/**
+ * @brief ESP32 通讯 接收数据中断服务
+ * 
+ * @param pamam 
+ */
+void esp32_msg_IRQHandler(void *pamam)
 {
     if (USART_GetITStatus(s_msg_handle->esp32_msg_dev.usart, USART_IT_RXNE) != RESET)
     {
@@ -43,6 +47,8 @@ void USART6_IRQHandler(void)
         USART_ClearITPendingBit(s_msg_handle->esp32_msg_dev.usart, USART_IT_RXNE);
     }
 }
+
+
 
 /**
  * @brief ESP32 通讯时钟初始化

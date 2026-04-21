@@ -16,6 +16,7 @@ extern void ult_tim_handler(void* param);
 /*-------------------------- 串口 -----------------------------*/
 extern void main_message_irq_handler(void *param);
 extern void DMA_main_message_irq_handler(void* param);
+extern void esp32_msg_IRQHandler(void *pamam);
 
 /*------------------------ 编码器 -----------------------------*/
 /**
@@ -90,7 +91,14 @@ void USART1_IRQHandler(void)
 {
     main_message_irq_handler((void*)"USART1_IRQHandler");
 }
-
+/**
+ * @brief USART6_IRQHandler
+ * 
+ */
+void USART6_IRQHandler(void)
+{
+    esp32_msg_IRQHandler((void*)"USART6_IRQHandler");
+}
 /**
  * @brief DAM1_Channel7 中断处理函数
  * 
