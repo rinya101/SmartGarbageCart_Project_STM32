@@ -430,12 +430,7 @@ void bsp_compass_calibrate(compass_handle_t *compass_handle)
     int16_t x, y;
     int16_t x_min = 32767, x_max = -32768;
     int16_t y_min = 32767, y_max = -32768;
-
-    SGCS_INFO("开始校准指南针... 请水平旋转设备 360°");
-    vTaskDelay(1000);
-
-    // 连续采样 500 次，采集最大最小值
-    for (int i = 0; i < 500; i++)
+    for (int i = 0; i < 250; i++)
     {
         uint8_t buf[6];
         compass_read_bytes(compass_handle, QMC5883P_XOUT_L_REG, buf, 6);
@@ -448,8 +443,8 @@ void bsp_compass_calibrate(compass_handle_t *compass_handle)
         if (x > x_max) x_max = x;
         if (y < y_min) y_min = y;
         if (y > y_max) y_max = y;
-        printf("x: %d, y: %d\n", x, y);
-        vTaskDelay(20); // 20ms 采样一次
+        printf("x: %d, y: %d count %d\n", x, y, i);
+        for(uint32_t i = 0; i < 400000; i++);
     }
 
     // 计算偏移：(最大值 + 最小值)/2

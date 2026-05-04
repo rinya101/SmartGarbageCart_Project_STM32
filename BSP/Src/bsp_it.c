@@ -17,7 +17,8 @@ extern void ult_tim_handler(void* param);
 extern void main_message_irq_handler(void *param);
 extern void DMA_main_message_irq_handler(void* param);
 extern void esp32_msg_IRQHandler(void *pamam);
-
+/*-------------------------- 蜂鸣器延时 -----------------------------*/
+extern void buzzer_tim_IRQHandler(void* param);
 /*------------------------ 编码器 -----------------------------*/
 /**
  * @brief  定时器中断（1ms 定时）
@@ -81,7 +82,14 @@ void TIM3_IRQHandler(void)
 {
     ult_tim_handler((void*)"TIM3_IRQHandler");
 }
-
+/**
+ * @brief TIM1_UP_TIM10_IRQHandler
+ * 
+ */
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+    buzzer_tim_IRQHandler((void*)"TIM1_BRK_TIM9_IRQHandler");
+}
 
 /**
  * @brief USART1_IRQHandler

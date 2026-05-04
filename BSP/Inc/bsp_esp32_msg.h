@@ -1,7 +1,7 @@
 #ifndef _BSP_ESP32_MSG_H
 #define _BSP_ESP32_MSG_H
 #include "stm32f4xx_cryp.h"
-#define ESP32_MSG_BUF_SIZE  64
+#define ESP32_MSG_BUF_SIZE  128
 
 typedef struct esp32_msg_handle esp32_msg_handle_t;
 

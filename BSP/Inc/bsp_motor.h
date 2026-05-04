@@ -25,6 +25,8 @@ typedef struct
     uint32_t            gpio_m1b_rcc;
     uint32_t            gpio_m2a_rcc;
     uint32_t            gpio_m2b_rcc;
+    uint32_t            gpio_pwma_rcc;
+    uint32_t            gpio_pwmb_rcc;
     uint32_t            tim_rcc;
 
     /* GPIO */
@@ -32,37 +34,22 @@ typedef struct
     GPIO_TypeDef*       gpio_m1b_port;
     GPIO_TypeDef*       gpio_m2a_port;
     GPIO_TypeDef*       gpio_m2b_port;
+    GPIO_TypeDef*       gpio_pwma_port;
+    GPIO_TypeDef*       gpio_pwmb_port;
 
     uint32_t            gpio_m1a_pin;
     uint32_t            gpio_m1b_pin;
     uint32_t            gpio_m2a_pin;
     uint32_t            gpio_m2b_pin;
+    uint32_t            gpio_pwma_pin;
+    uint32_t            gpio_pwmb_pin;
 
-    GPIOMode_TypeDef    gpio_m1a_mode;
-    GPIOMode_TypeDef    gpio_m1b_mode;
-    GPIOMode_TypeDef    gpio_m2a_mode;
-    GPIOMode_TypeDef    gpio_m2b_mode;
 
-    GPIOOType_TypeDef   gpio_m1a_otype;
-    GPIOOType_TypeDef   gpio_m1b_otype;
-    GPIOOType_TypeDef   gpio_m2a_otype;
-    GPIOOType_TypeDef   gpio_m2b_otype;
+    uint16_t            gpio_pwma_pin_source;
+    uint16_t            gpio_pwmb_pin_source;
 
-    GPIOSpeed_TypeDef   gpio_m1a_speed;
-    GPIOSpeed_TypeDef   gpio_m1b_speed;
-    GPIOSpeed_TypeDef   gpio_m2a_speed;
-    GPIOSpeed_TypeDef   gpio_m2b_speed;
-
-    GPIOPuPd_TypeDef    gpio_m1a_pu;
-    GPIOPuPd_TypeDef    gpio_m1b_pu;
-    GPIOPuPd_TypeDef    gpio_m2a_pu;
-    GPIOPuPd_TypeDef    gpio_m2b_pu;
-
-    uint16_t            gpio_m1a_pin_source;
-    uint16_t            gpio_m2a_pin_source;
-
-    uint8_t             gpio_m1a_af;
-    uint8_t             gpio_m2a_af;
+    uint8_t             gpio_pwma_af;
+    uint8_t             gpio_pwmb_af;
 
     /* TIM */
     TIM_TypeDef*        tim;
@@ -89,10 +76,14 @@ typedef struct
     GPIO_TypeDef*       gpio_m1b_port;
     GPIO_TypeDef*       gpio_m2a_port;
     GPIO_TypeDef*       gpio_m2b_port;
+    GPIO_TypeDef*       gpio_pwma_port;
+    GPIO_TypeDef*       gpio_pwmb_port;
     uint32_t            gpio_m1a_pin;
     uint32_t            gpio_m1b_pin;
     uint32_t            gpio_m2a_pin;
     uint32_t            gpio_m2b_pin;
+    uint32_t            gpio_pwma_pin;
+    uint32_t            gpio_pwmb_pin;
 
 } motor_dev_t;
 

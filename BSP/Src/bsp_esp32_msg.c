@@ -29,21 +29,37 @@ void esp32_msg_IRQHandler(void *pamam)
     if (USART_GetITStatus(s_msg_handle->esp32_msg_dev.usart, USART_IT_RXNE) != RESET)
     {
         uint8_t ch = USART_ReceiveData(s_msg_handle->esp32_msg_dev.usart);
-        if (ch == ESP32_MSG_BUF_LF)
+        
+        /* 接收换行符，表示一帧数据结束 */
+        if (ch == USART_STRING_END_LF)
         {
-            if (s_msg_handle->buf_index < s_msg_handle->buf_len - 2)
+            /* 添加字符串结束符 */
+            if (s_msg_handle->buf_index < USART_RECEIVE_BUF_SIZE)
             {
-                s_msg_handle->buf[s_msg_handle->buf_index++] = ESP32_MSG_BUF_LF;
+                s_msg_handle->buf[s_msg_handle->buf_index] = USART_STRING_END_NULL;
             }
-            s_msg_handle->buf[s_msg_handle->buf_index] = EPS32_MSG_END_NULL;
-            s_msg_handle->rx_len = s_msg_handle->buf_index;
+            
+            /* 设置消息标志 & 长度 */
             s_msg_handle->new_msg_flag = 1;
+            s_msg_handle->rx_len = s_msg_handle->buf_index;
             s_msg_handle->buf_index = 0;
+            
+            /* 接收回调函数 */
+            if (s_msg_handle->esp32_msg_callback.rx_callback != NULL)
+            {
+                s_msg_handle->esp32_msg_callback.rx_callback(s_msg_handle);
+            }
         }
-        else if (s_msg_handle->buf_index < s_msg_handle->buf_len - 2)
+        else
         {
-            s_msg_handle->buf[s_msg_handle->buf_index++] = ch;
+            /* 正常数据，安全存入缓冲区 */
+            if (s_msg_handle->buf_index < USART_RECEIVE_BUF_SIZE - 1)
+            {
+                s_msg_handle->buf[s_msg_handle->buf_index++] = ch;
+            }
         }
+        
+        /* 清除中断标志 */
         USART_ClearITPendingBit(s_msg_handle->esp32_msg_dev.usart, USART_IT_RXNE);
     }
 }
@@ -72,13 +88,13 @@ static void esp32_msg_gpio_init(esp32_msg_cfg_t *cfg)
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Pin     = cfg->gpio_tx_pin;
     GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_AF;
-    GPIO_InitStructure.GPIO_OType   = GPIO_OType_OD;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_NOPULL;
     GPIO_Init(cfg->gpio_tx_port, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pin     = cfg->gpio_rx_pin;
-    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_OD;
     GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_UP;
     GPIO_Init(cfg->gpio_rx_port, &GPIO_InitStructure);
 
@@ -138,8 +154,9 @@ void bsp_esp32_msg_init(esp32_msg_handle_t *handle, esp32_msg_cfg_t *cfg)
     }
 
     handle->new_msg_flag = 0;
-    handle->esp32_msg_dev.usart = cfg->usart;
 
+    handle->esp32_msg_dev.usart = cfg->usart;
+    s_msg_handle->buf = handle->buf;
     s_msg_handle = handle; /* 保存句柄 */
     /* RCC */
     esp32_msg_clk_init(cfg);

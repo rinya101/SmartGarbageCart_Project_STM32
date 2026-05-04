@@ -22,6 +22,8 @@ static void motor_clk_init(motor_cfg_t *cfg)
     RCC_AHB1PeriphClockCmd(cfg->gpio_m1b_rcc, ENABLE);
     RCC_AHB1PeriphClockCmd(cfg->gpio_m2a_rcc, ENABLE);
     RCC_AHB1PeriphClockCmd(cfg->gpio_m2b_rcc, ENABLE);
+    RCC_AHB1PeriphClockCmd(cfg->gpio_pwma_rcc, ENABLE);
+    RCC_AHB1PeriphClockCmd(cfg->gpio_pwmb_rcc, ENABLE);
     RCC_APB1PeriphClockCmd(cfg->tim_rcc, ENABLE);
 }
 /**
@@ -35,37 +37,52 @@ static void motor_gpio_init(motor_cfg_t *cfg)
 
     // M1B 方向
     gpio_init.GPIO_Pin   = cfg->gpio_m1b_pin;
-    gpio_init.GPIO_Mode  = cfg->gpio_m1b_mode;
-    gpio_init.GPIO_OType = cfg->gpio_m1b_otype;
-    gpio_init.GPIO_Speed = cfg->gpio_m1b_speed;
-    gpio_init.GPIO_PuPd  = cfg->gpio_m1b_pu;
+    gpio_init.GPIO_Mode  = GPIO_Mode_OUT;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_UP;
     GPIO_Init(cfg->gpio_m1b_port, &gpio_init);
 
     // M2B 方向
     gpio_init.GPIO_Pin   = cfg->gpio_m2b_pin;
-    gpio_init.GPIO_Mode  = cfg->gpio_m2b_mode;
-    gpio_init.GPIO_OType = cfg->gpio_m2b_otype;
-    gpio_init.GPIO_Speed = cfg->gpio_m2b_speed;
-    gpio_init.GPIO_PuPd  = cfg->gpio_m2b_pu;
+    gpio_init.GPIO_Mode  = GPIO_Mode_OUT;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_UP;
     GPIO_Init(cfg->gpio_m2b_port, &gpio_init);
 
     // M1A PWM
     gpio_init.GPIO_Pin   = cfg->gpio_m1a_pin;
-    gpio_init.GPIO_Mode  = cfg->gpio_m1a_mode;
-    gpio_init.GPIO_OType = cfg->gpio_m1a_otype;
-    gpio_init.GPIO_Speed = cfg->gpio_m1a_speed;
-    gpio_init.GPIO_PuPd  = cfg->gpio_m1a_pu;
+    gpio_init.GPIO_Mode  = GPIO_Mode_OUT;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_UP;
     GPIO_Init(cfg->gpio_m1a_port, &gpio_init);
-    GPIO_PinAFConfig(cfg->gpio_m1a_port, cfg->gpio_m1a_pin_source, cfg->gpio_m1a_af);
+
 
     // M2A PWM
     gpio_init.GPIO_Pin   = cfg->gpio_m2a_pin;
-    gpio_init.GPIO_Mode  = cfg->gpio_m2a_mode;
-    gpio_init.GPIO_OType = cfg->gpio_m2a_otype;
-    gpio_init.GPIO_Speed = cfg->gpio_m2a_speed;
-    gpio_init.GPIO_PuPd  = cfg->gpio_m2a_pu;
+    gpio_init.GPIO_Mode  = GPIO_Mode_OUT;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_UP;
     GPIO_Init(cfg->gpio_m2a_port, &gpio_init);
-    GPIO_PinAFConfig(cfg->gpio_m2a_port, cfg->gpio_m2a_pin_source, cfg->gpio_m2a_af);
+
+    gpio_init.GPIO_Pin   = cfg->gpio_pwma_pin;
+    gpio_init.GPIO_Mode  = GPIO_Mode_AF;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    GPIO_Init(cfg->gpio_pwma_port, &gpio_init);
+    GPIO_PinAFConfig(cfg->gpio_pwma_port, cfg->gpio_pwma_pin_source, cfg->gpio_pwma_af);
+
+    gpio_init.GPIO_Pin   = cfg->gpio_pwmb_pin;
+    gpio_init.GPIO_Mode  = GPIO_Mode_AF;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    GPIO_Init(cfg->gpio_pwmb_port, &gpio_init);
+    GPIO_PinAFConfig(cfg->gpio_pwmb_port, cfg->gpio_pwmb_pin_source, cfg->gpio_pwmb_af);
 }
 /**
  * @brief 电机定时器初始化
@@ -109,11 +126,21 @@ void bsp_motor_init(motor_handle_t *handle, motor_cfg_t *cfg)
     handle->dev.period         = cfg->tim_period;
     handle->dev.gpio_m1b_port       = cfg->gpio_m1b_port;
     handle->dev.gpio_m1b_pin        = cfg->gpio_m1b_pin;
+
     handle->dev.gpio_m2b_port       = cfg->gpio_m2b_port;
     handle->dev.gpio_m2b_pin        = cfg->gpio_m2b_pin;
+
     handle->dev.gpio_m1a_port       = cfg->gpio_m1a_port;
     handle->dev.gpio_m1a_pin        = cfg->gpio_m1a_pin;
+
     handle->dev.gpio_m2a_port       = cfg->gpio_m2a_port;
+    handle->dev.gpio_m2a_pin        = cfg->gpio_m2a_pin;
+
+    handle->dev.gpio_pwma_port      = cfg->gpio_pwma_port;
+    handle->dev.gpio_pwma_pin      = cfg->gpio_pwma_pin;
+
+    handle->dev.gpio_pwmb_port      = cfg->gpio_pwmb_port;
+    handle->dev.gpio_pwmb_pin      = cfg->gpio_pwmb_pin;
     handle->speed1 = 0;
     handle->speed2 = 0;
     motor_clk_init(cfg);
@@ -156,28 +183,31 @@ void bsp_motor_set_speed(motor_handle_t *handle, int16_t speed1, int16_t speed2)
     speed1 = calculate_smooth_speed(speed1);
     speed2 = calculate_smooth_speed(speed2);
     uint32_t ccr1 = 0, ccr2 = 0;
+
     if (speed1 > 0) 
     {
+        GPIO_ResetBits(handle->dev.gpio_m1a_port, handle->dev.gpio_m1a_pin);
         GPIO_SetBits(handle->dev.gpio_m1b_port, handle->dev.gpio_m1b_pin);
         ccr1 = speed1;
-        ccr1 = handle->dev.period - ccr1;
     } else 
     {
+        GPIO_SetBits(handle->dev.gpio_m1a_port, handle->dev.gpio_m1a_pin);
         GPIO_ResetBits(handle->dev.gpio_m1b_port, handle->dev.gpio_m1b_pin);
         ccr1 = -speed1;
         
     }
+
     if (speed2 > 0) 
     {
-        GPIO_SetBits(handle->dev.gpio_m2b_port, handle->dev.gpio_m2b_pin);
+        GPIO_ResetBits(handle->dev.gpio_m2a_port, handle->dev.gpio_m2a_pin); /* 10 */
+        GPIO_SetBits(handle->dev.gpio_m2b_port, handle->dev.gpio_m2b_pin);   /* 12 */
         ccr2 = speed2;
-        ccr2 = handle->dev.period - ccr2;
     } else 
     {
-        GPIO_ResetBits(handle->dev.gpio_m2b_port, handle->dev.gpio_m2b_pin);
-        ccr2 = -speed2;
-        
-    }
+        GPIO_SetBits(handle->dev.gpio_m2a_port, handle->dev.gpio_m2a_pin);  /* 10 */
+        GPIO_ResetBits(handle->dev.gpio_m2b_port, handle->dev.gpio_m2b_pin); /* 12 */
+        ccr2 = -speed2;                                                                 
+    }        
     TIM_SetCompare1(handle->dev.tim, ccr1);
     TIM_SetCompare2(handle->dev.tim, ccr2); 
 }

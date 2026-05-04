@@ -32,7 +32,7 @@ typedef enum {
     APP_OVER_VOLT  = 9U,
 } AppStatusTypeDef;
 
-// 修复冲突版本 ✅
+
 typedef enum {
     APP_SWITCH_OFF = 0U,
     APP_SWITCH_ON  = 1U,

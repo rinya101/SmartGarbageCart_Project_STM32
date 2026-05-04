@@ -28,6 +28,8 @@ virtualFolder:
             - path: ../../Application/Inc/app_ultrasonic.h
             - path: ../../Application/Inc/app_usart.h
             - path: ../../Application/Inc/app_ctype.h
+            - path: ../../Application/Inc/app_bsp_install.h
+            - path: ../../Application/Inc/app_car.h
           folders: []
         - name: Src
           files:
@@ -44,6 +46,8 @@ virtualFolder:
             - path: ../../Application/Src/app_tracking.c
             - path: ../../Application/Src/app_ultrasonic.c
             - path: ../../Application/Src/app_usart.c
+            - path: ../../Application/Src/app_bsp_install.c
+            - path: ../../Application/Src/app_car.c
           folders: []
     - name: BSP
       files: []
@@ -231,9 +235,29 @@ virtualFolder:
                 - path: ../../Middlewares/FreeRTOS/port/port.c
                 - path: ../../Middlewares/FreeRTOS/port/portmacro.h
               folders: []
-        - name: Loh
+        - name: Log
           files: []
           folders: []
+        - name: Oled
+          files:
+            - path: ../../Middlewares/OLED/oled_font.c
+            - path: ../../Middlewares/OLED/oled_font.h
+            - path: ../../Middlewares/OLED/oled_image.c
+            - path: ../../Middlewares/OLED/oled_image.h
+          folders: []
+        - name: Protocol
+          files: []
+          folders:
+            - name: Inc
+              files:
+                - path: ../../Middlewares/Protocol/Inc/Decode.h
+                - path: ../../Middlewares/Protocol/Inc/Encode.h
+              folders: []
+            - name: Src
+              files:
+                - path: ../../Middlewares/Protocol/Src/Decode.c
+                - path: ../../Middlewares/Protocol/Src/Encode.c
+              folders: []
     - name: Tasks
       files: []
       folders:
@@ -241,19 +265,13 @@ virtualFolder:
           files:
             - path: ../../Tasks/Inc/task_app.h
             - path: ../../Tasks/Inc/task_control.h
-            - path: ../../Tasks/Inc/task_esp32.h
-            - path: ../../Tasks/Inc/task_motor.h
-            - path: ../../Tasks/Inc/task_sensor.h
-            - path: ../../Tasks/Inc/task_ui.h
+            - path: ../../Tasks/Inc/task_data_updata.h
           folders: []
         - name: Src
           files:
             - path: ../../Tasks/Src/task_app.c
             - path: ../../Tasks/Src/task_control.c
-            - path: ../../Tasks/Src/task_esp32.c
-            - path: ../../Tasks/Src/task_motor.c
-            - path: ../../Tasks/Src/task_sensor.c
-            - path: ../../Tasks/Src/task_ui.c
+            - path: ../../Tasks/Src/task_data_updata.c
           folders: []
     - name: Config
       files: []
@@ -312,6 +330,9 @@ targets:
         - ../..
         - ../../Config/Inc
         - ../../Config/Src
+        - ../../Middlewares/OLED
+        - ../../Middlewares/Protocol/Inc
+        - ../../Middlewares/Protocol/Src
       libList:
         - ../../Drivers/CMSIS/Core
         - ../../Drivers/CMSIS/Device
@@ -321,6 +342,9 @@ targets:
         - ../../Middlewares/FreeRTOS/inc
         - ../../BSP/Inc
         - ../../BSP/Src
+        - ../../Config/Inc
+        - ../../Config/Src
+        - ../../Middlewares/Protocol/Inc
     excludeList:
       - <virtual_root>/BSP/Src/bsp_usart.c
     settings:

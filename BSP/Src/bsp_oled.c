@@ -39,7 +39,7 @@ void oled_dma_irq_handler(void* param)
  * @param oled_handle 
  * @param cfg 
  */
-static void bsp_oled_clk_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
+static void bsp_oled_clk_cfg(oled_handle_t* oled_handle,const oled_cfg_t* cfg)
 {
     /* GPIO 时钟 */
     RCC_AHB1PeriphClockCmd(cfg->scl_clk, ENABLE);
@@ -57,7 +57,7 @@ static void bsp_oled_clk_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
  * @param oled_handle 
  * @param cfg 
  */
-static void bsp_oled_gpio_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
+static void bsp_oled_gpio_cfg(oled_handle_t* oled_handle,const oled_cfg_t* cfg)
 {
     /* AF */
     GPIO_PinAFConfig(cfg->sda_port, cfg->sda_source, cfg->sda_af);
@@ -78,7 +78,7 @@ static void bsp_oled_gpio_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
  * @param oled_handle 
  * @param cfg 
  */
-static void bsp_oled_i2c_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
+static void bsp_oled_i2c_cfg(oled_handle_t* oled_handle,const oled_cfg_t* cfg)
 {
     /* I2C 配置 */
     I2C_DeInit(cfg->i2cx);
@@ -100,7 +100,7 @@ static void bsp_oled_i2c_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
  * @param oled_handle 
  * @param cfg 
  */
-static void bsp_oled_dma_cfg(oled_handle_t* oled_handle, oled_cfg_t* cfg)
+static void bsp_oled_dma_cfg(oled_handle_t* oled_handle,const oled_cfg_t* cfg)
 {
     /* 参数拷贝 */
     DMA_InitTypeDef DMA_InitStructure;
@@ -196,7 +196,7 @@ void bsp_oled_refresh(oled_handle_t* oled_handle)
  * @param oled_handle 
  * @param cfg 
  */
-void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t* cfg)
+void bsp_oled_init(oled_handle_t* oled_handle,const oled_cfg_t* cfg)
 {
     if (oled_handle == NULL)
     {
@@ -221,7 +221,7 @@ void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t* cfg)
     bsp_oled_i2c_cfg(oled_handle, cfg);
     /* DMA 配置 */
     bsp_oled_dma_cfg(oled_handle, cfg);
-    SGCS_INFO("OLED init success");
+    //SGCS_INFO("OLED init success");
     /* 发送 OLED 初始化命令序列 */
     for (uint8_t i = 0; i < OLED_INIT_CMD_SEQ_SIZE; i++)
     {

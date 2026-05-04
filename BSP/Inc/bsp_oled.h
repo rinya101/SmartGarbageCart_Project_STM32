@@ -101,7 +101,7 @@ struct oled_handle
 };
 
 
-void bsp_oled_init(oled_handle_t* oled_handle, oled_cfg_t* cfg);
+void bsp_oled_init(oled_handle_t* oled_handle,const oled_cfg_t* cfg);
 void bsp_oled_draw_point(oled_handle_t* oled_handle, uint8_t x, uint8_t y, uint8_t data);
 void bsp_oled_refresh(oled_handle_t* oled_handle);
 

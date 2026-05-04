@@ -1,7 +1,5 @@
+#include "bsp_oled.h"
 #include "PeripheralParamConfig.h"
-#include "bsp_encoder.h"
-
-
 /* ---------------------------------- OLED 配置 ----------------------------- */
 /**
  * @brief OLED 初始化命令序列（SSD1306 128x64）
@@ -35,3 +33,4 @@ const uint8_t oled_init_cmd_seq[] = {
     0x2E,   // 取消滚动
     0xAF    // 开启显示
 };
+

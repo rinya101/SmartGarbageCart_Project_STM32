@@ -8,7 +8,7 @@
 #include "bsp_battery.h"
 #include "PeripheralParamConfig.h"
 /* 底层句柄 */
-static battery_handle_t battery_handle;
+battery_handle_t battery_handle;
 
 /* 内部函数 */
 static AppStatusTypeDef App_Battery_Init(void);
@@ -68,5 +68,5 @@ static AppStatusTypeDef App_Battery_PrintMsg(void)
     sprintf((char *)buf, "[Battery] Level: %d%%\r\n", level);
 
     /* 调用APP MSG发送 */
-    return App_Message.Send(buf, strlen((char *)buf));
+    return App_Message.Send(buf);
 }

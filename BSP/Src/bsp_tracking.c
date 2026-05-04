@@ -61,6 +61,7 @@ void tracker_b_exti_handler(void* param)
         {
             s_track_b_handle->sta = TRACKER_STATE_WHITE;
         }
+
     }
 }
 /**
@@ -83,6 +84,7 @@ void tracker_c_exti_handler(void* param)
         {
             s_track_c_handle->sta = TRACKER_STATE_WHITE;
         }
+
     }
 }
 /**

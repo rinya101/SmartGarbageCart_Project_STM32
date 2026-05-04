@@ -68,6 +68,7 @@ typedef struct
     uint8_t             nvic_subpri;
 } track_cfg_t;
 
+
 /**
  * @brief 循迹设备句柄
  * 

@@ -12,10 +12,12 @@
  */
 typedef struct
 {
+    uint8_t newMsg;
     /* 方法 */
     AppStatusTypeDef (*Init)(void);
-    AppStatusTypeDef (*Send)(uint8_t *data, uint16_t len);
+    AppStatusTypeDef (*Send)(uint8_t *data);
     AppStatusTypeDef (*Process)(void);
+    AppStatusTypeDef (*Scan)(void);
 } AppMessageObjectTypeDef;
 
 /**

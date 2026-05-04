@@ -161,7 +161,7 @@
                                                          \
         .tim = TIM5,                                     \
         .tim_psc = 1000 - 1,                             \
-        .tim_arr = 50000 - 1,                            \
+        .tim_arr = 60000 - 1,                            \
     }
 /* ---------------------------------- OLED 配置 ----------------------------- */
 extern const uint8_t oled_init_cmd_seq[];
@@ -180,9 +180,7 @@ extern const uint8_t oled_init_cmd_seq[];
 #define OLED_PAGE(page) (0xB0 + (page))                   /* 设置页地址 */
 #define OLED_COL_LOW(col) (0x00 | ((col) & 0x0F))         /* 设置列地址低4位 */
 #define OLED_COL_HIGH(col) (0x10 | (((col) >> 4) & 0x0F)) /* 设置列地址高4位 */
-#define OLED_DEFAULT_CONFIG()                                      \
-    (oled_cfg_t)                                                   \
-    {                                                              \
+#define OLED_DEFAULT_CONFIG() ( const oled_cfg_t){                  \
         /* GPIO 配置 */                                            \
         .scl_clk = RCC_AHB1Periph_GPIOB,                           \
         .sda_clk = RCC_AHB1Periph_GPIOB,                           \
@@ -215,13 +213,14 @@ extern const uint8_t oled_init_cmd_seq[];
         .tx_dma_channel = DMA_Channel_1,                           \
         .dma_priority = DMA_Priority_High,                         \
         .dma_irq_channel = DMA1_Stream7_IRQn,                      \
-        .dma_irq_prio = 5,                                         \
-        .dma_irq_sub_prio = 0,                   /* SYSCFG 配置 */ \
+        .dma_irq_prio = 2,                                         \
+        .dma_irq_sub_prio = 2,                   /* SYSCFG 配置 */ \
         .syscfg_clk = RCC_APB2Periph_SYSCFG, /* OLED 配置 */       \
         .i2c_addr = OLED_ADDR,                                     \
         .width = OLED_WIDTH,                                       \
         .height = OLED_HEIGHT                                      \
     }
+
 /* ----------------------- 超声波模块（HC-SR04） 配置 ------------------------- */
 // #define ULT_FIRST_EH_EXTI_HANDLE(void)  EXTI1_IRQHandler(void)
 // #define ULT_TIM_HANDLE(void)            TIM3_IRQHandler(void)
@@ -359,13 +358,15 @@ extern const uint8_t oled_init_cmd_seq[];
     {                                                         \
         .gpio_rcc = RCC_AHB1Periph_GPIOB,                     \
         .tim_rcc = RCC_APB1Periph_TIM4,                       \
+        .tim_rcc_continue = RCC_APB2Periph_TIM10,             \
         .gpio_port = GPIOB,                                   \
         .gpio_pin = GPIO_Pin_9,                               \
         .timx = TIM4,                                         \
+        .timx_continue = TIM10,                               \
         .tim_channel = TIM_Channel_4,                         \
         .prescaler = 10 - 1, /* 100MHz /10 = 10MHz → 0.1us */ \
-            .period = 10000, /* 1kHz 默认频率 */              \
-            .duty = 1000,    /* 温和占空比 */                 \
+        .period = 10000,      /* 1kHz 默认频率 */              \
+        .duty = 1000,          /* 温和占空比 */                \
     }
 
 /* ----------------------- 马达 配置 ------------------------- */
@@ -373,43 +374,37 @@ extern const uint8_t oled_init_cmd_seq[];
     (motor_cfg_t)                                       \
     {                                                   \
         /* RCC */                                       \
-        .gpio_m1a_rcc = RCC_AHB1Periph_GPIOA,           \
-        .gpio_m1b_rcc = RCC_AHB1Periph_GPIOB,           \
-        .gpio_m2a_rcc = RCC_AHB1Periph_GPIOA,           \
+        .gpio_m1a_rcc = RCC_AHB1Periph_GPIOC,           \
+        .gpio_m1b_rcc = RCC_AHB1Periph_GPIOC,           \
+        .gpio_m2a_rcc = RCC_AHB1Periph_GPIOB,           \
         .gpio_m2b_rcc = RCC_AHB1Periph_GPIOB,           \
-        .tim_rcc = RCC_APB1Periph_TIM2, /* GPIO PORT */ \
-            .gpio_m1a_port = GPIOA,                     \
-        .gpio_m1b_port = GPIOB,                         \
-        .gpio_m2a_port = GPIOA,                         \
-        .gpio_m2b_port = GPIOB, /* GPIO PIN */          \
-            .gpio_m1a_pin = GPIO_Pin_0,                 \
-        .gpio_m1b_pin = GPIO_Pin_10,                    \
-        .gpio_m2a_pin = GPIO_Pin_1,                     \
-        .gpio_m2b_pin = GPIO_Pin_12, /* MODE */         \
-            .gpio_m1a_mode = GPIO_Mode_AF,              \
-        .gpio_m1b_mode = GPIO_Mode_OUT,                 \
-        .gpio_m2a_mode = GPIO_Mode_AF,                  \
-        .gpio_m2b_mode = GPIO_Mode_OUT, /* OTYPER */    \
-            .gpio_m1a_otype = GPIO_OType_PP,            \
-        .gpio_m1b_otype = GPIO_OType_PP,                \
-        .gpio_m2a_otype = GPIO_OType_PP,                \
-        .gpio_m2b_otype = GPIO_OType_PP, /* SPEED */    \
-            .gpio_m1a_speed = GPIO_Speed_100MHz,        \
-        .gpio_m1b_speed = GPIO_Speed_100MHz,            \
-        .gpio_m2a_speed = GPIO_Speed_100MHz,            \
-        .gpio_m2b_speed = GPIO_Speed_100MHz, /* PUPD */ \
-            .gpio_m1a_pu = GPIO_PuPd_NOPULL,            \
-        .gpio_m1b_pu = GPIO_PuPd_NOPULL,                \
-        .gpio_m2a_pu = GPIO_PuPd_NOPULL,                \
-        .gpio_m2b_pu = GPIO_PuPd_NOPULL, /* AF */       \
-            .gpio_m1a_pin_source = GPIO_PinSource0,     \
-        .gpio_m2a_pin_source = GPIO_PinSource1,         \
-        .gpio_m1a_af = GPIO_AF_TIM2,                    \
-        .gpio_m2a_af = GPIO_AF_TIM2, /* TIM */          \
-            .tim = TIM2,                                \
+        .gpio_pwma_rcc = RCC_AHB1Periph_GPIOA,          \
+        .gpio_pwma_rcc = RCC_AHB1Periph_GPIOA,          \
+        .tim_rcc = RCC_APB1Periph_TIM2,                 \
+                                                        \
+        .gpio_m1a_port = GPIOC,                         \
+        .gpio_m1b_port = GPIOC,                         \
+        .gpio_m2a_port = GPIOB,                         \
+        .gpio_m2b_port = GPIOB,                         \
+        .gpio_pwma_port = GPIOA,                        \
+        .gpio_pwmb_port = GPIOA,                        \
+                                                        \
+        .gpio_m1a_pin = GPIO_Pin_14,                    \
+        .gpio_m1b_pin = GPIO_Pin_15,                    \
+        .gpio_m2a_pin = GPIO_Pin_10,                    \
+        .gpio_m2b_pin = GPIO_Pin_12,                    \
+        .gpio_pwma_pin = GPIO_Pin_0,                    \
+        .gpio_pwmb_pin = GPIO_Pin_1,                    \
+                                                        \
+        .gpio_pwma_pin_source = GPIO_PinSource0,         \
+        .gpio_pwmb_pin_source = GPIO_PinSource1,         \
+        .gpio_pwma_af = GPIO_AF_TIM2,                    \
+        .gpio_pwmb_af = GPIO_AF_TIM2,                   \
+                                                        \
+        .tim = TIM2,                                    \
         .tim_channel1 = TIM_Channel_1,                  \
         .tim_channel2 = TIM_Channel_2,                  \
-        .tim_pre = 100 - 1,                             \
+        .tim_pre = 1000 - 1,                             \
         .tim_period = 1000 - 1,                         \
         .tim_div = TIM_CKD_DIV1,                        \
         .tim_mode = TIM_CounterMode_Up,                 \
@@ -455,16 +450,14 @@ extern const uint8_t oled_init_cmd_seq[];
     .duty = 1500}
 
 /* ----------------------- 电池电量采集 配置 ------------------------- */
-#define BATTERY_DEFAULT_CONFIG()          \
-    (const battery_cfg_t)                 \
-    {                                     \
+#define BATTERY_DEFAULT_CONFIG() (const battery_cfg_t){ \
         .gpio_clk = RCC_AHB1Periph_GPIOA, \
         .adc_clk = RCC_APB2Periph_ADC1,   \
         .gpio_port = GPIOA,               \
         .gpio_pin = GPIO_Pin_5,           \
         .adc = ADC1,                      \
         .adc_channel = ADC_Channel_5,     \
-        .offset = 1.106f,                 \
+        .offset = 1.106f                 \
     }
 
 #endif /* PeripheralParamConfig.h */

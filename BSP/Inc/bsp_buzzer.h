@@ -16,6 +16,7 @@ typedef struct
     /* RCC */
     uint32_t            gpio_rcc;
     uint32_t            tim_rcc;
+    uint32_t            tim_rcc_continue;
 
     /* GPIO */
     GPIO_TypeDef*       gpio_port;
@@ -23,6 +24,7 @@ typedef struct
 
     /* TIM */
     TIM_TypeDef*        timx;
+    TIM_TypeDef*        timx_continue;
     uint16_t            tim_channel;
     uint16_t            prescaler;
     uint16_t            period;
@@ -33,6 +35,7 @@ typedef struct
 typedef struct 
 {
     TIM_TypeDef*        timx;
+    TIM_TypeDef*        timx_continue;
     uint16_t            period;
     uint16_t            duty;
 } buzzer_dev_t;
@@ -46,6 +49,7 @@ struct buzzer_handle
 };
 
 void bsp_buzzer_init(buzzer_handle_t *buzzer, buzzer_cfg_t *cfg);
+void bsp_buzzer_beep(buzzer_handle_t *buzzer, uint16_t time);
 void bsp_buzzer_on(buzzer_handle_t *buzzer);
 void bsp_buzzer_off(buzzer_handle_t *buzzer);
 void bsp_buzzer_trigger(buzzer_handle_t *buzzer);

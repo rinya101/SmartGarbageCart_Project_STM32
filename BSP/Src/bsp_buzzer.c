@@ -40,6 +40,22 @@
 #define H6  10121   // 高音6
 #define H7  9091    // 高音7
 
+buzzer_handle_t *s_buzzer_handler = NULL;
+
+/**
+ * @brief 蜂鸣器延时处理函数
+ * @note 默认 TIM9
+ * @param param 
+ */
+void buzzer_tim_IRQHandler(void* param)
+{
+    if (TIM_GetITStatus(s_buzzer_handler->dev.timx_continue, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(s_buzzer_handler->dev.timx_continue, TIM_IT_Update);
+        TIM_Cmd(s_buzzer_handler->dev.timx_continue, DISABLE);
+        bsp_buzzer_off(s_buzzer_handler);
+    }
+}
 
 static void buzzer_gpio_init(buzzer_cfg_t *cfg)
 {
@@ -85,6 +101,32 @@ static void buzzer_tim_pwm_init(buzzer_cfg_t *cfg)
     TIM_Cmd(cfg->timx, ENABLE);
 }
 /**
+ * @brief 蜂鸣器关闭定时器初始化
+ * 
+ * @param cfg 
+ */
+static void buzzer_tim_continue_init(buzzer_cfg_t *cfg)
+{
+    RCC_APB2PeriphClockCmd(cfg->tim_rcc_continue, ENABLE);
+    TIM_TimeBaseInitTypeDef TIM_InitStructure;
+    TIM_InitStructure.TIM_Prescaler     = 1000 - 1;  
+    TIM_InitStructure.TIM_CounterMode   = TIM_CounterMode_Up; 
+    TIM_InitStructure.TIM_Period        = 10000 - 1;
+    TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+
+    TIM_TimeBaseInit(cfg->timx_continue, &TIM_InitStructure);
+
+    TIM_ITConfig(cfg->timx_continue, TIM_IT_Update, ENABLE);
+
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_TIM10_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 8;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 8;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    TIM_Cmd(cfg->timx_continue, ENABLE);
+}
+/**
  * @brief 蜂鸣器初始化
  * 
  * @param buzzer 
@@ -95,15 +137,18 @@ void bsp_buzzer_init(buzzer_handle_t *buzzer, buzzer_cfg_t *cfg)
     if (buzzer == NULL || cfg == NULL) return;
 
     buzzer->dev.timx    = cfg->timx;
+    buzzer->dev.timx_continue = cfg->timx_continue;
     buzzer->dev.period  = cfg->period;
     buzzer->dev.duty    = cfg->duty;
     buzzer->period      = cfg->period;
     buzzer->duty        = cfg->duty;
     buzzer->is_open     = 0;
 
+    s_buzzer_handler = buzzer;
+
     buzzer_gpio_init(cfg);
     buzzer_tim_pwm_init(cfg);
-
+    buzzer_tim_continue_init(cfg);
     bsp_buzzer_off(buzzer);
 }
 /**
@@ -142,7 +187,20 @@ void bsp_buzzer_trigger(buzzer_handle_t *buzzer)
         bsp_buzzer_on(buzzer);
     }
 }
-
+/**
+ * @brief Beep
+ * 
+ * @param buzzer 
+ */
+void bsp_buzzer_beep(buzzer_handle_t *buzzer, uint16_t time)
+{
+    if (buzzer == NULL || time == 0) return;
+    TIM_TypeDef *tim = buzzer->dev.timx_continue;
+    TIM_SetCounter(tim, 0);      // 计数器清零
+    TIM_SetAutoreload(tim, time); // 设置定时时间
+    bsp_buzzer_on(buzzer);       // 开蜂鸣器
+    TIM_Cmd(tim, ENABLE);        // 启动定时
+}
 /**
  * @brief 设置蜂鸣器周期
  * @note uint16_t -> (0, 65535)
