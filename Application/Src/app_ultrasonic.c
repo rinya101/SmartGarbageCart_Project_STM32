@@ -41,7 +41,6 @@ static AppStatusTypeDef App_UltInit(void)
 static uint16_t App_GetDistance(void)
 {
     uint16_t distance = 0;
-    //bsp_ultrasonic_trigger(&ult);
     distance = ult.distance_cm;
     return distance;
 }
@@ -65,6 +64,7 @@ static AppStatusTypeDef App_Scan(void)
     uint8_t buf[24] = {0};
     if (ult.state) /* 准备完成 */
     {
+        App_Ult.distance = App_GetDistance();
         sprintf((char *)buf,"[Ultrasonic] Distance:%d\r\n",App_GetDistance());
         App_Message.Send(buf);
     }

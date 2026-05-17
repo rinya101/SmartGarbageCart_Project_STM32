@@ -30,6 +30,9 @@ track_handle_t tracking3;
  */
 static AppStatusTypeDef App_TrackingInit(void)
 {
+    App_Tracking.tracker1_sta = &(tracking1.sta);
+    App_Tracking.tracker2_sta = &(tracking2.sta);
+    App_Tracking.tracker3_sta = &(tracking3.sta);
     bsp_tracking_init(&tracking1, &TRACKER_A_DEFAULT_CONFIG());
     bsp_tracking_init(&tracking2, &TRACKER_B_DEFAULT_CONFIG());
     bsp_tracking_init(&tracking3, &TRACKER_C_DEFAULT_CONFIG());

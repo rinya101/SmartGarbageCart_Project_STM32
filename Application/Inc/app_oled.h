@@ -2,6 +2,9 @@
 #define _APP_OLED_H
 #include "app_ctype.h"
 #include "bsp_oled.h"
+
+
+
 typedef struct
 {
     /* 方法 */
@@ -13,8 +16,8 @@ typedef struct
     AppStatusTypeDef (*DrawRect)(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
     AppStatusTypeDef (*DrawFillRect)(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
     AppStatusTypeDef (*Welcome)(void);
+
 } AppOledObjectTypedef;
 
 extern AppOledObjectTypedef App_Oled;
-extern oled_handle_t oled;
 #endif

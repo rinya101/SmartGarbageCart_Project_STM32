@@ -7,6 +7,8 @@
  */
 typedef struct 
 {
+    uint16_t distance;
+
     AppStatusTypeDef (*Init)(void);
     uint16_t (*GetDistance)(void);
     AppStatusTypeDef (*Trigger)(void);

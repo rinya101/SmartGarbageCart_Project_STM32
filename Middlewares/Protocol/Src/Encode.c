@@ -17,31 +17,17 @@ int Encode_Frame(Decode_Cmd_t *cmd, uint8_t *buf)
     
     switch (cmd->cmdCode)
     {
-        case CMD_STM32_CAR:
-            // 格式：STM32,CAR,FORWARD,500
-            sprintf((char *)buf, "STM32,CAR,%s,%s", cmd->key, cmd->value);
-            break;
-
-        case CMD_STM32_SERVO:
-            // 格式：STM32,SERVO,1,90
-            sprintf((char *)buf, "STM32,SERVO,%s,%s", cmd->key, cmd->value);
-            break;
-
-        case CMD_STM32_LED:
-            // 格式：STM32,LED,RED,ON
-            sprintf((char *)buf, "STM32,LED,%s,%s", cmd->key, cmd->value);
-            break;
-
-        case CMD_STM32_ULTRASONIC:
-            sprintf((char *)buf, "STM32,ULT,%s,%s", cmd->key, cmd->value);
-            break;
-
-        case CMD_STM32_COMPASS:
-            sprintf((char *)buf, "STM32,COMPASS,%s,%s", cmd->key, cmd->value);
-            break;
+        /* 向 PC 发送指令 */
         case CMD_PC_CAR_STA:
             sprintf((char *)buf, "PC,CAR,%s,%s",cmd->key, cmd->value);
             break;
+        case CMD_PC_ULTRASONIC_DISTANCEUPLOAD:
+            sprintf((char *)buf, "PC,ULT,%s,%s", cmd->key, cmd->value);
+            break;
+        case CMD_PC_COMPASS_ANGLEUPLOAD:
+            sprintf((char *)buf, "PC,COMPASS,%s,%s", cmd->key, cmd->value);break;
+        case CMD_PC_BAT_PERCENTUPLOAD:
+            sprintf((char *)buf, "PC,BATTERY,%s,%s", cmd->key, cmd->value);break;
         default:
             printf("Unknown Command Code!\n");
             return -1;

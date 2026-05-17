@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 Decode_Cmd_t g_cmd_pc = {0};
-uint8_t g_cmd_flag = 0;
+volatile uint8_t g_cmd_flag = 0;
 
 /**
  * @brief 指令分割
@@ -117,6 +117,30 @@ int Decode_ParseFrame(uint8_t *buf, Decode_Cmd_t *cmd)
     if (strcmp((char*)item, "ULT") == 0) 
     {
         cmd->cmdCode = CMD_STM32_ULTRASONIC;
+        strcpy((char*)cmd->key, (char*)key);
+        strcpy((char*)cmd->value, (char*)value);
+        return 0;
+    }
+    /* MODE*/
+    if (strcmp((char*)item, "SYS") == 0)
+    {
+        cmd->cmdCode = CMD_STM32_SYS;
+        strcpy((char*)cmd->key, (char*)key);
+        strcpy((char*)cmd->value, (char*)value);
+        return 0;
+    }
+    /* RESET */
+    if (strcmp((char*)item, "RESET") == 0)
+    {
+        cmd->cmdCode = CMD_SYS_RESET;
+        strcpy((char*)cmd->key, (char*)key);
+        strcpy((char*)cmd->value, (char*)value);
+        return 0;
+    }
+    /* 目标追踪 */
+    if (strcmp((char*)item, "TARGET") == 0)
+    {
+        cmd->cmdCode = CMD_PC_TARGET;
         strcpy((char*)cmd->key, (char*)key);
         strcpy((char*)cmd->value, (char*)value);
         return 0;

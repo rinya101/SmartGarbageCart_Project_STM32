@@ -14,11 +14,11 @@
 typedef struct
 {
     /* 属性 */
-    uint8_t level;      /* 电量百分比 0~100% */
+    float level;      /* 电量百分比 0~100% */
 
     /* 方法 */
     AppStatusTypeDef (*Init)(void);
-    uint8_t (*GetLevel)(void);
+    float (*GetLevel)(void);
     uint8_t (*IsLowPower)(void);
     AppStatusTypeDef (*Print)(void);
 } AppBatteryObjectTypeDef;

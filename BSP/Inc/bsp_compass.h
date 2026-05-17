@@ -101,6 +101,7 @@ struct compass_handle
     uint8_t         id; // 模块ID 0x80 
     int16_t         x_offset;
     int16_t         y_offset;
+    int16_t         z_offset;
     /* Dev */
     compass_dev_t dev;
 };

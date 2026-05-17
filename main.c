@@ -66,6 +66,7 @@ int main(void)
     OLED_DEFAULT_CONFIG(); /* 修复显示屏错行问题 */
     App_Oled.Init();
     App_Oled.Welcome();
+    //App_Compass.Calibrate();
     /* 小车控制任务（核心） */
     xTaskCreate(task_control, "task_control", 2048, NULL, 6, NULL);
     /* 杂项任务（OLED显示） */

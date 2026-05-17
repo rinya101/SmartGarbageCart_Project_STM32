@@ -19,6 +19,6 @@ void task_control(void *pvParameters)
     while(1)
     {
         App_Car.Run();
-        vTaskDelay(2);/* 延时10ms 释放 */
+        vTaskDelay(2);/* 延时2ms 释放 */
     }
 }

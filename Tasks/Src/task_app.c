@@ -11,7 +11,6 @@
 #include "PeripheralParamConfig.h"
 #include "bsp_oled.h"
 #include "bsp_motor.h"
-extern motor_handle_t motor;
 /**
  * @brief APP 业务
  * 
@@ -19,7 +18,8 @@ extern motor_handle_t motor;
  */
 void task_app(void *pvParameters)
 {
-    App_Buzzer.Beep(50000);
+    //App_Buzzer.Beep(50000);
+
     while(1)
     {
         App_ESP32Msg.Scan();

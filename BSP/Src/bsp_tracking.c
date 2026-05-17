@@ -33,11 +33,11 @@ void tracker_a_exti_handler(void* param)
             s_track_a_handle->dev.gpio_pin);
         if (sta != 0)
         {
-            s_track_a_handle->sta = TRACKER_STATE_BLACK;
+            s_track_a_handle->sta = 1;
         }
         else
         {
-            s_track_a_handle->sta = TRACKER_STATE_WHITE;
+            s_track_a_handle->sta = 0;
         }
     }
 }
@@ -55,11 +55,11 @@ void tracker_b_exti_handler(void* param)
             s_track_b_handle->dev.gpio_pin);
         if (sta != 0)
         {
-            s_track_b_handle->sta = TRACKER_STATE_BLACK;
+            s_track_b_handle->sta = 1;
         }
         else
         {
-            s_track_b_handle->sta = TRACKER_STATE_WHITE;
+            s_track_b_handle->sta = 0;
         }
 
     }
@@ -78,11 +78,11 @@ void tracker_c_exti_handler(void* param)
                                             s_track_c_handle->dev.gpio_pin);
         if (sta != 0)
         {
-            s_track_c_handle->sta = TRACKER_STATE_BLACK;
+            s_track_c_handle->sta = 1;
         }
         else
         {
-            s_track_c_handle->sta = TRACKER_STATE_WHITE;
+            s_track_c_handle->sta = 0;
         }
 
     }

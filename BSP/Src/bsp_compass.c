@@ -390,32 +390,15 @@ compass_status_t bsp_compass_read(compass_handle_t *compass_handle)
     int16_t y = (buf[3] << 8) | buf[2];
     int16_t z = (buf[5] << 8) | buf[4];
 
-    // ===================== 【补偿：硬铁偏移】 =====================
-    // 根据你提供的 北/东/南/西 4点校准数据计算得出
-    const int16_t x_offset = 372;  // X 补偿
-    const int16_t y_offset = -294; // Y 补偿
-    const int16_t z_offset = -361; // Z 补偿
-
-    x += x_offset;  // 原始X + 补偿
-    y += y_offset;  // 原始Y + 补偿
-    z += z_offset;  // 原始Z + 补偿
-
-    // 存入补偿后的坐标
+    x -= compass_handle->x_offset;   // ✅ 减
+    y -= compass_handle->y_offset;   // ✅ 减
+    z -= compass_handle->z_offset;   // ✅ 减
     compass_handle->data->x = x;
     compass_handle->data->y = y;
     compass_handle->data->z = z;
-
-    // ===================== 【补偿：角度校准】 =====================
     float angle = atan2(y, x) * 180.0f / 3.1415926f;
     if(angle < 0) angle += 360.0f;
 
-    // 角度补偿：测量值 - 21.13°
-    const float angle_offset = -21.13f;
-    angle += angle_offset;
-    if(angle < 0) angle += 360.0f;  // 防止负角度
-    if(angle > 360) angle -= 360.0f;
-
-    // 存入补偿后的角度
     compass_handle->data->angle = angle;
 
     return status;
@@ -427,32 +410,37 @@ compass_status_t bsp_compass_read(compass_handle_t *compass_handle)
  */
 void bsp_compass_calibrate(compass_handle_t *compass_handle)
 {
-    int16_t x, y;
+    int16_t x, y, z;
     int16_t x_min = 32767, x_max = -32768;
     int16_t y_min = 32767, y_max = -32768;
-    for (int i = 0; i < 250; i++)
+    int16_t z_min = 32767, z_max = -32768;
+    for (int i = 0; i < 500; i++)
     {
         uint8_t buf[6];
         compass_read_bytes(compass_handle, QMC5883P_XOUT_L_REG, buf, 6);
 
         x = (buf[1] << 8) | buf[0];
         y = (buf[3] << 8) | buf[2];
-
+        z = (buf[5] << 8) | buf[4];
         // 更新极值
         if (x < x_min) x_min = x;
         if (x > x_max) x_max = x;
         if (y < y_min) y_min = y;
         if (y > y_max) y_max = y;
-        printf("x: %d, y: %d count %d\n", x, y, i);
+        if (z < z_min) z_min = z;
+        if (z > z_max) z_max = z;
+        printf("x: %d, y: %d z: %d count %d\n", x, y, z, i);
         for(uint32_t i = 0; i < 400000; i++);
     }
 
     // 计算偏移：(最大值 + 最小值)/2
     compass_handle->x_offset = (x_min + x_max) / 2;
     compass_handle->y_offset = (y_min + y_max) / 2;
+    compass_handle->z_offset = (z_min + z_max) / 2;
 
     SGCS_INFO("指南针校准完成！");
-    SGCS_INFO("X偏移: %d, Y偏移: %d",
+    SGCS_INFO("X偏移: %d, Y偏移: %d, Z偏移: %d",
               compass_handle->x_offset,
-              compass_handle->y_offset);
+              compass_handle->y_offset,
+              compass_handle->z_offset);
 }

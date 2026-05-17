@@ -28,16 +28,7 @@ typedef enum
     TRACKER_D,
     TRACKER_E,
 } track_id_t;
-/**
- * @brief 循迹模块状态枚举
- * 
- */
-typedef enum
-{
-    TRACKER_STATE_NONE = -1,
-    TRACKER_STATE_WHITE = 0,
-    TRACKER_STATE_BLACK = 1,
-}track_state_t;
+
 
 /**
  * @brief 循迹初始化
@@ -90,7 +81,7 @@ struct track_handle
 {
     /* BASE */
     track_id_t          id;
-    track_state_t       sta;
+    uint8_t             sta;
     /* Dev */
     track_dev_handle_t  dev;
 };

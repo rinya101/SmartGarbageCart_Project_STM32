@@ -17,11 +17,16 @@ typedef enum
     CMD_STM32_SERVO,        /* 舵机 */
     CMD_STM32_COMPASS,      /* 电子罗盘 */
     CMD_STM32_ULTRASONIC,   /* 超声波 */
-
     /* PC */
-    CMD_PC_CAR_STA,                 /* 车子 */
-    CMD_PC_SERVO_ANGLEUPLOAD,       /* 舵机 */
-    CMD_PC_COMPASS_ANGLEUPLOAD,     /* 电子罗盘 */
+    CMD_PC_CAR_STA,                     /* 车子 */
+    CMD_PC_SERVO_ANGLEUPLOAD,           /* 舵机 */
+    CMD_PC_COMPASS_ANGLEUPLOAD,         /* 电子罗盘 */
+    CMD_PC_ULTRASONIC_DISTANCEUPLOAD,   /* 超声波 */
+    CMD_PC_BAT_PERCENTUPLOAD,           /* 电池电量 */
+    CMD_PC_TARGET,                      /* 目标 */
+    /* SYS */ 
+    CMD_STM32_SYS,                /* 系统指令 */
+    CMD_SYS_RESET,                /* 系统复位 */
 } Decode_CmdCode_t;
 
 /**

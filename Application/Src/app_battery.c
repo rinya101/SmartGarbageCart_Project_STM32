@@ -12,7 +12,7 @@ battery_handle_t battery_handle;
 
 /* 内部函数 */
 static AppStatusTypeDef App_Battery_Init(void);
-static uint8_t App_Battery_GetLevel(void);
+static float App_Battery_GetLevel(void);
 static uint8_t App_Battery_IsLowPower(void);
 static AppStatusTypeDef App_Battery_PrintMsg(void);
 /* 导出对象 */
@@ -38,7 +38,7 @@ static AppStatusTypeDef App_Battery_Init(void)
  * @brief 获取电量
  * @return 0~100%
  */
-static uint8_t App_Battery_GetLevel(void)
+static float App_Battery_GetLevel(void)
 {
     App_Battery.level = bsp_battery_get_level(&battery_handle);
     return App_Battery.level;

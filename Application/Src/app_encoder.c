@@ -8,6 +8,7 @@ static AppStatusTypeDef App_EncoderInit(void);
 static int32_t App_EncoderGetValue(void);
 AppStatusTypeDef App_EncoderPressEvent(void);
 
+
 AppEncoderObjectTypeDef App_Encoder = {
     .Init = App_EncoderInit,
     .GetVlaue = App_EncoderGetValue,

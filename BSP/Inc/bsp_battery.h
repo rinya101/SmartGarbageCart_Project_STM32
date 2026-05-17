@@ -41,7 +41,7 @@ struct battery_handle
 {
     uint16_t  adc_value;        /* ADC原始值 */
     float     voltage;          /* 实际电压 */
-    uint8_t   level;            /* 电量百分比 */
+    float   level;              /* 电量百分比 */
 
     struct
     {
@@ -61,6 +61,6 @@ struct battery_handle
 
 void bsp_battery_init(battery_handle_t *handle, const battery_cfg_t *cfg);
 float bsp_battery_get_voltage(battery_handle_t *handle);
-uint8_t bsp_battery_get_level(battery_handle_t *handle);
+float bsp_battery_get_level(battery_handle_t *handle);
 
 #endif

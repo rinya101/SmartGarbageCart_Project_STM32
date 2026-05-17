@@ -57,7 +57,7 @@ static uint16_t App_CompassRead(void)
 static AppStatusTypeDef App_CompassCalibration(void)
 {
     App_Buzzer.Beep(60000);
-    App_Motor.TurnRight()->Middle();
+    App_Motor.TurnRight()->SetSpeed(200);
     bsp_compass_calibrate(&compass);
     App_Motor.Stop();
     App_Buzzer.Beep(60000);

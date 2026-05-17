@@ -118,11 +118,12 @@ float bsp_battery_get_voltage(battery_handle_t *handle)
 /**
  * @brief 获取电池电量 0~100%
  */
-uint8_t bsp_battery_get_level(battery_handle_t *handle)
+float bsp_battery_get_level(battery_handle_t *handle)
 {
+    float level = 0;
     bsp_battery_get_voltage(handle);
-
-    handle->level = (((float)(handle->voltage) - 4.4f) / (5.0f - 4.4f)) * 100;
-
+    level = handle->voltage / 2.8f * 100;
+    if (level > 100) level = 100;
+    handle->level = level;
     return handle->level;
 }
